@@ -598,6 +598,8 @@ class SttService {
         }
 
         await this.theirSttSession.sendRealtimeInput(payload);
+        // The IPC bridge emits its AEC reference only after successful forwarding.
+        return { success: true };
     }
 
     killExistingSystemAudioDump() {
