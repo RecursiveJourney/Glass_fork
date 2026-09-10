@@ -1,3 +1,4 @@
+const { getWindowBounds, setWindowBounds } = require('./windowBounds');
 const { screen } = require('electron');
 
 class SmoothMovementManager {
@@ -13,6 +14,7 @@ class SmoothMovementManager {
         this.animationFrameId = null;
 
         this.animationTimers = new Map();
+        this.animationTargets = new Map();
     }
 
     /**
@@ -22,10 +24,7 @@ class SmoothMovementManager {
     _isWindowValid(win) {
         if (!win || win.isDestroyed()) {
             // 해당 창의 타이머가 있으면 정리
-            if (this.animationTimers.has(win)) {
-                clearTimeout(this.animationTimers.get(win));
-                this.animationTimers.delete(win);
-            }
+            this.cancelWindowAnimation(win);
             return false;
         }
         return true;
@@ -48,7 +47,7 @@ class SmoothMovementManager {
         }
 
         const { sizeOverride, onComplete, duration: animDuration } = options;
-        const start = win.getBounds();
+        const start = getWindowBounds(win);
         const startTime = Date.now();
         const duration = animDuration || this.animationDuration;
         const { width, height } = sizeOverride || start;
@@ -64,7 +63,7 @@ class SmoothMovementManager {
             const x = start.x + (targetX - start.x) * eased;
             const y = start.y + (targetY - start.y) * eased;
 
-            win.setBounds({ x: Math.round(x), y: Math.round(y), width, height });
+            setWindowBounds(win, { x: Math.round(x), y: Math.round(y), width, height });
 
             if (p < 1) {
                 setTimeout(step, 8);
@@ -104,23 +103,41 @@ class SmoothMovementManager {
         step();
     }
     
-    animateWindowBounds(win, targetBounds, options = {}) {
-        if (this.animationTimers.has(win)) {
-            clearTimeout(this.animationTimers.get(win));
+    // A direct drag/layout supersedes old positions; optionally finish a pending resize.
+    cancelWindowAnimation(win, finishSize = false) {
+        const animation = this.animationTargets.get(win);
+        clearTimeout(this.animationTimers.get(win));
+        this.animationTimers.delete(win);
+        this.animationTargets.delete(win);
+        this.isAnimating = this.animationTargets.size > 0;
+        if (finishSize && animation && win && !win.isDestroyed()) {
+            const current = getWindowBounds(win);
+            setWindowBounds(win, { ...current,
+                width: animation.targetBounds.width ?? current.width,
+                height: animation.targetBounds.height ?? current.height });
+            // Restore temporary resize state before the caller calculates the new layout.
+            if (animation.onComplete) animation.onComplete();
         }
+    }
+
+    animateWindowBounds(win, targetBounds, options = {}) {
+        this.cancelWindowAnimation(win);
 
         if (!this._isWindowValid(win)) {
             if (options.onComplete) options.onComplete();
             return;
         }
 
+        const animation = { targetBounds, onComplete: options.onComplete };
+        this.animationTargets.set(win, animation);
         this.isAnimating = true;
 
-        const startBounds = win.getBounds();
+        const startBounds = getWindowBounds(win);
         const startTime = Date.now();
         const duration = options.duration || this.animationDuration;
     
         const step = () => {
+            if (this.animationTargets.get(win) !== animation) return;
             if (!this._isWindowValid(win)) {
                 if (options.onComplete) options.onComplete();
                 return;
@@ -135,16 +152,19 @@ class SmoothMovementManager {
                 width: Math.round(startBounds.width + ((targetBounds.width ?? startBounds.width) - startBounds.width) * eased),
                 height: Math.round(startBounds.height + ((targetBounds.height ?? startBounds.height) - startBounds.height) * eased),
             };
-            win.setBounds(newBounds);
+            setWindowBounds(win, newBounds);
+            // Native move/resize handlers may have canceled this animation synchronously.
+            if (this.animationTargets.get(win) !== animation) return;
     
             if (progress < 1) {
                 const timerId = setTimeout(step, 8);
                 this.animationTimers.set(win, timerId);
             } else {
-                win.setBounds(targetBounds);
+                setWindowBounds(win, targetBounds);
                 this.animationTimers.delete(win);
+                this.animationTargets.delete(win);
                 
-                if (this.animationTimers.size === 0) {
+                if (this.animationTargets.size === 0) {
                     this.isAnimating = false;
                 }
                 
@@ -159,7 +179,7 @@ class SmoothMovementManager {
             if (options.onComplete) options.onComplete();
             return;
         }
-        const currentBounds = win.getBounds();
+        const currentBounds = getWindowBounds(win);
         const targetBounds = { ...currentBounds, ...targetPosition };
         this.animateWindowBounds(win, targetBounds, options);
     }
@@ -173,7 +193,8 @@ class SmoothMovementManager {
                 if (animated) {
                     this.animateWindowBounds(win, targetBounds);
                 } else {
-                    win.setBounds(targetBounds);
+                    this.cancelWindowAnimation(win);
+                    setWindowBounds(win, targetBounds);
                 }
             }
         }

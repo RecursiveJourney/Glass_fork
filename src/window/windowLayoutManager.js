@@ -1,3 +1,4 @@
+const { getWindowBounds, setWindowBounds } = require('./windowBounds');
 const { screen } = require('electron');
 
 /**
@@ -8,7 +9,7 @@ const { screen } = require('electron');
 function getCurrentDisplay(window) {
     if (!window || window.isDestroyed()) return screen.getPrimaryDisplay();
 
-    const windowBounds = window.getBounds();
+    const windowBounds = getWindowBounds(window);
     const windowCenter = {
         x: windowBounds.x + windowBounds.width / 2,
         y: windowBounds.y + windowBounds.height / 2,
@@ -76,8 +77,8 @@ class WindowLayoutManager {
             return null;
         }
 
-        const headerBounds = header.getBounds();
-        const settingsBounds = settings.getBounds();
+        const headerBounds = getWindowBounds(header);
+        const settingsBounds = getWindowBounds(settings);
         const display = getCurrentDisplay(header);
         const { x: workAreaX, y: workAreaY, width: screenWidth, height: screenHeight } = display.workArea;
 
@@ -96,7 +97,7 @@ class WindowLayoutManager {
 
     calculateHeaderResize(header, { width, height }) {
         if (!header) return null;
-        const currentBounds = header.getBounds();
+        const currentBounds = getWindowBounds(header);
         const centerX = currentBounds.x + currentBounds.width / 2;
         const newX = Math.round(centerX - width / 2);
         const display = getCurrentDisplay(header);
@@ -109,7 +110,7 @@ class WindowLayoutManager {
         if (!header) return null;
         const targetDisplay = screen.getDisplayNearestPoint({ x: newX, y: newY });
         const { x: workAreaX, y: workAreaY, width, height } = targetDisplay.workArea;
-        const headerBounds = header.getBounds();
+        const headerBounds = getWindowBounds(header);
         const clampedX = Math.max(workAreaX, Math.min(newX, workAreaX + width - headerBounds.width));
         const clampedY = Math.max(workAreaY, Math.min(newY, workAreaY + height - headerBounds.height));
         return { x: clampedX, y: clampedY };
@@ -117,7 +118,7 @@ class WindowLayoutManager {
     
     calculateWindowHeightAdjustment(senderWindow, targetHeight) {
         if (!senderWindow) return null;
-        const currentBounds = senderWindow.getBounds();
+        const currentBounds = getWindowBounds(senderWindow);
         const minHeight = senderWindow.getMinimumSize()[1];
         const maxHeight = senderWindow.getMaximumSize()[1];
         let adjustedHeight = Math.max(minHeight, targetHeight);
@@ -131,7 +132,7 @@ class WindowLayoutManager {
     // 기존 getTargetBoundsForFeatureWindows를 이 함수로 대체합니다.
     calculateFeatureWindowLayout(visibility, headerBoundsOverride = null) {
         const header = this.windowPool.get('header');
-        const headerBounds = headerBoundsOverride || (header ? header.getBounds() : null);
+        const headerBounds = headerBoundsOverride || (header ? getWindowBounds(header) : null);
 
         if (!headerBounds) return {};
 
@@ -165,8 +166,8 @@ class WindowLayoutManager {
         const relativeY = (headerBounds.y - workAreaY) / screenHeight;
         const strategy = this.determineLayoutStrategy(headerBounds, screenWidth, screenHeight, relativeX, relativeY, workAreaX, workAreaY);
     
-        const askB = askVis ? ask.getBounds() : null;
-        const listenB = listenVis ? listen.getBounds() : null;
+        const askB = askVis ? getWindowBounds(ask) : null;
+        const listenB = listenVis ? getWindowBounds(listen) : null;
 
         if (askVis) {
             console.log(`[Layout Debug] Ask Window Bounds: height=${askB.height}, width=${askB.width}`);
@@ -224,8 +225,8 @@ class WindowLayoutManager {
         const shortcutSettings = this.windowPool.get('shortcut-settings');
         if (!header || !shortcutSettings) return null;
     
-        const headerBounds = header.getBounds();
-        const shortcutBounds = shortcutSettings.getBounds();
+        const headerBounds = getWindowBounds(header);
+        const shortcutBounds = getWindowBounds(shortcutSettings);
         const { workArea } = getCurrentDisplay(header);
     
         let newX = Math.round(headerBounds.x + (headerBounds.width / 2) - (shortcutBounds.width / 2));
@@ -239,7 +240,7 @@ class WindowLayoutManager {
 
     calculateStepMovePosition(header, direction) {
         if (!header) return null;
-        const currentBounds = header.getBounds();
+        const currentBounds = getWindowBounds(header);
         const stepSize = 80; // 이동 간격
         let targetX = currentBounds.x;
         let targetY = currentBounds.y;
@@ -258,7 +259,7 @@ class WindowLayoutManager {
         if (!header) return null;
         const display = getCurrentDisplay(header);
         const { workArea } = display;
-        const currentBounds = header.getBounds();
+        const currentBounds = getWindowBounds(header);
     
         let targetX = currentBounds.x;
         let targetY = currentBounds.y;
@@ -278,7 +279,7 @@ class WindowLayoutManager {
         const targetDisplay = screen.getAllDisplays().find(d => d.id === targetDisplayId);
         if (!targetDisplay) return null;
     
-        const currentBounds = window.getBounds();
+        const currentBounds = getWindowBounds(window);
         const currentDisplay = getCurrentDisplay(window);
     
         if (currentDisplay.id === targetDisplay.id) return { x: currentBounds.x, y: currentBounds.y };

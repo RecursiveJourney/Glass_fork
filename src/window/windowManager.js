@@ -1,3 +1,4 @@
+const { getWindowBounds, setWindowBounds } = require('./windowBounds');
 const { BrowserWindow, globalShortcut, screen, app, shell } = require('electron');
 const WindowLayoutManager = require('./windowLayoutManager');
 const SmoothMovementManager = require('./smoothMovementManager');
@@ -41,23 +42,26 @@ let layoutManager = null;
 let movementManager = null;
 
 
+let updatingChildLayouts = false;
 function updateChildWindowLayouts(animated = true) {
-    // if (movementManager.isAnimating) return;
-
-    const visibleWindows = {};
-    const listenWin = windowPool.get('listen');
-    const askWin = windowPool.get('ask');
-    if (listenWin && !listenWin.isDestroyed() && listenWin.isVisible()) {
-        visibleWindows.listen = true;
+    // Resize completion callbacks also request layout; reconcile once using final sizes.
+    if (updatingChildLayouts) return;
+    updatingChildLayouts = true;
+    try {
+        const visibleWindows = {};
+        for (const name of ['listen', 'ask']) {
+            const win = windowPool.get(name);
+            if (win && !win.isDestroyed() && win.isVisible()) {
+                if (!animated) movementManager.cancelWindowAnimation(win, true);
+                visibleWindows[name] = true;
+            }
+        }
+        if (Object.keys(visibleWindows).length === 0) return;
+        const newLayout = layoutManager.calculateFeatureWindowLayout(visibleWindows);
+        movementManager.animateLayout(newLayout, animated);
+    } finally {
+        updatingChildLayouts = false;
     }
-    if (askWin && !askWin.isDestroyed() && askWin.isVisible()) {
-        visibleWindows.ask = true;
-    }
-
-    if (Object.keys(visibleWindows).length === 0) return;
-
-    const newLayout = layoutManager.calculateFeatureWindowLayout(visibleWindows);
-    movementManager.animateLayout(newLayout, animated);
 }
 
 const showSettingsWindow = () => {
@@ -136,7 +140,7 @@ function setupWindowController(windowPool, layoutManager, movementManager) {
             const newHeaderPosition = layoutManager.calculateStepMovePosition(header, direction);
             if (!newHeaderPosition) return;
     
-            const futureHeaderBounds = { ...header.getBounds(), ...newHeaderPosition };
+            const futureHeaderBounds = { ...getWindowBounds(header), ...newHeaderPosition };
             const visibleWindows = {};
             const listenWin = windowPool.get('listen');
             const askWin = windowPool.get('ask');
@@ -183,7 +187,7 @@ function setupWindowController(windowPool, layoutManager, movementManager) {
     internalBridge.on('window:getHeaderPosition', (reply) => {
         const header = windowPool.get('header');
         if (header && !header.isDestroyed()) {
-            reply(header.getBounds());
+            reply(getWindowBounds(header));
         } else {
             reply({ x: 0, y: 0, width: 0, height: 0 });
         }
@@ -191,8 +195,11 @@ function setupWindowController(windowPool, layoutManager, movementManager) {
     internalBridge.on('window:moveHeaderTo', ({ newX, newY }) => {
         const header = windowPool.get('header');
         if (header) {
+            // Manual dragging wins over a keyboard/display animation already in flight.
+            movementManager.cancelWindowAnimation(header, true);
             const newPosition = layoutManager.calculateClampedPosition(header, { x: newX, y: newY });
-            header.setPosition(newPosition.x, newPosition.y);
+            setWindowBounds(header, newPosition);
+            updateChildWindowLayouts(false);
         }
     });
     internalBridge.on('window:adjustWindowHeight', ({ winName, targetHeight }) => {
@@ -297,7 +304,7 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
             }
             const position = layoutManager.calculateSettingsWindowPosition();
             if (position) {
-                win.setBounds(position);
+                setWindowBounds(win, position);
                 win.__lockedByButton = true;
                 win.show();
                 win.moveTop();
@@ -328,7 +335,7 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
         if (shouldBeVisible) {
             // layoutManager.positionShortcutSettingsWindow();
             const newBounds = layoutManager.calculateShortcutSettingsWindowPosition();
-            if (newBounds) win.setBounds(newBounds);
+            if (newBounds) setWindowBounds(win, newBounds);
             
             if (process.platform === 'darwin') {
                 win.setAlwaysOnTop(true, 'screen-saver');
@@ -379,7 +386,7 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
             else if (name === 'ask') startPos.y -= ANIM_OFFSET_Y;
 
             win.setOpacity(0);
-            win.setBounds(startPos);
+            setWindowBounds(win, startPos);
             win.show();
 
             movementManager.fade(win, { to: 1 });
@@ -388,7 +395,7 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
         } else {
             if (!win || !win.isVisible()) return;
 
-            const currentBounds = win.getBounds();
+            const currentBounds = getWindowBounds(win);
             const targetPos = { ...currentBounds };
             if (name === 'listen') targetPos.x -= ANIM_OFFSET_X;
             else if (name === 'ask') targetPos.y -= ANIM_OFFSET_Y;
@@ -430,6 +437,7 @@ const openLoginPage = () => {
     shell.openExternal(personalizeUrl);
     console.log('Opening personalization page:', personalizeUrl);
 };
+
 
 
 function createFeatureWindows(header, namesToCreate) {
@@ -626,7 +634,7 @@ function destroyFeatureWindows() {
 function getCurrentDisplay(window) {
     if (!window || window.isDestroyed()) return screen.getPrimaryDisplay();
 
-    const windowBounds = window.getBounds();
+    const windowBounds = getWindowBounds(window);
     const windowCenter = {
         x: windowBounds.x + windowBounds.width / 2,
         y: windowBounds.y + windowBounds.height / 2,
@@ -700,12 +708,11 @@ function createWindows() {
     movementManager = new SmoothMovementManager(windowPool);
 
 
-    header.on('moved', () => {
-        if (movementManager.isAnimating) {
-            return;
-        }
-        updateChildWindowLayouts(false);
-    });
+    // Windows children do not follow their parent automatically. Track every move,
+    // including moves during transcript resizing, and reconcile again when dragging ends.
+    header.on('will-move', () => movementManager.cancelWindowAnimation(header, true));
+    header.on('move', () => updateChildWindowLayouts(false));
+    header.on('moved', () => updateChildWindowLayouts(false));
 
     header.webContents.once('dom-ready', () => {
         shortcutsService.initialize(windowPool);
@@ -764,7 +771,7 @@ function setupIpcHandlers(windowPool, layoutManager) {
             const newPosition = layoutManager.calculateNewPositionForDisplay(header, primaryDisplay.id);
             if (newPosition) {
                 // 복구 상황이므로 애니메이션 없이 즉시 이동
-                header.setPosition(newPosition.x, newPosition.y, false);
+                setWindowBounds(header, newPosition);
                 updateChildWindowLayouts(false);
             }
         }
