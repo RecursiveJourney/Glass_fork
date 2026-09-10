@@ -275,6 +275,14 @@ class WhisperService extends EventEmitter {
 
     async initialize() {
         if (this.installState.isInitialized) return;
+        if (!this.initializationPromise) {
+            this.initializationPromise = this.initializeOnce().finally(() => { this.initializationPromise = null; });
+        }
+        return this.initializationPromise;
+    }
+
+    async initializeOnce() {
+        if (this.installState.isInitialized) return;
 
         try {
             const homeDir = os.homedir();
@@ -285,7 +293,7 @@ class WhisperService extends EventEmitter {
             
             // Windows에서는 .exe 확장자 필요
             const platform = this.getPlatform();
-            const whisperExecutable = platform === 'win32' ? 'whisper-whisper.exe' : 'whisper';
+            const whisperExecutable = platform === 'win32' ? 'whisper-cli.exe' : 'whisper-cli';
             this.whisperPath = path.join(whisperDir, 'bin', whisperExecutable);
 
             await this.ensureDirectories();
@@ -361,50 +369,43 @@ class WhisperService extends EventEmitter {
     }
 
     async ensureWhisperBinary() {
-        const whisperCliPath = await this.checkCommand('whisper-cli');
-        if (whisperCliPath) {
-            this.whisperPath = whisperCliPath;
-            console.log(`[WhisperService] Found whisper-cli at: ${this.whisperPath}`);
-            return;
+        const managedPath = this.whisperPath;
+        const candidates = new Set([managedPath]);
+        for (const command of ['whisper-cli', 'whisper']) {
+            const found = await this.checkCommand(command);
+            if (found) for (const candidate of found.split(/\r?\n/)) candidates.add(candidate.trim());
         }
-
-        const whisperPath = await this.checkCommand('whisper');
-        if (whisperPath) {
-            this.whisperPath = whisperPath;
-            console.log(`[WhisperService] Found whisper at: ${this.whisperPath}`);
-            return;
-        }
-
-        try {
-            await fsPromises.access(this.whisperPath, fs.constants.X_OK);
-            console.log('[WhisperService] Custom whisper binary found');
-            return;
-        } catch (error) {
-            // Continue to installation
-        }
-
-        const platform = this.getPlatform();
-        if (platform === 'darwin') {
-            console.log('[WhisperService] Whisper not found, trying Homebrew installation...');
-            try {
-                await this.installViaHomebrew();
-                // verify installation
-                const verified = await this.verifyInstallation();
-                if (!verified.success) {
-                    throw new Error(verified.error);
-                }
+        for (const candidate of candidates) {
+            const result = await this.verifyBinary(candidate);
+            if (result.success) {
+                this.whisperPath = candidate;
+                console.log('[WhisperService] Verified transcription CLI: ' + candidate);
                 return;
-            } catch (error) {
-                console.log('[WhisperService] Homebrew installation failed:', error.message);
             }
+            console.warn('[WhisperService] Rejecting unusable CLI ' + candidate + ': ' + result.error);
         }
 
-        await this.autoInstall();
-        
-        // verify installation
+        // Never overwrite a failed PATH executable; repair Glass's managed installation.
+        this.whisperPath = managedPath;
+        if (this.getPlatform() === 'darwin') await this.installViaHomebrew();
+        else await this.autoInstall();
         const verified = await this.verifyInstallation();
-        if (!verified.success) {
-            throw new Error(`Whisper installation verification failed: ${verified.error}`);
+        if (!verified.success) throw new Error('Whisper installation verification failed: ' + verified.error);
+    }
+
+    async verifyBinary(binaryPath) {
+        if (!binaryPath) return { success: false, error: 'Whisper binary path not set' };
+        try {
+            await fsPromises.access(binaryPath, fs.constants.X_OK);
+            // Existence accepts deprecated launchers and missing DLLs; execute the CLI instead.
+            const { stdout, stderr } = await spawnAsync(binaryPath, ['--help'],
+                { timeout: 10000, windowsHide: true });
+            const help = (stdout || '') + '\n' + (stderr || '');
+            if (/deprecated/i.test(help) || !/whisper/i.test(help) || !/--model/.test(help))
+                return { success: false, error: 'Not a working Whisper transcription CLI' };
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: 'Whisper binary verification failed: ' + error.message };
         }
     }
 
@@ -628,12 +629,17 @@ class WhisperService extends EventEmitter {
     }
 
     async isInstalled() {
-        try {
-            const whisperPath = await this.checkCommand('whisper-cli') || await this.checkCommand('whisper');
-            return !!whisperPath;
-        } catch (error) {
-            return false;
+        const managedPath = this.whisperPath || path.join(os.homedir(), '.glass', 'whisper', 'bin',
+            this.getPlatform() === 'win32' ? 'whisper-cli.exe' : 'whisper-cli');
+        const candidates = new Set([managedPath]);
+        for (const command of ['whisper-cli', 'whisper']) {
+            const found = await this.checkCommand(command);
+            if (found) for (const candidate of found.split(/\r?\n/)) candidates.add(candidate.trim());
         }
+        for (const candidate of candidates) {
+            if ((await this.verifyBinary(candidate)).success) return true;
+        }
+        return false;
     }
 
     async installMacOS() {
@@ -643,71 +649,39 @@ class WhisperService extends EventEmitter {
     async installWindows() {
         console.log('[WhisperService] Installing Whisper on Windows...');
         const version = 'v1.7.6';
-        const binaryUrl = `https://github.com/ggml-org/whisper.cpp/releases/download/${version}/whisper-bin-x64.zip`;
-        const tempFile = path.join(this.tempDir, 'whisper-binary.zip');
-        
+        const binaryUrl = 'https://github.com/ggml-org/whisper.cpp/releases/download/' +
+            version + '/whisper-bin-x64.zip';
+        // Each attempt owns its extraction directory; no shared/stale executable selection.
+        const extractDir = await fsPromises.mkdtemp(path.join(this.tempDir, 'whisper-install-'));
+        const archive = path.join(extractDir, 'whisper-binary.zip');
         try {
-            console.log('[WhisperService] Step 1: Downloading Whisper binary...');
-            await this.downloadWithRetry(binaryUrl, tempFile);
-            
-            console.log('[WhisperService] Step 2: Extracting archive...');
-            const extractDir = path.join(this.tempDir, 'extracted');
-            
-            // 임시 압축 해제 디렉토리 생성
-            await fsPromises.mkdir(extractDir, { recursive: true });
-            
-            // PowerShell 명령에서 경로를 올바르게 인용
-            const expandCommand = `Expand-Archive -Path "${tempFile}" -DestinationPath "${extractDir}" -Force`;
-            await spawnAsync('powershell', ['-command', expandCommand]);
-            
-            console.log('[WhisperService] Step 3: Finding and moving whisper executable...');
-            
-            // 압축 해제된 디렉토리에서 whisper.exe 파일 찾기
-            const whisperExecutables = await this.findWhisperExecutables(extractDir);
-            
-            if (whisperExecutables.length === 0) {
-                throw new Error('whisper.exe not found in extracted files');
-            }
-            
-            // 첫 번째로 찾은 whisper.exe를 목표 위치로 복사
-            const sourceExecutable = whisperExecutables[0];
+            await this.downloadWithRetry(binaryUrl, archive);
+            const unpacked = path.join(extractDir, 'unpacked');
+            const quote = value => "'" + value.replace(/'/g, "''") + "'";
+            await spawnAsync('powershell', ['-NoProfile', '-command',
+                'Expand-Archive -LiteralPath ' + quote(archive) +
+                ' -DestinationPath ' + quote(unpacked) + ' -Force'], { windowsHide: true });
+            const executables = await this.findWhisperExecutables(unpacked);
+            const sourceExecutable = executables.find(file => path.basename(file).toLowerCase() === 'whisper-cli.exe');
+            if (!sourceExecutable) throw new Error('whisper-cli.exe not found in release archive');
             const targetDir = path.dirname(this.whisperPath);
             await fsPromises.mkdir(targetDir, { recursive: true });
-            await fsPromises.copyFile(sourceExecutable, this.whisperPath);
-            
-            console.log('[WhisperService] Step 4: Verifying installation...');
-            
-            // 설치 검증
-            await fsPromises.access(this.whisperPath, fs.constants.F_OK);
-            
-            // whisper.exe 실행 테스트
-            try {
-                await spawnAsync(this.whisperPath, ['--help']);
-                console.log('[WhisperService] Whisper executable verified successfully');
-            } catch (testError) {
-                console.warn('[WhisperService] Whisper executable test failed, but file exists:', testError.message);
-            }
-            
-            console.log('[WhisperService] Step 5: Cleanup...');
-            
-            // 임시 파일 정리
-            await fsPromises.unlink(tempFile).catch(() => {});
-            await this.removeDirectory(extractDir).catch(() => {});
-            
-            console.log('[WhisperService] Whisper installed successfully on Windows');
+            // Keep the release runtime alongside the CLI (whisper.dll, ggml DLLs, etc.).
+            await fsPromises.cp(path.dirname(sourceExecutable), targetDir, { recursive: true, force: true });
+            this.whisperPath = path.join(targetDir, path.basename(sourceExecutable));
+            const verified = await this.verifyInstallation();
+            if (!verified.success) throw new Error(verified.error);
+            console.log('[WhisperService] Installed and execution-verified CLI: ' + this.whisperPath);
             return true;
-            
         } catch (error) {
             console.error('[WhisperService] Windows installation failed:', error);
-            
-            // 실패 시 임시 파일 정리
-            await fsPromises.unlink(tempFile).catch(() => {});
-            await this.removeDirectory(path.join(this.tempDir, 'extracted')).catch(() => {});
-            
-            throw new Error(`Failed to install Whisper on Windows: ${error.message}`);
+            throw new Error('Failed to install Whisper on Windows: ' + error.message);
+        } finally {
+            // extractDir was created exclusively for this attempt beneath tempDir.
+            await this.removeDirectory(extractDir).catch(() => {});
         }
     }
-    
+
     // 압축 해제된 디렉토리에서 whisper.exe 파일들을 재귀적으로 찾기
     async findWhisperExecutables(dir) {
         const executables = [];
@@ -721,7 +695,7 @@ class WhisperService extends EventEmitter {
                 if (item.isDirectory()) {
                     const subExecutables = await this.findWhisperExecutables(fullPath);
                     executables.push(...subExecutables);
-                } else if (item.isFile() && (item.name === 'whisper-whisper.exe' || item.name === 'whisper.exe' || item.name === 'main.exe')) {
+                } else if (item.isFile() && ['whisper-cli.exe', 'whisper-cli'].includes(item.name.toLowerCase())) {
                     executables.push(fullPath);
                 }
             }
@@ -831,44 +805,14 @@ class WhisperSession {
 
 // verify installation
 WhisperService.prototype.verifyInstallation = async function() {
+    const binary = await this.verifyBinary(this.whisperPath);
+    if (!binary.success) return binary;
     try {
-        console.log('[WhisperService] Verifying installation...');
-        
-        // 1. check binary
-        if (!this.whisperPath) {
-            return { success: false, error: 'Whisper binary path not set' };
-        }
-        
-        try {
-            await fsPromises.access(this.whisperPath, fs.constants.X_OK);
-        } catch (error) {
-            return { success: false, error: 'Whisper binary not executable' };
-        }
-        
-        // 2. check version
-        try {
-            const { stdout } = await spawnAsync(this.whisperPath, ['--help']);
-            if (!stdout.includes('whisper')) {
-                return { success: false, error: 'Invalid whisper binary' };
-            }
-        } catch (error) {
-            return { success: false, error: 'Whisper binary not responding' };
-        }
-        
-        // 3. check directories
-        try {
-            await fsPromises.access(this.modelsDir, fs.constants.W_OK);
-            await fsPromises.access(this.tempDir, fs.constants.W_OK);
-        } catch (error) {
-            return { success: false, error: 'Required directories not accessible' };
-        }
-        
-        console.log('[WhisperService] Installation verified successfully');
+        await fsPromises.access(this.modelsDir, fs.constants.W_OK);
+        await fsPromises.access(this.tempDir, fs.constants.W_OK);
         return { success: true };
-        
     } catch (error) {
-        console.error('[WhisperService] Verification failed:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: 'Required directories not accessible: ' + error.message };
     }
 };
 

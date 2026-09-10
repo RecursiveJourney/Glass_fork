@@ -1,3 +1,4 @@
+const pcm24To16 = require('./pcm24To16');
 let spawn, path, EventEmitter;
 
 if (typeof window === 'undefined') {
@@ -41,8 +42,8 @@ class WhisperSTTSession extends EventEmitter {
 
     startProcessingLoop() {
         this.processingInterval = setInterval(async () => {
-            const minBufferSize = 16000 * 2 * 0.15;
-            if (this.audioBuffer.length >= minBufferSize && !this.process) {
+            const minBufferSize = 24000 * 2 * 0.15;
+            if (this.audioBuffer.length >= minBufferSize && !this.process && !this.processing) {
                 console.log(`[WhisperSTT-${this.sessionId}] Processing audio chunk, buffer size: ${this.audioBuffer.length}`);
                 await this.processAudioChunk();
             }
@@ -50,74 +51,67 @@ class WhisperSTTSession extends EventEmitter {
     }
 
     async processAudioChunk() {
-        if (!this.isRunning || this.audioBuffer.length === 0) return;
-
+        if (!this.isRunning || this.audioBuffer.length === 0 || this.processing) return;
+        this.processing = true;
         const audioData = this.audioBuffer;
         this.audioBuffer = Buffer.alloc(0);
-
-        try {
-            const tempFile = await this.whisperService.saveAudioToTemp(audioData, this.sessionId);
-            
-            if (!tempFile || typeof tempFile !== 'string') {
-                console.error('[WhisperSTT] Invalid temp file path:', tempFile);
-                return;
+        let tempFile;
+        let output = '';
+        let errorOutput = '';
+        let reported = false;
+        const reportFailure = (code, reason = '') => {
+            if (!this.isRunning) return; // Stop intentionally terminates the child.
+            const error = new Error('Whisper exit code ' + code + (reason ? ': ' + reason : '') +
+                '\nstdout:\n' + output + '\nstderr:\n' + errorOutput);
+            console.error('[WhisperSTT-' + this.sessionId + '] Process error:', error.message);
+            if (!reported && this.listenerCount('error') > 0) {
+                reported = true;
+                this.emit('error', error);
             }
-            
+        };
+        try {
+            tempFile = await this.whisperService.saveAudioToTemp(pcm24To16(audioData), this.sessionId);
+            if (!tempFile || typeof tempFile !== 'string') throw new Error('Invalid temp file path');
             const whisperPath = await this.whisperService.getWhisperPath();
             const modelPath = await this.whisperService.getModelPath(this.model);
-
-            if (!whisperPath || !modelPath) {
-                console.error('[WhisperSTT] Invalid whisper or model path:', { whisperPath, modelPath });
+            if (!whisperPath || !modelPath) throw new Error('Invalid whisper or model path');
+            if (!this.isRunning) {
+                await this.whisperService.cleanupTempFile(tempFile);
+                this.processing = false;
                 return;
             }
-
-            this.process = spawn(whisperPath, [
-                '-m', modelPath,
-                '-f', tempFile,
-                '--no-timestamps',
-                '--output-txt',
-                '--output-json',
-                '--language', 'auto',
-                '--threads', '4',
-                '--print-progress', 'false'
-            ]);
-
-            let output = '';
-            let errorOutput = '';
-
-            this.process.stdout.on('data', (data) => {
-                output += data.toString();
-            });
-
-            this.process.stderr.on('data', (data) => {
-                errorOutput += data.toString();
-            });
-
-            this.process.on('close', async (code) => {
-                this.process = null;
-                
-                if (code === 0 && output.trim()) {
-                    const transcription = output.trim();
-                    if (transcription && transcription !== this.lastTranscription) {
-                        this.lastTranscription = transcription;
-                        console.log(`[WhisperSTT-${this.sessionId}] Transcription: "${transcription}"`);
-                        this.emit('transcription', {
-                            text: transcription,
-                            timestamp: Date.now(),
-                            confidence: 1.0,
-                            sessionId: this.sessionId
-                        });
+            const child = spawn(whisperPath, [
+                '-m', modelPath, '-f', tempFile, '--no-timestamps',
+                '--language', 'auto', '--threads', '4'
+            ], { windowsHide: true });
+            this.process = child;
+            child.stdout.on('data', data => { output += data.toString(); });
+            child.stderr.on('data', data => { errorOutput += data.toString(); });
+            child.on('error', error => reportFailure(error.code || 'spawn', error.message));
+            child.on('close', async (code, signal) => {
+                if (this.process === child) this.process = null;
+                try {
+                    if (code !== 0) reportFailure(code, signal || '');
+                    else if (this.isRunning && output.trim() && !reported) {
+                        const transcription = output.trim();
+                        if (transcription !== this.lastTranscription) {
+                            this.lastTranscription = transcription;
+                            console.log('[WhisperSTT-' + this.sessionId + '] Transcription: "' + transcription + '"');
+                            this.emit('transcription', {
+                                text: transcription, timestamp: Date.now(),
+                                confidence: 1.0, sessionId: this.sessionId
+                            });
+                        }
                     }
-                } else if (errorOutput) {
-                    console.error(`[WhisperSTT-${this.sessionId}] Process error:`, errorOutput);
+                } finally {
+                    await this.whisperService.cleanupTempFile(tempFile);
+                    this.processing = false;
                 }
-
-                await this.whisperService.cleanupTempFile(tempFile);
             });
-
         } catch (error) {
-            console.error('[WhisperSTT] Processing error:', error);
-            this.emit('error', error);
+            reportFailure(error.code || 'setup', error.message);
+            if (tempFile) await this.whisperService.cleanupTempFile(tempFile);
+            this.processing = false;
         }
     }
 

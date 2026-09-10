@@ -1,0 +1,274 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const vm = require('node:vm');
+const { EventEmitter } = require('node:events');
+const { createRequire, isBuiltin } = require('node:module');
+
+function load(relative, stubs = {}, messages = []) {
+    const filename = path.join(__dirname, '../src/features/common', relative);
+    const module = { exports: {} };
+    const localRequire = createRequire(filename);
+    const requireStub = id => {
+        if (Object.hasOwn(stubs, id)) return stubs[id];
+        if (isBuiltin(id) || id === './pcm24To16') return localRequire(id);
+        throw new Error('Unexpected dependency: ' + id);
+    };
+    vm.runInThisContext('(function(require,module,exports,console){' +
+        fs.readFileSync(filename, 'utf8') + '\n})', { filename })(
+        requireStub, module, module.exports,
+        { log: (...args) => messages.push(args), warn: (...args) => messages.push(args),
+            error: (...args) => messages.push(args) });
+    return module.exports;
+}
+
+function serviceHarness(run = async () => ({ stdout: '', stderr: 'usage: whisper-cli --model FNAME' })) {
+    const calls = [];
+    const service = load('services/whisperService.js', {
+        fs: { ...fs, promises: { ...fs.promises, access: async () => {} } },
+        '../utils/spawnHelper': { spawnAsync: async (...args) => { calls.push(args); return run(...args); } },
+        '../config/checksums': { DOWNLOAD_CHECKSUMS: {} }
+    });
+    service.whisperPath = path.join(os.tmpdir(), 'glass-test-bin', 'whisper-cli.exe');
+    service.modelsDir = os.tmpdir();
+    service.tempDir = os.tmpdir();
+    service.getPlatform = () => 'win32';
+    service.checkCommand = async () => null;
+    return { service, calls };
+}
+
+test('Whisper help on stderr with exit zero verifies successfully', async () => {
+    const h = serviceHarness();
+    assert.equal((await h.service.verifyInstallation()).success, true);
+    assert.deepEqual(h.calls[0][1], ['--help']);
+    assert.equal(h.calls[0][2].timeout, 10000);
+    assert.equal(h.calls[0][2].windowsHide, true);
+});
+
+test('nonzero help with stdout-only warning fails execution verification', async () => {
+    const h = serviceHarness(async () => { throw Object.assign(new Error('deprecated stub'), {
+        code: 1, stdout: 'WARNING: deprecated', stderr: ''
+    }); });
+    assert.equal((await h.service.verifyInstallation()).success, false);
+});
+
+test('even a zero-exit deprecation warning is not a transcription CLI', async () => {
+    const h = serviceHarness(async () => ({ stdout: 'whisper is deprecated; use whisper-cli --model', stderr: '' }));
+    assert.equal((await h.service.verifyInstallation()).success, false);
+});
+
+test('existing executable is executed before reuse, without reinstalling', async () => {
+    const h = serviceHarness();
+    h.service.autoInstall = async () => assert.fail('healthy binary must not reinstall');
+    await h.service.ensureWhisperBinary();
+    assert.ok(h.calls.length >= 1);
+});
+
+test('failing existing executable triggers replacement and verifies the replacement', async () => {
+    let replaced = false;
+    const h = serviceHarness(async () => {
+        if (!replaced) throw new Error('binary failed');
+        return { stdout: '', stderr: 'usage: whisper-cli --model FNAME' };
+    });
+    h.service.autoInstall = async () => { replaced = true; };
+    await h.service.ensureWhisperBinary();
+    assert.equal(replaced, true);
+    assert.ok(h.calls.length >= 2);
+});
+
+test('replacement that still fails execution is rejected', async () => {
+    const h = serviceHarness(async () => { throw new Error('missing runtime DLL'); });
+    h.service.autoInstall = async () => {};
+    await assert.rejects(h.service.ensureWhisperBinary(), /verification|binary|DLL/i);
+});
+
+test('finder selects modern CLI names and ignores legacy stubs and streaming tools', async t => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'glass-whisper-finder-'));
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const nested = path.join(root, 'Release');
+    fs.mkdirSync(nested);
+    for (const name of ['main.exe', 'whisper.exe', 'whisper-whisper.exe', 'whisper-cli.exe',
+        'whisper-cli', 'whisper-stream.exe']) fs.writeFileSync(path.join(nested, name), '');
+    const h = serviceHarness();
+    const found = await h.service.findWhisperExecutables(root);
+    assert.deepEqual(found.map(item => path.basename(item)).sort(), ['whisper-cli', 'whisper-cli.exe']);
+});
+
+test('Windows installer preserves the CLI companion DLLs and verifies execution', async t => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'glass-whisper-install-'));
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const bin = path.join(root, 'bin');
+    fs.mkdirSync(bin);
+    const calls = [];
+    const service = load('services/whisperService.js', {
+        '../utils/spawnHelper': { spawnAsync: async (command, args) => {
+            calls.push([command, args]);
+            if (command === 'powershell') {
+                const destination = args.at(-1).match(/-DestinationPath\s+["']([^"']+)["']/)[1];
+                const release = path.join(destination, 'Release');
+                fs.mkdirSync(release, { recursive: true });
+                for (const name of ['whisper-cli.exe', 'whisper.dll', 'ggml.dll', 'main.exe'])
+                    fs.writeFileSync(path.join(release, name), name);
+                return { stdout: '', stderr: '' };
+            }
+            assert.equal(path.basename(command), 'whisper-cli.exe');
+            assert.equal(fs.readFileSync(path.join(path.dirname(command), 'whisper.dll'), 'utf8'), 'whisper.dll');
+            return { stdout: '', stderr: 'usage: whisper-cli --model FNAME' };
+        } },
+        '../config/checksums': { DOWNLOAD_CHECKSUMS: {} }
+    });
+    service.whisperPath = path.join(bin, 'whisper-cli.exe');
+    service.tempDir = path.join(root, 'temp');
+    service.modelsDir = path.join(root, 'models');
+    fs.mkdirSync(service.tempDir);
+    fs.mkdirSync(service.modelsDir);
+    service.downloadWithRetry = async (_, destination) => fs.writeFileSync(destination, 'fake archive');
+    await service.installWindows();
+    assert.equal(fs.readFileSync(path.join(bin, 'ggml.dll'), 'utf8'), 'ggml.dll');
+    assert.equal(path.basename(service.whisperPath), 'whisper-cli.exe');
+    assert.ok(calls.some(([command]) => path.basename(command) === 'whisper-cli.exe'));
+});
+
+function pcmTone(frequency, samples = 24000, amplitude = 12000) {
+    const pcm = Buffer.alloc(samples * 2);
+    for (let i = 0; i < samples; i++)
+        pcm.writeInt16LE(Math.round(amplitude * Math.sin(2 * Math.PI * frequency * i / 24000)), i * 2);
+    return pcm;
+}
+function rms(pcm, trim = 128) {
+    let sum = 0;
+    const count = pcm.length / 2;
+    for (let i = trim; i < count - trim; i++) sum += pcm.readInt16LE(i * 2) ** 2;
+    return Math.sqrt(sum / (count - 2 * trim));
+}
+
+async function sessionHarness(t, spawnImpl) {
+    const saved = [];
+    const cleaned = [];
+    const messages = [];
+    const errors = [];
+    const children = [];
+    const fakeService = {
+        ensureModelAvailable: async () => {},
+        saveAudioToTemp: async pcm => { saved.push(pcm); return 'audio.wav'; },
+        getWhisperPath: async () => 'whisper-cli.exe',
+        getModelPath: async () => 'tiny.bin',
+        cleanupTempFile: async filename => { cleaned.push(filename); }
+    };
+    const provider = load('ai/providers/whisper.js', {
+        child_process: { spawn: (command, args, options) => {
+            const child = new EventEmitter();
+            child.stdout = new EventEmitter();
+            child.stderr = new EventEmitter();
+            child.kill = () => {};
+            children.push({ child, command, args, options });
+            if (spawnImpl) spawnImpl(child);
+            return child;
+        } }
+    }, messages);
+    const session = new provider.WhisperSTTSession('whisper-tiny', fakeService, 'my_test');
+    session.on('error', error => errors.push(error));
+    await session.initialize();
+    clearInterval(session.processingInterval);
+    t.after(() => session.close());
+    return { session, saved, cleaned, messages, errors, children };
+}
+
+test('Whisper boundary converts one second of 24 kHz PCM to 16 kHz PCM', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(pcmTone(1000));
+    await h.session.processAudioChunk();
+    assert.equal(h.saved[0].length, 16000 * 2);
+    assert.ok(Math.abs(rms(h.saved[0]) - 12000 / Math.sqrt(2)) < 250);
+    const args = h.children[0].args;
+    assert.ok(!args.includes('false'), 'boolean CLI flags must not receive a false filename');
+    h.children[0].child.emit('close', 0);
+});
+
+test('24-to-16 kHz conversion attenuates frequencies above the new Nyquist limit', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(pcmTone(10000));
+    await h.session.processAudioChunk();
+    assert.ok(rms(h.saved[0]) < 600, 'downsampling must filter aliasing, not just relabel or drop samples');
+    h.children[0].child.emit('close', 0);
+});
+
+test('Whisper boundary preserves silence', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(Buffer.alloc(48000));
+    await h.session.processAudioChunk();
+    assert.equal(h.saved[0].length, 32000);
+    assert.equal(h.saved[0].every(value => value === 0), true);
+    h.children[0].child.emit('close', 0);
+});
+
+test('stdout-only nonzero exit reports code and both streams to logs and callbacks', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(Buffer.alloc(4800));
+    await h.session.processAudioChunk();
+    h.children[0].child.stdout.emit('data', 'WARNING: deprecated executable');
+    h.children[0].child.emit('close', 1);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(h.errors.length, 1);
+    assert.match(h.errors[0].message, /1/);
+    assert.match(h.errors[0].message, /deprecated executable/);
+    assert.match(h.errors[0].message, /stdout/i);
+    assert.match(h.errors[0].message, /stderr/i);
+    assert.ok(h.messages.some(args => args.map(String).join(' ').includes('deprecated executable')));
+    assert.deepEqual(h.cleaned, ['audio.wav']);
+});
+
+test('spawn errors surface once and cleanup still happens on close', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(Buffer.alloc(4800));
+    await h.session.processAudioChunk();
+    h.children[0].child.emit('error', new Error('spawn ENOENT'));
+    h.children[0].child.emit('close', -2);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(h.errors.length, 1);
+    assert.match(h.errors[0].message, /ENOENT/);
+    assert.deepEqual(h.cleaned, ['audio.wav']);
+});
+
+test('successful CLI stdout becomes transcription', async t => {
+    const h = await sessionHarness(t);
+    const transcripts = [];
+    h.session.on('transcription', event => transcripts.push(event.text));
+    h.session.sendRealtimeInput(Buffer.alloc(4800));
+    await h.session.processAudioChunk();
+    h.children[0].child.stdout.emit('data', 'A working local transcript.\n');
+    h.children[0].child.emit('close', 0);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(transcripts, ['A working local transcript.']);
+    assert.equal(h.errors.length, 0);
+});
+
+test('intentional shutdown does not emit an unhandled process failure', async t => {
+    const h = await sessionHarness(t);
+    h.session.sendRealtimeInput(Buffer.alloc(4800));
+    await h.session.processAudioChunk();
+    await h.session.close();
+    assert.doesNotThrow(() => h.children[0].child.emit('close', null, 'SIGTERM'));
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(h.cleaned, ['audio.wav']);
+});
+
+test('managed CLI installation status requires successful execution even without PATH', async () => {
+    const h = serviceHarness();
+    assert.equal(await h.service.isInstalled(), true);
+    assert.ok(h.calls.length > 0);
+});
+test('broken managed CLI is not reported installed', async () => {
+    const h = serviceHarness(async () => { throw new Error('missing DLL'); });
+    assert.equal(await h.service.isInstalled(), false);
+});
+test('concurrent initialization shares one installation attempt', async () => {
+    const h = serviceHarness();
+    let attempts = 0;
+    h.service.ensureDirectories = async () => {};
+    h.service.ensureWhisperBinary = async () => { attempts++; await new Promise(resolve => setImmediate(resolve)); };
+    await Promise.all([h.service.initialize(), h.service.initialize()]);
+    assert.equal(attempts, 1);
+});
