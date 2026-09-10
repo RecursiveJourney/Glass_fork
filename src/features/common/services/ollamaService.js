@@ -160,11 +160,13 @@ class OllamaService extends EventEmitter {
                     return true;
                 } catch {
                     const ollamaPath = await this.checkCommand(this.getOllamaCliPath());
-                    return !!ollamaPath;
+                    // A healthy endpoint is usable without a local binary.
+                    return !!ollamaPath || await this.isServiceRunning();
                 }
             } else {
                 const ollamaPath = await this.checkCommand(this.getOllamaCliPath());
-                return !!ollamaPath;
+                // A healthy endpoint is usable without a local binary.
+                return !!ollamaPath || await this.isServiceRunning();
             }
         } catch (error) {
             console.log('[OllamaService] Ollama not found:', error.message);
@@ -890,7 +892,13 @@ class OllamaService extends EventEmitter {
                     try {
                         const isLoaded = loadedModels.includes(model.name);
                         // DB에는 installed 상태만 저장, loaded 상태는 메모리에서 관리
-                        await ollamaModelRepository.updateInstallStatus(model.name, true, false);
+                        // Discovery must insert models never downloaded through Glass.
+                        await ollamaModelRepository.upsertModel({
+                            name: model.name,
+                            size: model.size ?? 'Unknown',
+                            installed: true,
+                            installing: false
+                        });
                         
                         // 로드 상태를 인스턴스 변수에 저장
                         if (!this.modelLoadStatus) {
@@ -1377,6 +1385,8 @@ class OllamaService extends EventEmitter {
                 console.log('[OllamaService] Ollama installed but not running, starting service...');
                 await this.startService();
             }
+            // Persist discovery before welcome validation and model selection.
+            await this.syncState();
             return { success: true };
         } catch (error) {
             console.error('[OllamaService] Failed to ensure ready:', error);

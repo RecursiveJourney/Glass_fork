@@ -421,6 +421,8 @@ class ModelStateService extends EventEmitter {
         const hasLlmKey = Object.entries(apiKeyMap).some(([provider, key]) => {
             if (!key) return false;
             if (provider === 'whisper') return false; // whisper는 LLM 없음
+            // Ollama's factory list is empty; its models are discovered dynamically.
+            if (provider === 'ollama') return ollamaModelRepository.getInstalledModels().length > 0;
             return PROVIDERS[provider]?.llmModels?.length > 0;
         });
         // STT
