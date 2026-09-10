@@ -461,6 +461,9 @@ class SttService {
             portkeyVirtualKey: this.modelInfo.provider === 'openai-glass' ? this.modelInfo.apiKey : undefined,
         };
 
+        // Whisper models are selected dynamically; pass the selection to both sessions and renewals.
+        if (this.modelInfo.provider === 'whisper') sttOptions.model = this.modelInfo.model;
+
         // Add sessionType for Whisper to distinguish between My and Their sessions
         const myOptions = { ...sttOptions, callbacks: mySttConfig.callbacks, sessionType: 'my' };
         const theirOptions = { ...sttOptions, callbacks: theirSttConfig.callbacks, sessionType: 'their' };
