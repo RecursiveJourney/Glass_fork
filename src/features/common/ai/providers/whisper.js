@@ -1,10 +1,12 @@
 const pcm24To16 = require('./pcm24To16');
-let spawn, path, EventEmitter;
+const pcm16Stats = require('./pcm16Stats');
+let spawn, path, EventEmitter, config;
 
 if (typeof window === 'undefined') {
     spawn = require('child_process').spawn;
     path = require('path');
     EventEmitter = require('events').EventEmitter;
+    config = require('../../config/config');
 } else {
     class DummyEventEmitter {
         on() {}
@@ -25,6 +27,9 @@ class WhisperSTTSession extends EventEmitter {
         this.audioBuffer = Buffer.alloc(0);
         this.processingInterval = null;
         this.lastTranscription = '';
+        this.chunkSequence = 0;
+        this.audioBufferStartedAt = null;
+        this.audioBufferEndedAt = null;
     }
 
     async initialize() {
@@ -44,7 +49,6 @@ class WhisperSTTSession extends EventEmitter {
         this.processingInterval = setInterval(async () => {
             const minBufferSize = 24000 * 2 * 0.15;
             if (this.audioBuffer.length >= minBufferSize && !this.process && !this.processing) {
-                console.log(`[WhisperSTT-${this.sessionId}] Processing audio chunk, buffer size: ${this.audioBuffer.length}`);
                 await this.processAudioChunk();
             }
         }, 1500);
@@ -54,13 +58,33 @@ class WhisperSTTSession extends EventEmitter {
         if (!this.isRunning || this.audioBuffer.length === 0 || this.processing) return;
         this.processing = true;
         const audioData = this.audioBuffer;
+        const from = this.audioBufferStartedAt || Date.now();
+        const to = this.audioBufferEndedAt || Date.now();
         this.audioBuffer = Buffer.alloc(0);
-        let tempFile;
+        this.audioBufferStartedAt = this.audioBufferEndedAt = null;
+        const seq = ++this.chunkSequence;
+        let stats, tempFile, decodeStarted;
         let output = '';
         let errorOutput = '';
         let reported = false;
+        let failed = false;
+        let logged = false;
+        const logChunk = (result, transcription = false, emitted = false) => {
+            if (logged) return;
+            logged = true;
+            // One bounded metadata-only debug line per batch; never audio, text, paths or credentials.
+            if (config.shouldLog('debug')) console.debug('[WhisperSTT] chunk', JSON.stringify({
+                session: this.sessionId, channel: /^(my|their)_/.exec(this.sessionId)?.[1] || 'unknown', seq,
+                from: new Date(from).toISOString(), to: new Date(to).toISOString(),
+                audio_ms: Math.round(audioData.length / 48),
+                rms_dbfs: stats ? (stats.exactZero ? '-inf' : Number(stats.rmsDbfs.toFixed(2))) : null,
+                result, transcription, emitted,
+                decode_ms: decodeStarted === undefined ? 0 : Date.now() - decodeStarted
+            }));
+        };
         const reportFailure = (code, reason = '') => {
             if (!this.isRunning) return; // Stop intentionally terminates the child.
+            failed = true;
             const error = new Error('Whisper exit code ' + code + (reason ? ': ' + reason : '') +
                 '\nstdout:\n' + output + '\nstderr:\n' + errorOutput);
             console.error('[WhisperSTT-' + this.sessionId + '] Process error:', error.message);
@@ -70,16 +94,26 @@ class WhisperSTTSession extends EventEmitter {
             }
         };
         try {
+            stats = pcm16Stats(audioData);
+            // Gate original 24 kHz PCM only when EVERY sample is zero, including on either channel.
+            // Nonzero input always decodes, even if resampling later rounds its low amplitude to zero.
+            if (stats.exactZero) {
+                logChunk('zero');
+                this.processing = false;
+                return;
+            }
             tempFile = await this.whisperService.saveAudioToTemp(pcm24To16(audioData), this.sessionId);
             if (!tempFile || typeof tempFile !== 'string') throw new Error('Invalid temp file path');
             const whisperPath = await this.whisperService.getWhisperPath();
             const modelPath = await this.whisperService.getModelPath(this.model);
             if (!whisperPath || !modelPath) throw new Error('Invalid whisper or model path');
             if (!this.isRunning) {
+                logChunk('stopped');
                 await this.whisperService.cleanupTempFile(tempFile);
                 this.processing = false;
                 return;
             }
+            decodeStarted = Date.now();
             const child = spawn(whisperPath, [
                 '-m', modelPath, '-f', tempFile, '--no-timestamps',
                 '--language', 'auto', '--threads', '4'
@@ -90,12 +124,20 @@ class WhisperSTTSession extends EventEmitter {
             child.on('error', error => reportFailure(error.code || 'spawn', error.message));
             child.on('close', async (code, signal) => {
                 if (this.process === child) this.process = null;
+                let result = 'empty', produced = false, emitted = false;
                 try {
-                    if (code !== 0) reportFailure(code, signal || '');
-                    else if (this.isRunning && output.trim() && !reported) {
+                    if (!this.isRunning) result = 'stopped';
+                    else if (code !== 0 || failed) {
+                        result = 'error';
+                        if (code !== 0) reportFailure(code, signal || '');
+                    } else if (output.trim() && !reported) {
+                        produced = true;
+                        result = 'duplicate';
                         const transcription = output.trim();
                         if (transcription !== this.lastTranscription) {
                             this.lastTranscription = transcription;
+                            result = 'text';
+                            emitted = true;
                             console.log('[WhisperSTT-' + this.sessionId + '] Transcription: "' + transcription + '"');
                             this.emit('transcription', {
                                 text: transcription, timestamp: Date.now(),
@@ -104,14 +146,16 @@ class WhisperSTTSession extends EventEmitter {
                         }
                     }
                 } finally {
-                    await this.whisperService.cleanupTempFile(tempFile);
-                    this.processing = false;
+                    logChunk(result, produced, emitted);
+                    try { await this.whisperService.cleanupTempFile(tempFile); }
+                    finally { this.processing = false; }
                 }
             });
         } catch (error) {
             reportFailure(error.code || 'setup', error.message);
-            if (tempFile) await this.whisperService.cleanupTempFile(tempFile);
-            this.processing = false;
+            logChunk(this.isRunning ? 'error' : 'stopped');
+            try { if (tempFile) await this.whisperService.cleanupTempFile(tempFile); }
+            finally { this.processing = false; }
         }
     }
 
@@ -140,11 +184,10 @@ class WhisperSTTSession extends EventEmitter {
         }
 
         if (audioData.length > 0) {
+            // Receipt window identifies mixed batches when decoding takes longer than the timer interval.
+            if (this.audioBuffer.length === 0) this.audioBufferStartedAt = Date.now();
+            this.audioBufferEndedAt = Date.now();
             this.audioBuffer = Buffer.concat([this.audioBuffer, audioData]);
-            // Log every 10th audio chunk to avoid spam
-            if (Math.random() < 0.1) {
-                console.log(`[WhisperSTT-${this.sessionId}] Received audio chunk: ${audioData.length} bytes, total buffer: ${this.audioBuffer.length} bytes`);
-            }
         }
     }
 
