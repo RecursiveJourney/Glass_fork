@@ -5,9 +5,14 @@ export class MainHeader extends LitElement {
         isTogglingSession: { type: Boolean, state: true },
         shortcuts: { type: Object, state: true },
         listenSessionStatus: { type: String, state: true },
+        listenState: { type: Object, state: true },
+        capabilities: { type: Object, state: true },
     };
 
     static styles = css`
+        .source-select { -webkit-app-region:no-drag; background:rgba(255,255,255,.08); color:inherit; border:1px solid rgba(255,255,255,.18); border-radius:7px; padding:5px 3px; font:inherit; font-size:11px; max-width:82px; cursor:pointer; }
+        .source-select option { background:#20262b; color:white; }
+        .source-select:disabled { opacity:.65; cursor:default; }
         :host {
             display: flex;
             transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease-out;
@@ -349,6 +354,9 @@ export class MainHeader extends LitElement {
         this.settingsHideTimer = null;
         this.isTogglingSession = false;
         this.listenSessionStatus = 'beforeSession';
+        this.listenState = null;
+        this.capabilities = { meeting:true, localListen:false, ask:true };
+        this._listenHydration = 0;
         this.animationEndTimer = null;
         this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -361,7 +369,7 @@ export class MainHeader extends LitElement {
         switch (status) {
             case 'beforeSession': return 'Listen';
             case 'inSession'   : return 'Stop';
-            case 'afterSession': return 'Done';
+            case 'afterSession': return 'Listen';
             default            : return 'Listen';
         }
     }
@@ -473,19 +481,13 @@ export class MainHeader extends LitElement {
 
         if (window.api) {
 
-            this._sessionStateTextListener = (event, { success }) => {
-                if (success) {
-                    this.listenSessionStatus = ({
-                        beforeSession: 'inSession',
-                        inSession: 'afterSession',
-                        afterSession: 'beforeSession',
-                    })[this.listenSessionStatus] || 'beforeSession';
-                } else {
-                    this.listenSessionStatus = 'beforeSession';
-                }
-                this.isTogglingSession = false; // ✨ 로딩 상태만 해제
-            };
-            window.api.mainHeader.onListenChangeSessionResult(this._sessionStateTextListener);
+            const identity = ++this._listenHydration;
+            this._offListen = window.api.listen.onState(state => this.applyListenState(state));
+            window.api.listen.getCapabilities().then(capabilities => {
+                if (identity !== this._listenHydration) return;
+                this.capabilities = capabilities;
+                return window.api.listen.getState();
+            }).then(state => { if (identity === this._listenHydration) this.applyListenState(state); }).catch(() => {});
 
             this._shortcutListener = (event, keybinds) => {
                 console.log('[MainHeader] Received updated shortcuts:', keybinds);
@@ -497,6 +499,7 @@ export class MainHeader extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        ++this._listenHydration; this._offListen?.(); this._offListen = null;
         this.removeEventListener('animationend', this.handleAnimationEnd);
         
         if (this.animationEndTimer) {
@@ -540,14 +543,37 @@ export class MainHeader extends LitElement {
         this.isTogglingSession = true;
 
         try {
+            if (this.listenState?.source === 'local' && this.listenState.error !== 'local_cleanup_failed' && ['idle','stopped'].includes(this.listenState.phase)) {
+                this.capabilities = await window.api.listen.getCapabilities();
+                if (!this.capabilities.localListen) {
+                    window.dispatchEvent(new CustomEvent('listen-setup-requested'));
+                    return;
+                }
+            }
             const listenButtonText = this._getListenButtonText(this.listenSessionStatus);
             if (window.api) {
-                await window.api.mainHeader.sendListenButtonClick(listenButtonText);
+                const result = await window.api.mainHeader.sendListenButtonClick(listenButtonText);
+                this.applyListenState(result?.state);
             }
         } catch (error) {
             console.error('IPC invoke for session change failed:', error);
             this.isTogglingSession = false;
+        } finally {
+            this.isTogglingSession = false;
         }
+    }
+
+    applyListenState(state) {
+        if (!state || (this.listenState && state.version <= this.listenState.version)) return;
+        this.listenState = state;
+        this.listenSessionStatus = ['starting','active','stopping'].includes(state.phase) || state.error === 'local_cleanup_failed' ? 'inSession' : state.phase === 'stopped' ? 'afterSession' : 'beforeSession';
+        this.isTogglingSession = ['starting','stopping'].includes(state.phase);
+    }
+
+    async selectSource(event) {
+        const result = await window.api.listen.selectSource(event.target.value);
+        this.applyListenState(result?.state);
+        event.target.value = this.listenState?.source || 'local';
     }
 
     async _handleAskClick() {
@@ -609,6 +635,11 @@ export class MainHeader extends LitElement {
 
         return html`
             <div class="header" @mousedown=${this.handleMouseDown}>
+                <select class="source-select" aria-label="Transcript source" .value=${this.listenState?.source || 'local'}
+                    ?disabled=${!this.listenState || this.listenState.error === 'local_cleanup_failed' || ['starting','active','stopping'].includes(this.listenState.phase)}
+                    @mousedown=${event => event.stopPropagation()} @change=${this.selectSource}>
+                    <option value="local">Local</option><option value="meeting">Meeting</option>
+                </select>
                 <button 
                     class="listen-button ${Object.keys(buttonClasses).filter(k => buttonClasses[k]).join(' ')}"
                     @click=${this._handleListenClick}
@@ -622,7 +653,7 @@ export class MainHeader extends LitElement {
                         `
                         : html`
                             <div class="action-text">
-                                <div class="action-text-content">${listenButtonText}</div>
+                                <div class="action-text-content">${this.listenState?.source === 'local' && this.listenState.error !== 'local_cleanup_failed' && ['idle','stopped'].includes(this.listenState.phase) && !this.capabilities.localListen ? 'Set up Local' : listenButtonText}</div>
                             </div>
                             <div class="listen-icon">
                                 ${showStopIcon

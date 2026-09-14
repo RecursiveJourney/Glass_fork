@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: capture Stop acknowledges only after asynchronous resource release
+ok 1 - capture Stop acknowledges only after asynchronous resource release
+  ---
+  duration_ms: 4.1374
+  type: 'test'
+  ...
+# Subtest: late local capture completion is released before stop ack and stale start is rejected
+ok 2 - late local capture completion is released before stop ack and stale start is rejected
+  ---
+  duration_ms: 1.5632
+  type: 'test'
+  ...
+# Subtest: failed start is cleaned and acknowledged as failed
+ok 3 - failed start is cleaned and acknowledged as failed
+  ---
+  duration_ms: 1.1559
+  type: 'test'
+  ...
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+ok 4 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 1.7047
+  type: 'test'
+  ...
+# Subtest: Linux capture owns and releases microphone, display and audio context before Stop completes
+ok 5 - Linux capture owns and releases microphone, display and audio context before Stop completes
+  ---
+  duration_ms: 1.7059
+  type: 'test'
+  ...
+# Subtest: failed capture release remains owned until a successful cleanup retry
+ok 6 - failed capture release remains owned until a successful cleanup retry
+  ---
+  duration_ms: 1.0035
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.7933

@@ -1,0 +1,231 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    not ok 1 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 1.139
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        both panes are mounted
+        + actual - expected
+        
+        + 'both panes are mounted'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'both panes are mounted'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    not ok 2 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.212
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        keyed nodes survive reorder
+        + actual - expected
+        
+        + 'keyed nodes survive reorder'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'keyed nodes survive reorder'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    not ok 3 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.1688
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        resolve is not a function
+        + actual - expected
+        
+        + 'resolve is not a function'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'resolve is not a function'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    not ok 4 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.2095
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        Cannot read properties of null (reading 'shadowRoot')
+        + actual - expected
+        
+        + "Cannot read properties of null (reading 'shadowRoot')"
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: "Cannot read properties of null (reading 'shadowRoot')"
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    not ok 5 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.2187
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        source is locked while active
+        + actual - expected
+        
+        + 'source is locked while active'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'source is locked while active'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    not ok 6 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.1308
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        failure cannot optimistically mark completed
+        + actual - expected
+        
+        + 'failure cannot optimistically mark completed'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'failure cannot optimistically mark completed'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    not ok 7 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.1262
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        meeting-only header reachable without providers/permissions
+        + actual - expected
+        
+        + 'meeting-only header reachable without providers/permissions'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'meeting-only header reachable without providers/permissions'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    1..7
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1971.0488
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '7 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 8
+# suites 0
+# pass 0
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2047.0421

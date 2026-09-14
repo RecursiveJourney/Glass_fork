@@ -36,6 +36,7 @@ function harness(provider = 'whisper') {
         electron: { ipcMain: { handle: (name, handler) => handlers.set(name, handler) } },
         '../features/listen/listenService': {
             sttService: stt,
+            sendSystemAudioContent: (...args) => stt.sendSystemAudioContent(...args),
             sendToRenderer: (channel, payload) => events.push({ channel, payload })
         },
         '../features/common/services/modelStateService': modelState

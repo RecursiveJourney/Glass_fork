@@ -1,0 +1,104 @@
+TAP version 13
+# Subtest: capture Stop acknowledges only after asynchronous resource release
+not ok 1 - capture Stop acknowledges only after asynchronous resource release
+  ---
+  duration_ms: 4.4802
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   {
+    -     lifecycleId: 2,
+    -     status: 'stop',
+    -     success: true
+    -   }
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      status: 'stop'
+      lifecycleId: 2
+      success: true
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:18:36)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: late local capture completion is released before stop ack and stale start is rejected
+not ok 2 - late local capture completion is released before stop ack and stale start is rejected
+  ---
+  duration_ms: 1.766
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:20:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'success')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:24:72)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: failed start is cleaned and acknowledged as failed
+not ok 3 - failed start is cleaned and acknowledged as failed
+  ---
+  duration_ms: 1.7642
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:30:65)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+not ok 4 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 1.5003
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:32:1'
+  failureType: 'testCodeFailure'
+  error: 'setInterval is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    evalmachine.<anonymous>:285:1
+    Script.runInContext (node:vm:149:12)
+    Object.runInContext (node:vm:301:6)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:35:8)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 73.1629

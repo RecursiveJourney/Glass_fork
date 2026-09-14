@@ -40,7 +40,7 @@ class HeaderTransitionManager {
             } else if (type === 'apikey') {
                 this.apiKeyHeader = document.createElement('apikey-header');
                 this.apiKeyHeader.stateUpdateCallback = (userState) => this.handleStateUpdate(userState);
-                this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
+                this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
                 this.apiKeyHeader.addEventListener('request-resize', e => {
                     this._resizeForApiKey(e.detail.height); 
                 });
@@ -48,6 +48,7 @@ class HeaderTransitionManager {
                 console.log('[HeaderController] ensureHeader: Header of type:', type, 'created.');
             } else if (type === 'permission') {
                 this.permissionHeader = document.createElement('permission-setup');
+                if (this.localSetup) this.permissionHeader.backCallback = () => this.transitionToMainHeader();
                 this.permissionHeader.addEventListener('request-resize', e => {
                     this._resizeForPermissionHeader(e.detail.height); 
                 });
@@ -76,6 +77,11 @@ class HeaderTransitionManager {
         this.handleApiKeyOption = this.handleApiKeyOption.bind(this);
 
         this._bootstrap();
+        window.addEventListener('listen-setup-requested', async () => {
+            this.localSetup = true;
+            if (await window.api.apiKeyHeader.areProvidersConfigured()) this.transitionToPermissionHeader();
+            else this.handleApiKeyOption();
+        });
 
         if (window.api) {
             window.api.headerController.onUserStateChanged((event, userState) => {
@@ -91,6 +97,8 @@ class HeaderTransitionManager {
                 }
             });
             window.api.headerController.onForceShowApiKeyHeader(async () => {
+                const capabilities = await window.api.listen.getCapabilities();
+                if (capabilities.meeting) { await this.transitionToMainHeader(); return; }
                 console.log('[HeaderController] Received broadcast to show apikey header. Switching now.');
                 const isConfigured = await window.api.apiKeyHeader.areProvidersConfigured();
                 if (!isConfigured) {
@@ -127,6 +135,10 @@ class HeaderTransitionManager {
 
     //////// after_modelStateService ////////
     async handleStateUpdate(userState) {
+        const update = this._stateUpdate = (this._stateUpdate || 0) + 1;
+        const capabilities = await window.api.listen.getCapabilities();
+        if (update !== this._stateUpdate) return;
+        if (capabilities.meeting) { await this.transitionToMainHeader(); return; }
         const isConfigured = await window.api.apiKeyHeader.areProvidersConfigured();
 
         if (isConfigured) {
@@ -158,7 +170,7 @@ class HeaderTransitionManager {
         this.ensureHeader('apikey');
         // ApiKeyHeader에 뒤로가기 콜백 설정
         if (this.apiKeyHeader) {
-            this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
+            this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
         }
     }
 
@@ -218,6 +230,7 @@ class HeaderTransitionManager {
     }
 
     async transitionToMainHeader(animate = true) {
+        this.localSetup = false;
         if (this.currentHeaderType === 'main') {
             return this._resizeForMain();
         }
@@ -228,8 +241,8 @@ class HeaderTransitionManager {
 
     async _resizeForMain() {
         if (!window.api) return;
-        console.log('[HeaderController] _resizeForMain: Resizing window to 353x47');
-        return window.api.headerController.resizeHeaderWindow({ width: 353, height: 47 }).catch(() => {});
+        console.log('[HeaderController] _resizeForMain: Resizing window to 445x47');
+        return window.api.headerController.resizeHeaderWindow({ width: 445, height: 47 }).catch(() => {});
     }
 
     async _resizeForApiKey(height = 370) {

@@ -11,6 +11,7 @@ class SummaryService {
         this.analysisHistory = [];
         this.conversationHistory = [];
         this.currentSessionId = null;
+        this.lifecycleEpoch = 0;
         
         // Callbacks
         this.onAnalysisComplete = null;
@@ -23,6 +24,7 @@ class SummaryService {
     }
 
     setSessionId(sessionId) {
+        ++this.lifecycleEpoch;
         this.currentSessionId = sessionId;
     }
 
@@ -50,6 +52,8 @@ class SummaryService {
     }
 
     resetConversationHistory() {
+        ++this.lifecycleEpoch;
+        this.currentSessionId = null;
         this.conversationHistory = [];
         this.previousAnalysisResult = null;
         this.analysisHistory = [];
@@ -68,6 +72,9 @@ class SummaryService {
     }
 
     async makeOutlineAndRequests(conversationTexts, maxTurns = 30) {
+        const sessionId = this.currentSessionId, epoch = this.lifecycleEpoch;
+        const current = () => this.currentSessionId === sessionId && this.lifecycleEpoch === epoch;
+        if (!sessionId) return null;
         console.log(`🔍 makeOutlineAndRequests called - conversationTexts: ${conversationTexts.length}`);
 
         if (conversationTexts.length === 0) {
@@ -95,10 +102,12 @@ Please build upon this context while analyzing the new conversation segments.
 
         try {
             if (this.currentSessionId) {
-                await sessionRepository.touch(this.currentSessionId);
+                await sessionRepository.touch(sessionId);
+                if (!current()) return null;
             }
 
             const modelInfo = await modelStateService.getCurrentModelInfo('llm');
+            if (!current()) return null;
             if (!modelInfo || !modelInfo.apiKey) {
                 throw new Error('AI model or API key is not configured.');
             }
@@ -147,6 +156,7 @@ Keep all points concise and build upon previous analysis if provided.`,
             });
 
             const completion = await llm.chat(messages);
+            if (!current()) return null;
 
             const responseText = completion.content;
             console.log(`✅ Analysis response received: ${responseText}`);
@@ -154,8 +164,8 @@ Keep all points concise and build upon previous analysis if provided.`,
 
             if (this.currentSessionId) {
                 try {
-                    summaryRepository.saveSummary({
-                        sessionId: this.currentSessionId,
+                    await summaryRepository.saveSummary({
+                        sessionId,
                         text: responseText,
                         tldr: structuredData.summary.join('\n'),
                         bullet_json: JSON.stringify(structuredData.topic.bullets),
@@ -167,6 +177,7 @@ Keep all points concise and build upon previous analysis if provided.`,
                 }
             }
 
+            if (!current()) return null;
             // 분석 결과 저장
             this.previousAnalysisResult = structuredData;
             this.analysisHistory.push({
@@ -182,7 +193,7 @@ Keep all points concise and build upon previous analysis if provided.`,
             return structuredData;
         } catch (error) {
             console.error('❌ Error during analysis generation:', error.message);
-            return this.previousAnalysisResult; // 에러 시 이전 결과 반환
+            return current() ? this.previousAnalysisResult : null; // 에러 시 이전 결과 반환
         }
     }
 
@@ -303,11 +314,12 @@ Keep all points concise and build upon previous analysis if provided.`,
      * Triggers analysis when conversation history reaches 5 texts.
      */
     async triggerAnalysisIfNeeded() {
+        const epoch = this.lifecycleEpoch, sessionId = this.currentSessionId;
         if (this.conversationHistory.length >= 5 && this.conversationHistory.length % 5 === 0) {
             console.log(`Triggering analysis - ${this.conversationHistory.length} conversation texts accumulated`);
 
-            const data = await this.makeOutlineAndRequests(this.conversationHistory);
-            if (data) {
+            const data = await this.makeOutlineAndRequests([...this.conversationHistory]);
+            if (data && this.lifecycleEpoch === epoch && this.currentSessionId === sessionId) {
                 console.log('Sending structured data to renderer');
                 this.sendToRenderer('summary-update', data);
                 

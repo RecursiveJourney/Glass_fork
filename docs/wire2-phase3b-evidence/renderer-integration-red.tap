@@ -1,0 +1,153 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: source selection remains a native interactive control
+    not ok 1 - source selection remains a native interactive control
+      ---
+      duration_ms: 1.1485
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        selector must override native draggable header
+        + actual - expected
+        
+        + 'selector must override native draggable header'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'selector must override native draggable header'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: stopped session can restart from the header
+    not ok 2 - stopped session can restart from the header
+      ---
+      duration_ms: 0.2104
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        stopped state must offer a fresh Start
+        + actual - expected
+        
+        + 'stopped state must offer a fresh Start'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'stopped state must offer a fresh Start'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    not ok 3 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.1693
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        layout must measure its content rather than the previous window height
+        + actual - expected
+        
+        + 'layout must measure its content rather than the previous window height'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'layout must measure its content rather than the previous window height'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 4 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1471
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 5 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.0927
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 6 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0823
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 7 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0795
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 8 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.0982
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 9 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.1117
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 10 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.1246
+      type: 'test'
+      ...
+    1..10
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1730.5996
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 11
+# suites 0
+# pass 7
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1795.6558

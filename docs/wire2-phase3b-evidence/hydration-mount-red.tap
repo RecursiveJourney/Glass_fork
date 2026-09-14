@@ -1,0 +1,135 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    not ok 1 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 1.1782
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        do not mount local summary before source is known
+        + actual - expected
+        
+        + 'do not mount local summary before source is known'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'do not mount local summary before source is known'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 2 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.1526
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 3 - stopped session can restart from the header
+      ---
+      duration_ms: 0.1197
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 4 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.0997
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 5 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.0998
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 6 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.0785
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 7 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0772
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 8 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.103
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 9 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.1119
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 10 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.1271
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 11 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.1171
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 12 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0598
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 13 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0532
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 14 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0559
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 15 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0822
+      type: 'test'
+      ...
+    1..15
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 2054.5155
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 16
+# suites 0
+# pass 14
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2120.1227

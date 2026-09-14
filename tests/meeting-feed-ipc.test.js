@@ -11,6 +11,7 @@ function load(relative, stubs) {
     vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
         module, exports: module.exports, process: { env: {}, platform: 'win32' }, Buffer,
         console: { log() {}, warn() {}, error() {} },
+        setTimeout, clearTimeout,
         require: id => {
             if (!Object.hasOwn(stubs, id)) throw new Error('Unexpected dependency: ' + id);
             return stubs[id];
@@ -68,7 +69,7 @@ test('meeting start/stop/restart forwards state and cleans listeners without loc
     assert.equal(h.listen.startMeetingFeed().success, true);
     assert.equal(h.listen.getMeetingFeedState().connectionStatus, 'connecting');
     assert.equal(h.callbacks.size, 1);
-    assert.ok(h.sent.every(event => event.channel === 'meeting-feed:state'));
+    assert.ok(h.sent.every(event => ['meeting-feed:state', 'listen:state'].includes(event.channel)));
     assert.equal(h.listen.stopMeetingFeed().state.connectionStatus, 'stopped');
     assert.equal(h.callbacks.size, 0);
     h.listen.startMeetingFeed(); assert.equal(h.callbacks.size, 1);
@@ -85,7 +86,7 @@ test('existing app cleanup closes the meeting subscription through closeSession'
     assert.equal(h.counts.stop, 1); assert.equal(h.callbacks.size, 0);
 });
 
-function bridge(listen) {
+function bridge(listen, ask) {
     const handlers = new Map();
     const stubs = {
         electron: { ipcMain: { handle: (name, handler) => handlers.set(name, handler) } },
@@ -100,22 +101,48 @@ function bridge(listen) {
         '../features/common/services/encryptionService',
     ]) stubs[name] = new EventEmitter();
     stubs['../features/common/services/localAIManager'].startPeriodicSync = () => {};
+    if (ask) stubs['../features/ask/askService'] = ask;
     load('bridge/featureBridge.js', stubs).initialize();
     return handlers;
 }
 
 test('actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen', async () => {
     const calls = [];
-    const listen = Object.fromEntries(['startMeetingFeed', 'stopMeetingFeed', 'getMeetingFeedState'].map(method =>
-        [method, (...args) => { calls.push({ method, args }); return { marker: method }; }]));
+    let source = 'meeting';
+    const listen = {
+        getListenState: () => ({ source }),
+        handleListenRequest: (...args) => calls.push({ method: 'lifecycle', args }),
+        getMeetingFeedState: (...args) => calls.push({ method: 'state', args }),
+    };
     const handlers = bridge(listen);
     assert.equal(typeof handlers.get('meeting-feed:start'), 'function');
     assert.equal(calls.length, 0, 'IPC surface is not automatically activated');
     for (const action of ['start', 'stop', 'get-state']) {
         await handlers.get('meeting-feed:' + action)({}, { url: 'https://example.invalid/', wrapperToken: 'SYNTHETIC' });
     }
-    assert.deepEqual(calls.map(c => c.method), ['startMeetingFeed', 'stopMeetingFeed', 'getMeetingFeedState']);
-    assert.ok(calls.every(call => call.args.length === 0));
+    assert.deepEqual(calls, [{ method: 'lifecycle', args: ['Listen'] }, { method: 'lifecycle', args: ['Stop'] }, { method: 'state', args: [] }]);
+    source = 'local';
+    assert.equal((await handlers.get('meeting-feed:start')({})).error, 'meeting_source_required');
+    assert.equal(calls.length, 3);
+});
+
+test('authoritative Listen IPC preserves result, capture sender and Ask independence', async () => {
+    const calls = [], sender = {}, state = { source: 'meeting', phase: 'active' };
+    const handlers = bridge({
+        getListenState: () => state, getListenCapabilities: () => ({ meeting: true, ask: true }),
+        selectSource: source => { calls.push(source); return { success: false, state }; },
+        acknowledgeCapture: (payload, actualSender) => { assert.equal(actualSender, sender); return payload; },
+        handleListenRequest: () => ({ success: false, state, error: 'listen_busy' }),
+    }, { sendMessage: (...args) => { calls.push(args); return 'ask-response'; }, toggleAskButton: () => 'ask-open' });
+    assert.equal((await handlers.get('listen:get-state')()).source, 'meeting');
+    assert.equal((await handlers.get('listen:get-capabilities')()).ask, true);
+    assert.equal((await handlers.get('listen:changeSession')({}, 'Listen')).success, false);
+    assert.equal((await handlers.get('listen:select-source')({}, 'local')).success, false);
+    assert.equal((await handlers.get('listen:capture-ack')({ sender }, { success: true })).success, true);
+    assert.equal(await handlers.get('ask:sendQuestionFromAsk')({}, 'question'), 'ask-response');
+    assert.equal(await handlers.get('ask:sendQuestionFromSummary')({}, 'follow-up'), 'ask-response');
+    assert.equal(await handlers.get('ask:toggleAskButton')(), 'ask-open');
+    assert.deepEqual(calls, ['local', ['question'], ['follow-up']]);
 });
 
 test('preload exposes no config setter or Electron event and returns per-listener cleanup', async () => {
@@ -123,6 +150,7 @@ test('preload exposes no config setter or Electron event and returns per-listene
     ipc.invoke = async (...args) => { invokes.push(args); return {}; };
     load('preload.js', { electron: { ipcRenderer: ipc, contextBridge: { exposeInMainWorld: (_name, value) => { api = value; } } } });
     assert.ok(api.meetingFeed);
+    assert.deepEqual(Object.keys(api.listen).sort(), ['ackCapture', 'getCapabilities', 'getState', 'onState', 'selectSource']);
     assert.deepEqual(Object.keys(api.meetingFeed).sort(), ['getState', 'onState', 'start', 'stop']);
     await api.meetingFeed.start({ wrapperToken: 'SYNTHETIC' });
     await api.meetingFeed.stop(); await api.meetingFeed.getState();
@@ -134,4 +162,10 @@ test('preload exposes no config setter or Electron event and returns per-listene
     assert.deepEqual(plain(received), [[{ connectionStatus: 'connected' }]]);
     off(); off(); assert.equal(ipc.listenerCount('meeting-feed:state'), 1);
     offOther(); assert.equal(ipc.listenerCount('meeting-feed:state'), 0);
+    const states = [], dispose = api.listen.onState(value => states.push(value));
+    ipc.emit('listen:state', { privateEvent: true }, { source: 'meeting' });
+    assert.deepEqual(plain(states), [{ source: 'meeting' }]);
+    dispose(); dispose(); assert.equal(ipc.listenerCount('listen:state'), 0);
+    await api.listen.ackCapture({ status: 'stop', lifecycleId: 2, success: true, extra: 'discard' });
+    assert.deepEqual(plain(invokes.at(-1)), ['listen:capture-ack', { status: 'stop', lifecycleId: 2, success: true }]);
 });

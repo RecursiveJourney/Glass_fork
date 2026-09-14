@@ -1,0 +1,92 @@
+TAP version 13
+# Subtest: failed database end is retried and cannot falsely unlock Meeting
+not ok 1 - failed database end is retried and cannot falsely unlock Meeting
+  ---
+  duration_ms: 4.2239
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:109:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:112:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: Stop closes old overlap sockets immediately after STT renewal
+not ok 2 - Stop closes old overlap sockets immediately after STT renewal
+  ---
+  duration_ms: 5.215
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:235:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(h.providers.every(item => item.session.closed))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:238:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: cancelled STT initialization preserves failed socket cleanup for retry
+not ok 3 - cancelled STT initialization preserves failed socket cleanup for retry
+  ---
+  duration_ms: 4.2348
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:240:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:246:5)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: failed renewal preserves current provider callbacks
+not ok 4 - failed renewal preserves current provider callbacks
+  ---
+  duration_ms: 1.6312
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:248:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:252:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.7194

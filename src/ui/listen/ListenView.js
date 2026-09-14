@@ -1,9 +1,15 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
 import './stt/SttView.js';
 import './summary/SummaryView.js';
+import './meeting/SuggestionsView.js';
 
 export class ListenView extends LitElement {
     static styles = css`
+        .meeting-section-title { margin:0; padding:10px 12px 4px; font-size:11px; line-height:16px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#bdcbd4; }
+        .assistant-container.meeting-layout { height:auto; }
+        .meeting-layout section { min-height:0; border-top:1px solid rgba(255,255,255,.09); }
+        .meeting-layout .bar-left-text { font-size:12px; white-space:normal; }
+        .meeting-note { padding:8px 12px; font-size:12px; color:#f0c5a5; }
         :host {
             display: block;
             width: 400px;
@@ -427,6 +433,7 @@ export class ListenView extends LitElement {
         captureStartTime: { type: Number },
         isSessionActive: { type: Boolean },
         hasCompletedRecording: { type: Boolean },
+        listenState: { type: Object },
     };
 
     constructor() {
@@ -443,6 +450,9 @@ export class ListenView extends LitElement {
         this.isThrottled = false;
         this.copyState = 'idle';
         this.copyTimeout = null;
+        this.listenState = null;
+        this._hydration = 0;
+        this._lastHeight = null;
 
         this.adjustWindowHeight = this.adjustWindowHeight.bind(this);
     }
@@ -453,7 +463,13 @@ export class ListenView extends LitElement {
         if (this.isSessionActive) {
             this.startTimer();
         }
-        if (window.api) {
+        if (window.api?.listen) {
+            const identity = ++this._hydration;
+            this._offListen = window.api.listen.onState(state => this.applyListenState(state));
+            window.api.listen.getState().then(state => {
+                if (identity === this._hydration) this.applyListenState(state);
+            }).catch(() => {});
+        } else if (window.api) {
             window.api.listenView.onSessionStateChanged((event, { isActive }) => {
                 const wasActive = this.isSessionActive;
                 this.isSessionActive = isActive;
@@ -481,6 +497,8 @@ export class ListenView extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        ++this._hydration;
+        this._offListen?.(); this._offListen = null;
         this.stopTimer();
 
         if (this.adjustHeightThrottle) {
@@ -493,6 +511,7 @@ export class ListenView extends LitElement {
     }
 
     startTimer() {
+        this.stopTimer();
         this.captureStartTime = Date.now();
         this.timerInterval = setInterval(() => {
             const elapsed = Math.floor((Date.now() - this.captureStartTime) / 1000);
@@ -517,6 +536,12 @@ export class ListenView extends LitElement {
 
         this.updateComplete
             .then(() => {
+                if (!this.isConnected) return;
+                if (this.listenState?.source === 'meeting') {
+                    const container = this.shadowRoot.querySelector('.assistant-container');
+                    if (container) this.resizeIfChanged(Math.min(700, Math.ceil(container.getBoundingClientRect().height)));
+                    return;
+                }
                 const topBar = this.shadowRoot.querySelector('.top-bar');
                 const activeContent = this.viewMode === 'transcript'
                     ? this.shadowRoot.querySelector('stt-view')
@@ -536,11 +561,61 @@ export class ListenView extends LitElement {
                     `[Height Adjusted] Mode: ${this.viewMode}, TopBar: ${topBarHeight}px, Content: ${contentHeight}px, Ideal: ${idealHeight}px, Target: ${targetHeight}px`
                 );
 
-                window.api.listenView.adjustWindowHeight('listen', targetHeight);
+                this.resizeIfChanged(targetHeight);
             })
             .catch(error => {
                 console.error('Error in adjustWindowHeight:', error);
             });
+    }
+
+    resizeIfChanged(height) {
+        if (height === this._lastHeight) return;
+        this._lastHeight = height;
+        window.api.listenView.adjustWindowHeight('listen', height);
+    }
+
+    applyListenState(state) {
+        if (!state || (this.listenState && state.version <= this.listenState.version)) return;
+        const previous = this.listenState;
+        this.listenState = state;
+        this.isSessionActive = ['starting', 'active', 'stopping'].includes(state.phase);
+        this.hasCompletedRecording = state.phase === 'stopped';
+        if (!previous || state.lifecycleId !== previous.lifecycleId) {
+            if (this.isSessionActive) this.startTimer();
+            if (state.source === 'local') {
+                const hydration = this._hydration;
+                this.updateComplete.then(() => {
+                    if (hydration !== this._hydration || this.listenState !== state) return;
+                    this.shadowRoot.querySelector('stt-view')?.resetTranscript();
+                    this.shadowRoot.querySelector('summary-view')?.resetAnalysis();
+                });
+            }
+        }
+        if (!this.isSessionActive) this.stopTimer();
+    }
+
+    meetingStatus() {
+        const state = this.listenState;
+        if (state.phase === 'stopped') return state.feed?.snapshot?.closed ? 'Meeting ended' : 'Stopped';
+        if (state.phase === 'idle') return 'Ready to connect';
+        const transport = state.feed?.connectionStatus;
+        const names = { connecting:'Connecting…', reconnecting:'Reconnecting…', 'auth-required':'Check meeting credentials in the main process', closed:'Meeting ended', stopped:'Stopped' };
+        if (names[transport]) return names[transport];
+        const availability = state.feed?.snapshot?.availability;
+        return ({ stale:'Transcript is stale', disconnected:'Fireflies disconnected', empty:'Waiting for speech', available:'Live' })[availability] || 'Connecting…';
+    }
+
+    renderMeeting() {
+        const snapshot = this.listenState.feed?.snapshot || null;
+        return html`<div class="assistant-container meeting-layout">
+            <div class="top-bar"><div class="bar-left-text">Meeting · ${this.meetingStatus()}</div>
+                <button class="copy-button" aria-label="Copy meeting transcript and suggestions" @click=${this.handleCopy}>Copy</button></div>
+            ${this.listenState.error ? html`<div class="meeting-note" role="status">${this.listenState.error}</div>` : ''}
+            <section aria-label="Transcript"><h2 class="meeting-section-title">Transcript</h2>
+                <stt-view .meeting=${true} .snapshot=${snapshot}></stt-view></section>
+            <section aria-label="Suggestions"><h2 class="meeting-section-title">Suggestions ${snapshot?.generation?.state === 'running' ? '· Preparing…' : ''}</h2>
+                <suggestions-view .snapshot=${snapshot}></suggestions-view></section>
+        </div>`;
     }
 
     toggleViewMode() {
@@ -563,7 +638,9 @@ export class ListenView extends LitElement {
 
         let textToCopy = '';
 
-        if (this.viewMode === 'transcript') {
+        if (this.listenState?.source === 'meeting') {
+            textToCopy = [this.shadowRoot.querySelector('stt-view')?.getTranscriptText(), this.shadowRoot.querySelector('suggestions-view')?.getSuggestionsText()].filter(Boolean).join('\n\n');
+        } else if (this.viewMode === 'transcript') {
             const sttView = this.shadowRoot.querySelector('stt-view');
             textToCopy = sttView ? sttView.getTranscriptText() : '';
         } else {
@@ -608,7 +685,7 @@ export class ListenView extends LitElement {
     updated(changedProperties) {
         super.updated(changedProperties);
 
-        if (changedProperties.has('viewMode')) {
+        if (changedProperties.has('viewMode') || changedProperties.has('listenState')) {
             this.adjustWindowHeight();
         }
     }
@@ -624,6 +701,8 @@ export class ListenView extends LitElement {
     }
 
     render() {
+        if (!this.listenState && window.api?.listen) return html`<div class="assistant-container"><div class="top-bar">Loading Listen state…</div></div>`;
+        if (this.listenState?.source === 'meeting') return this.renderMeeting();
         const displayText = this.isHovering
             ? this.viewMode === 'transcript'
                 ? 'Copy Transcript'

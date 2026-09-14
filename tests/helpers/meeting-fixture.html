@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><style>body{background:#182026;color:white;margin:16px}#header-container{margin-bottom:24px}</style>
+<div id="header-container"></div><div id="content"></div>
+<script>
+window.listeners = new Set(); window.resizes = []; window.asks = 0; window.selections = []; window.commands = [];
+window.current = { source:'meeting', phase:'idle', lifecycleId:1, version:1, error:null, feed:null };
+window.api = {
+ listen: { getState:async()=>current, getCapabilities:async()=>({meeting:true,localListen:false,ask:true}),
+   selectSource:async source=>{selections.push(source);return {success:true,state:{...current,source,version:current.version+1}}},
+   onState:callback=>{listeners.add(callback);return()=>listeners.delete(callback)} },
+ listenView:{ onSessionStateChanged(){},removeOnSessionStateChanged(){},adjustWindowHeight:(_name,height)=>resizes.push(height) },
+ sttView:{onSttUpdate(){},removeOnSttUpdate(){}},summaryView:{onSummaryUpdate(){},removeAllSummaryUpdateListeners(){}},
+ mainHeader:{onListenChangeSessionResult(){},removeOnListenChangeSessionResult(){},onShortcutsUpdated(){},removeOnShortcutsUpdated(){},
+   sendListenButtonClick:async action=>{commands.push(action);return {success:true,state:current}},sendAskButtonClick:async()=>{asks++},sendHeaderAnimationFinished(){}},
+ headerController:{onUserStateChanged(){},onAuthFailed(){},onForceShowApiKeyHeader:cb=>window.forceApi=cb,
+   sendHeaderStateChanged(){},resizeHeaderWindow:async()=>{},checkSystemPermissions:async()=>{throw Error('capture permission lookup prohibited in meeting entry')}},
+ apiKeyHeader:{areProvidersConfigured:async()=>false},common:{getCurrentUser:async()=>({mode:'local'})}
+};
+window.marked={setOptions(){},parse:text=>text};window.hljs={};window.DOMPurify={sanitize:text=>text};
+window.emit = state=>{current=state;for(const callback of listeners)callback(state)};
+window.tick = async()=>{for(let i=0;i<5;i++)await new Promise(resolve=>setTimeout(resolve,0))};
+window.snapshot = (extra={})=>({instanceId:'feed-a',transcriptId:'meeting-a',sequence:1,revision:1,chunks:[],suggestions:[],suggestionHistoryLimit:20,
+ connectionState:'connected',availability:'available',ageMs:0,generation:{state:'idle'},...extra});
+window.active = snap=>({...current,source:'meeting',phase:'active',version:current.version+1,feed:{connectionStatus:'connected',snapshot:snap,error:null,nextRetryAt:null}});
+window.row = (id,text='Transcript '+id)=>({chunk_id:id,speaker_name:'Speaker '+id,text,start_time:1,end_time:2});
+window.outcome = (id,text='Suggestion '+id)=>({attemptId:id,revision:1,text,noSuggestion:false,completedAt:'2026-09-14T00:00:00Z'});
+window.boot = async()=>{
+ await import('/src/ui/listen/ListenView.js');await import('/src/ui/app/MainHeader.js');
+ document.querySelector('#content').append(document.createElement('listen-view'));
+ document.querySelector('#header-container').append(document.createElement('main-header'));await tick();
+ window.view=document.querySelector('listen-view');window.header=document.querySelector('main-header');
+};
+window.check=(value,message)=>{if(!value)throw Error(message)};
+</script>

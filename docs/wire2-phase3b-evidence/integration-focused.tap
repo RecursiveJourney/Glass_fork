@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: SQLite Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+ok 1 - SQLite Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+  ---
+  duration_ms: 18.3244
+  type: 'test'
+  ...
+# Subtest: Firebase Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+ok 2 - Firebase Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+  ---
+  duration_ms: 2.1247
+  type: 'test'
+  ...
+# Subtest: Ask keeps screenshot, streaming persistence and screen-only shortcut while Meeting is selected
+ok 3 - Ask keeps screenshot, streaming persistence and screen-only shortcut while Meeting is selected
+  ---
+  duration_ms: 7.6855
+  type: 'test'
+  ...
+# Subtest: Meeting source lifecycle and feed do not import or call Ask or provider mutation APIs
+ok 4 - Meeting source lifecycle and feed do not import or call Ask or provider mutation APIs
+  ---
+  duration_ms: 0.5512
+  type: 'test'
+  ...
+# Subtest: capture Stop acknowledges only after asynchronous resource release
+ok 5 - capture Stop acknowledges only after asynchronous resource release
+  ---
+  duration_ms: 5.1132
+  type: 'test'
+  ...
+# Subtest: late local capture completion is released before stop ack and stale start is rejected
+ok 6 - late local capture completion is released before stop ack and stale start is rejected
+  ---
+  duration_ms: 1.5755
+  type: 'test'
+  ...
+# Subtest: failed start is cleaned and acknowledged as failed
+ok 7 - failed start is cleaned and acknowledged as failed
+  ---
+  duration_ms: 1.151
+  type: 'test'
+  ...
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+ok 8 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 1.8414
+  type: 'test'
+  ...
+# Subtest: Listen service exposes an idle meeting state without constructing or starting a subscriber
+ok 9 - Listen service exposes an idle meeting state without constructing or starting a subscriber
+  ---
+  duration_ms: 3.0596
+  type: 'test'
+  ...
+# Subtest: meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+ok 10 - meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+  ---
+  duration_ms: 1.8857
+  type: 'test'
+  ...
+# Subtest: existing app cleanup closes the meeting subscription through closeSession
+ok 11 - existing app cleanup closes the meeting subscription through closeSession
+  ---
+  duration_ms: 1.1103
+  type: 'test'
+  ...
+# Subtest: actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+ok 12 - actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+  ---
+  duration_ms: 1.5532
+  type: 'test'
+  ...
+# Subtest: authoritative Listen IPC preserves result, capture sender and Ask independence
+ok 13 - authoritative Listen IPC preserves result, capture sender and Ask independence
+  ---
+  duration_ms: 1.3538
+  type: 'test'
+  ...
+# Subtest: preload exposes no config setter or Electron event and returns per-listener cleanup
+ok 14 - preload exposes no config setter or Electron event and returns per-listener cleanup
+  ---
+  duration_ms: 2.2362
+  type: 'test'
+  ...
+# Subtest: system-audio success waits for provider forwarding before the IPC reference event
+ok 15 - system-audio success waits for provider forwarding before the IPC reference event
+  ---
+  duration_ms: 4.5459
+  type: 'test'
+  ...
+# Subtest: whisper system audio retains provider payload and emits exactly one AEC reference
+ok 16 - whisper system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 1.5719
+  type: 'test'
+  ...
+# Subtest: gemini system audio retains provider payload and emits exactly one AEC reference
+ok 17 - gemini system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 1.9132
+  type: 'test'
+  ...
+# Subtest: deepgram system audio retains provider payload and emits exactly one AEC reference
+ok 18 - deepgram system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 1.8834
+  type: 'test'
+  ...
+# Subtest: provider rejection propagates without a success result or AEC reference
+ok 19 - provider rejection propagates without a success result or AEC reference
+  ---
+  duration_ms: 1.8894
+  type: 'test'
+  ...
+# Subtest: inactive STT session rejects without emitting an AEC reference
+ok 20 - inactive STT session rejects without emitting an AEC reference
+  ---
+  duration_ms: 1.5092
+  type: 'test'
+  ...
+# Subtest: missing model information rejects without forwarding or an AEC reference
+ok 21 - missing model information rejects without forwarding or an AEC reference
+  ---
+  duration_ms: 1.9173
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 105.014

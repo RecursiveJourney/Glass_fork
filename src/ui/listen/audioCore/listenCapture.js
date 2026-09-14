@@ -345,6 +345,7 @@ async function setupMicProcessing(micStream) {
 function setupLinuxMicProcessing(micStream) {
     // Setup microphone audio processing for Linux
     const micAudioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
+    audioContext = micAudioContext;
     const micSource = micAudioContext.createMediaStreamSource(micStream);
     const micProcessor = micAudioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
 
@@ -489,7 +490,7 @@ async function startCapture(screenshotIntervalSeconds = 5, imageQuality = 'mediu
             });
 
             // Get microphone input for Linux
-            let micMediaStream = null;
+            micMediaStream = null;
             try {
                 micMediaStream = await navigator.mediaDevices.getUserMedia({
                     audio: {
@@ -567,47 +568,34 @@ async function startCapture(screenshotIntervalSeconds = 5, imageQuality = 'mediu
     } catch (err) {
         console.error('Error starting capture:', err);
         // Note: pickleGlass.e() is not available in this context, commenting out
-        // pickleGlass.e().setStatus('error');
+        // The lifecycle must receive a failed start acknowledgement.
+        return false;
     }
+    return Boolean(mediaStream || micMediaStream);
 }
 
-function stopCapture() {
-    // Clean up microphone resources
-    if (audioProcessor) {
-        audioProcessor.disconnect();
-        audioProcessor = null;
-    }
-    if (audioContext) {
-        audioContext.close();
-        audioContext = null;
-    }
-
-    // Clean up system audio resources
-    if (systemAudioProcessor) {
-        systemAudioProcessor.disconnect();
-        systemAudioProcessor = null;
-    }
-    if (systemAudioContext) {
-        systemAudioContext.close();
-        systemAudioContext = null;
-    }
-
-    // Stop and release media stream tracks
-    if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-        mediaStream = null;
-    }
-    if (micMediaStream) {
-        micMediaStream.getTracks().forEach(t => t.stop());
-        micMediaStream = null;
-    }
-
-    // Stop macOS audio capture if running
-    if (isMacOS) {
-        window.api.listenCapture.stopMacosSystemAudio().catch(err => {
-            console.error('Error stopping macOS audio:', err);
+let pendingCaptureCleanup = [];
+async function stopCapture() {
+    const resources = { audioProcessor, audioContext, systemAudioProcessor, systemAudioContext, mediaStream, micMediaStream };
+    audioProcessor = audioContext = systemAudioProcessor = systemAudioContext = mediaStream = micMediaStream = null;
+    const retries = pendingCaptureCleanup;
+    pendingCaptureCleanup = [];
+    const attempt = async fn => { try { await fn(); } catch { pendingCaptureCleanup.push(fn); } };
+    for (const retry of retries) await attempt(retry);
+    await attempt(() => resources.audioProcessor?.disconnect());
+    await attempt(() => resources.systemAudioProcessor?.disconnect());
+    for (const stream of [resources.mediaStream, resources.micMediaStream]) {
+        await attempt(async () => {
+            for (const track of stream?.getTracks() || []) await attempt(() => track.stop());
         });
     }
+    await attempt(() => resources.audioContext?.close());
+    await attempt(() => resources.systemAudioContext?.close());
+    if (isMacOS) await attempt(async () => {
+        const result = await window.api.listenCapture.stopMacosSystemAudio();
+        if (result?.success === false) throw new Error('capture_cleanup_failed');
+    });
+    if (pendingCaptureCleanup.length) throw new Error('capture_cleanup_failed');
 }
 
 // ---------------------------
@@ -629,4 +617,4 @@ if (typeof window !== 'undefined') {
     window.pickleGlass = window.pickleGlass || {};
     window.pickleGlass.startCapture = startCapture;
     window.pickleGlass.stopCapture = stopCapture;
-} 
+}

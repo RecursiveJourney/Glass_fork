@@ -1,0 +1,68 @@
+GLASS: git rev-parse HEAD
+30f7362eb7f8b3ca3ab4ccad8abfc60d9d060f1d
+GLASS: git show --stat --oneline HEAD
+30f7362 [ADD] Wire 2 phase 2: meeting-feed subscriber service + IPC surface, main process only (199 tests green Node 20+24)
+ docs/meeting-feed-subscriber.md                    |   56 +
+ docs/wire2-phase2-checkpoint.md                    |  100 ++
+ docs/wire2-phase2-evidence/cleanup-green.tap       |   22 +
+ docs/wire2-phase2-evidence/cleanup-red.tap         |   61 +
+ docs/wire2-phase2-evidence/glass-node20.tap        | 1005 ++++++++++++++++
+ docs/wire2-phase2-evidence/glass-node24.tap        | 1204 ++++++++++++++++++++
+ docs/wire2-phase2-evidence/ipc-green.tap           |   82 ++
+ docs/wire2-phase2-evidence/ipc-red.tap             |  145 +++
+ docs/wire2-phase2-evidence/listener-node20.tap     |  930 +++++++++++++++
+ docs/wire2-phase2-evidence/listener-node24.tap     | 1114 ++++++++++++++++++
+ docs/wire2-phase2-evidence/parser-cr-green.tap     |  184 +++
+ docs/wire2-phase2-evidence/parser-cr-red.tap       |   65 ++
+ docs/wire2-phase2-evidence/phase1-git.txt          |   38 +
+ .../phase2-focused-node24.tap                      |  178 +++
+ docs/wire2-phase2-evidence/phase2-git.txt          |   13 +
+ docs/wire2-phase2-evidence/secret-scan.txt         |    1 +
+ docs/wire2-phase2-evidence/subscriber-green.tap    |  172 +++
+ docs/wire2-phase2-evidence/subscriber-red.tap      |  585 ++++++++++
+ src/bridge/featureBridge.js                        |    6 +-
+ src/features/listen/listenService.js               |   42 +-
+ src/features/listen/meeting/meetingFeedService.js  |  298 +++++
+ src/preload.js                                     |   14 +-
+ tests/meeting-feed-integration.test.js             |   67 ++
+ tests/meeting-feed-ipc.test.js                     |  137 +++
+ tests/meeting-feed-service.test.js                 |  336 ++++++
+ 25 files changed, 6852 insertions(+), 3 deletions(-)
+GLASS: git status --short
+?? docs/wire2-phase3a-git.txt
+?? docs/wire2-phase3a-inventory.md
+PARENT: git rev-parse HEAD
+1182c176495b9556ef6a3cb01b8168a41eb4c94f
+PARENT: git show --stat --oneline HEAD
+1182c17 [ADD] Wire 2 phase 1: live meeting feed — SSE /v1/live/events, typed subscriptions, bounded delivery (184 tests green Node 20+24)
+ realtime_listener/README.md                        |    4 +
+ realtime_listener/docs/design.md                   |    2 +
+ realtime_listener/docs/live-feed-contract.md       |   90 ++
+ realtime_listener/docs/wire2-phase1-checkpoint.md  |   81 ++
+ .../docs/wire2-phase1-evidence/cli-red.tap         |   33 +
+ .../docs/wire2-phase1-evidence/domain-green.txt    |   47 +
+ .../docs/wire2-phase1-evidence/domain-red.txt      |  306 ++++++
+ .../wire2-phase1-evidence/drain-probe-initial.tap  |   83 ++
+ .../docs/wire2-phase1-evidence/glass-node20.tap    |  830 ++++++++++++++
+ .../docs/wire2-phase1-evidence/glass-node24.tap    |  994 +++++++++++++++++
+ .../docs/wire2-phase1-evidence/http-green.tap      |   70 ++
+ .../docs/wire2-phase1-evidence/http-red.txt        |  148 +++
+ .../wire2-phase1-evidence/integration-green.tap    |   94 ++
+ .../wire2-phase1-evidence/integration-initial.tap  |   16 +
+ .../docs/wire2-phase1-evidence/listener-node20.tap |  930 ++++++++++++++++
+ .../listener-node24-first.tap                      | 1139 ++++++++++++++++++++
+ .../docs/wire2-phase1-evidence/listener-node24.tap | 1114 +++++++++++++++++++
+ .../node20-sandbox-failure.tap                     |  604 +++++++++++
+ .../terminal-snapshot-green.tap                    |   16 +
+ .../terminal-snapshot-red.tap                      |   34 +
+ realtime_listener/lib/http-server.js               |   82 +-
+ realtime_listener/lib/live-feed.js                 |   85 ++
+ realtime_listener/lib/live-session.js              |   47 +-
+ realtime_listener/lib/suggestion-loop.js           |   25 +-
+ realtime_listener/listener.js                      |    3 +-
+ realtime_listener/test/live-events-http.test.js    |  221 ++++
+ realtime_listener/test/live-feed.test.js           |  161 +++
+ realtime_listener/test/serve-cli.test.js           |   27 +
+ 28 files changed, 7262 insertions(+), 24 deletions(-)
+PARENT: git status --short
+ M glass

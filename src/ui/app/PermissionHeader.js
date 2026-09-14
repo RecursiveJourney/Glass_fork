@@ -267,6 +267,7 @@ export class PermissionHeader extends LitElement {
         keychainGranted: { type: String },
         isChecking: { type: String },
         continueCallback: { type: Function },
+        backCallback: { type: Function },
         userMode: { type: String }, // 'local' or 'firebase'
     };
 
@@ -470,6 +471,7 @@ export class PermissionHeader extends LitElement {
     }
 
     handleClose() {
+        if (this.backCallback) return this.backCallback();
         console.log('Close button clicked');
         if (window.api) {
             window.api.common.quitApplication();
@@ -484,7 +486,7 @@ export class PermissionHeader extends LitElement {
 
         return html`
             <div class="container" style="height: ${containerHeight}px">
-                <button class="close-button" @click=${this.handleClose} title="Close application">
+                <button class="close-button" @click=${this.handleClose} title=${this.backCallback ? 'Back to source selection' : 'Close application'}>
                     <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor">
                         <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.2" />
                     </svg>
@@ -583,4 +585,4 @@ export class PermissionHeader extends LitElement {
     }
 }
 
-customElements.define('permission-setup', PermissionHeader); 
+customElements.define('permission-setup', PermissionHeader);

@@ -1,0 +1,109 @@
+TAP version 13
+# Subtest: failed database initialization never starts capture
+ok 1 - failed database initialization never starts capture
+  ---
+  duration_ms: 2.9848
+  type: 'test'
+  ...
+# Subtest: Stop while local initialization is pending prevents late capture start
+ok 2 - Stop while local initialization is pending prevents late capture start
+  ---
+  duration_ms: 4.4271
+  type: 'test'
+  ...
+# Subtest: Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+ok 3 - Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+  ---
+  duration_ms: 1.3435
+  type: 'test'
+  ...
+# Subtest: Local stop performs all cleanup even when STT close fails
+ok 4 - Local stop performs all cleanup even when STT close fails
+  ---
+  duration_ms: 1.1063
+  type: 'test'
+  ...
+# Subtest: transcription pending database touch cannot persist or summarize after Stop
+ok 5 - transcription pending database touch cannot persist or summarize after Stop
+  ---
+  duration_ms: 1.0278
+  type: 'test'
+  ...
+# Subtest: default source initializes once from provider configuration and state publishes to both windows
+ok 6 - default source initializes once from provider configuration and state publishes to both windows
+  ---
+  duration_ms: 0.7832
+  type: 'test'
+  ...
+# Subtest: source locks and Stop cancels Listen while initial capability read is pending
+not ok 7 - source locks and Stop cancels Listen while initial capability read is pending
+  ---
+  duration_ms: 1.2608
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:106:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:109:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: summary reset failure cannot block capture stop, STT cleanup or session end
+not ok 8 - summary reset failure cannot block capture stop, STT cleanup or session end
+  ---
+  duration_ms: 0.9093
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:114:1'
+  failureType: 'testCodeFailure'
+  error: 'private'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Summary.resetConversationHistory (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:19:145)
+    ListenService.closeSession (evalmachine.<anonymous>:237:40)
+    ListenService.handleListenRequest (evalmachine.<anonymous>:132:33)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:116:36)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: capture acknowledgement requires matching actual sender and lifecycle
+ok 9 - capture acknowledgement requires matching actual sender and lifecycle
+  ---
+  duration_ms: 3.4105
+  type: 'test'
+  ...
+# Subtest: old STT provider callbacks cannot render into a restarted local lifecycle
+ok 10 - old STT provider callbacks cannot render into a restarted local lifecycle
+  ---
+  duration_ms: 2.0552
+  type: 'test'
+  ...
+# Subtest: STT initialization resolving after close disposes sessions without timers or renderer output
+ok 11 - STT initialization resolving after close disposes sessions without timers or renderer output
+  ---
+  duration_ms: 1.7682
+  type: 'test'
+  ...
+# Subtest: STT cleanup resets identity and closes each socket even if the first close throws
+ok 12 - STT cleanup resets identity and closes each socket even if the first close throws
+  ---
+  duration_ms: 0.8749
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 10
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85.8263

@@ -1,0 +1,59 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 1 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.5992
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 2 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.095
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 3 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.1231
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 4 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.1313
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 5 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.095
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 6 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0855
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 7 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.095
+      type: 'test'
+      ...
+    1..7
+ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1594.3035
+  type: 'test'
+  ...
+1..1
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1657.1274

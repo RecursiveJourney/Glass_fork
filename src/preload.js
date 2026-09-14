@@ -192,6 +192,18 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
 
+  listen: {
+    getState: () => ipcRenderer.invoke('listen:get-state'),
+    getCapabilities: () => ipcRenderer.invoke('listen:get-capabilities'),
+    selectSource: source => ipcRenderer.invoke('listen:select-source', source),
+    ackCapture: ({ status, lifecycleId, success }) => ipcRenderer.invoke('listen:capture-ack', { status, lifecycleId, success }),
+    onState: callback => {
+      const listener = (_event, state) => callback(state);
+      ipcRenderer.on('listen:state', listener);
+      return () => ipcRenderer.removeListener('listen:state', listener);
+    }
+  },
+
   // src/ui/listen/stt/SttView.js
   sttView: {
     // Listeners

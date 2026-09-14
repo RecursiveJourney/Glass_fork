@@ -86,12 +86,18 @@ module.exports = {
     
     // Listen
     // Main-process configuration only; renderer arguments are intentionally ignored.
-    ipcMain.handle('meeting-feed:start', () => listenService.startMeetingFeed());
-    ipcMain.handle('meeting-feed:stop', () => listenService.stopMeetingFeed());
+    const meetingAction = action => listenService.getListenState().source === 'meeting'
+      ? listenService.handleListenRequest(action) : { success: false, error: 'meeting_source_required' };
+    ipcMain.handle('meeting-feed:start', () => meetingAction('Listen'));
+    ipcMain.handle('meeting-feed:stop', () => meetingAction('Stop'));
     ipcMain.handle('meeting-feed:get-state', () => listenService.getMeetingFeedState());
+    ipcMain.handle('listen:get-state', () => listenService.getListenState());
+    ipcMain.handle('listen:get-capabilities', () => listenService.getListenCapabilities());
+    ipcMain.handle('listen:select-source', (_event, source) => listenService.selectSource(source));
+    ipcMain.handle('listen:capture-ack', (event, data) => listenService.acknowledgeCapture(data, event.sender));
     ipcMain.handle('listen:sendMicAudio', async (event, { data, mimeType }) => await listenService.handleSendMicAudioContent(data, mimeType));
     ipcMain.handle('listen:sendSystemAudio', async (event, { data, mimeType }) => {
-        const result = await listenService.sttService.sendSystemAudioContent(data, mimeType);
+        const result = await listenService.sendSystemAudioContent(data, mimeType);
         if(result.success) {
             listenService.sendToRenderer('system-audio-data', { data });
         }
@@ -104,8 +110,7 @@ module.exports = {
     ipcMain.handle('listen:changeSession', async (event, listenButtonText) => {
       console.log('[FeatureBridge] listen:changeSession from mainheader', listenButtonText);
       try {
-        await listenService.handleListenRequest(listenButtonText);
-        return { success: true };
+        return await listenService.handleListenRequest(listenButtonText);
       } catch (error) {
         console.error('[FeatureBridge] listen:changeSession failed', error.message);
         return { success: false, error: error.message };

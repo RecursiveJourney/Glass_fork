@@ -1,0 +1,3 @@
+PASS: secret scan of added diff lines and 51 untracked files (image content verified separately); no configured environment/.env credentials or key-pattern matches.
+PASS: Ask, repositories, provider implementations/settings, shortcuts and listener source unchanged.
+PASS: no staged changes; git diff --check clean.

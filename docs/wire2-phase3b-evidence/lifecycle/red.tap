@@ -1,0 +1,117 @@
+✖ failed database initialization never starts capture (2.5084ms)
+✖ Stop while local initialization is pending prevents late capture start (5.097ms)
+✖ Meeting lifecycle never calls local capture, database or summary; reconnect remains active (1.0384ms)
+✖ Local stop performs all cleanup even when STT close fails (1.482ms)
+✔ transcription pending database touch cannot persist or summarize after Stop (1.1432ms)
+✖ default source initializes once from provider configuration and state publishes to both windows (0.8305ms)
+✖ reset clears summary session identity (2.2924ms)
+✖ late summary completion after reset cannot save, render, or overwrite the new lifecycle (1.4925ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 1
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.7541
+
+✖ failing tests:
+
+test at tests\meeting-lifecycle.test.js:56:1
+✖ failed database initialization never starts capture (2.5084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:59:12)
+      at async Test.run (node:internal/test_runner/test:1110:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\meeting-lifecycle.test.js:61:1
+✖ Stop while local initialization is pending prevents late capture start (5.097ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:67:12)
+      at async Test.run (node:internal/test_runner/test:1110:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\meeting-lifecycle.test.js:69:1
+✖ Meeting lifecycle never calls local capture, database or summary; reconnect remains active (1.0384ms)
+  TypeError: h.service.selectSource is not a function
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:71:35)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+
+test at tests\meeting-lifecycle.test.js:81:1
+✖ Local stop performs all cleanup even when STT close fails (1.482ms)
+  TypeError: Cannot read properties of undefined (reading 'success')
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:85:25)
+      at async Test.run (node:internal/test_runner/test:1110:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+
+test at tests\meeting-lifecycle.test.js:98:1
+✖ default source initializes once from provider configuration and state publishes to both windows (0.8305ms)
+  TypeError: h.service.getListenCapabilities is not a function
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:100:35)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+
+test at tests\summary-lifecycle.test.js:21:1
+✖ reset clears summary session identity (2.2924ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'old' !== null
+  
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\summary-lifecycle.test.js:23:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.start (node:internal/test_runner/test:1000:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'old',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\summary-lifecycle.test.js:25:1
+✖ late summary completion after reset cannot save, render, or overwrite the new lifecycle (1.4925ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\summary-lifecycle.test.js:30:12)
+      at async Test.run (node:internal/test_runner/test:1110:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,43 @@
+TAP version 13
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+not ok 1 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 3.2674
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:32:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'audio',
+    -   'display',
+    -   'mic',
+    -   'system'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'audio'
+    1: 'display'
+    2: 'mic'
+    3: 'system'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:39:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 67.4546

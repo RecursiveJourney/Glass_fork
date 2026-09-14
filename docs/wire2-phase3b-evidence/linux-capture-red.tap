@@ -1,0 +1,68 @@
+TAP version 13
+# Subtest: capture Stop acknowledges only after asynchronous resource release
+ok 1 - capture Stop acknowledges only after asynchronous resource release
+  ---
+  duration_ms: 4.1811
+  type: 'test'
+  ...
+# Subtest: late local capture completion is released before stop ack and stale start is rejected
+ok 2 - late local capture completion is released before stop ack and stale start is rejected
+  ---
+  duration_ms: 1.4483
+  type: 'test'
+  ...
+# Subtest: failed start is cleaned and acknowledged as failed
+ok 3 - failed start is cleaned and acknowledged as failed
+  ---
+  duration_ms: 1.1655
+  type: 'test'
+  ...
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+ok 4 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 1.682
+  type: 'test'
+  ...
+# Subtest: Linux capture owns and releases microphone, display and audio context before Stop completes
+not ok 5 - Linux capture owns and releases microphone, display and audio context before Stop completes
+  ---
+  duration_ms: 2.6287
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-capture.test.js:42:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    -   'context',
+        'display',
+    -   'mic',
+        'processor'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'context'
+    1: 'display'
+    2: 'mic'
+    3: 'processor'
+  actual:
+    0: 'display'
+    1: 'processor'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-capture.test.js:56:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.642

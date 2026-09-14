@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: failed database initialization never starts capture
+ok 1 - failed database initialization never starts capture
+  ---
+  duration_ms: 2.4511
+  type: 'test'
+  ...
+# Subtest: Stop while local initialization is pending prevents late capture start
+ok 2 - Stop while local initialization is pending prevents late capture start
+  ---
+  duration_ms: 4.5545
+  type: 'test'
+  ...
+# Subtest: Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+ok 3 - Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+  ---
+  duration_ms: 1.3835
+  type: 'test'
+  ...
+# Subtest: Local stop performs all cleanup even when STT close fails
+ok 4 - Local stop performs all cleanup even when STT close fails
+  ---
+  duration_ms: 1.1273
+  type: 'test'
+  ...
+# Subtest: transcription pending database touch cannot persist or summarize after Stop
+ok 5 - transcription pending database touch cannot persist or summarize after Stop
+  ---
+  duration_ms: 1.019
+  type: 'test'
+  ...
+# Subtest: default source initializes once from provider configuration and state publishes to both windows
+ok 6 - default source initializes once from provider configuration and state publishes to both windows
+  ---
+  duration_ms: 0.7982
+  type: 'test'
+  ...
+# Subtest: old STT provider callbacks cannot render into a restarted local lifecycle
+not ok 7 - old STT provider callbacks cannot render into a restarted local lifecycle
+  ---
+  duration_ms: 2.2164
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:129:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:134:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: STT initialization resolving after close disposes sessions without timers or renderer output
+not ok 8 - STT initialization resolving after close disposes sessions without timers or renderer output
+  ---
+  duration_ms: 3.1733
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:137:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:142:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: STT cleanup resets identity and closes each socket even if the first close throws
+not ok 9 - STT cleanup resets identity and closes each socket even if the first close throws
+  ---
+  duration_ms: 4.1359
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:145:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(h.providers.every(item => item.session.closed))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:148:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: reset clears summary session identity
+ok 10 - reset clears summary session identity
+  ---
+  duration_ms: 1.5771
+  type: 'test'
+  ...
+# Subtest: late summary completion after reset cannot save, render, or overwrite the new lifecycle
+ok 11 - late summary completion after reset cannot save, render, or overwrite the new lifecycle
+  ---
+  duration_ms: 1.2049
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 8
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.8522

@@ -1,0 +1,101 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: source selection remains a native interactive control
+    ok 1 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.6272
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 2 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0957
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 3 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.1218
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 4 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.0878
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 5 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.0925
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 6 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0782
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 7 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0783
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 8 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.1038
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 9 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.12
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 10 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.1177
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 11 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0995
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 12 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0643
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 13 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0503
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 14 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0971
+      type: 'test'
+      ...
+    1..14
+ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 2017.7393
+  type: 'test'
+  ...
+1..1
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2082.0501

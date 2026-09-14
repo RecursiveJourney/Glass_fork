@@ -44,7 +44,34 @@ class SttService {
         this.onTranscriptionComplete = null;
         this.onStatusUpdate = null;
 
-        this.modelInfo = null; 
+        this.modelInfo = null;
+        this.lifecycleEpoch = 0;
+        this.sessionEpoch = 0;
+        this.lifecycleGuard = () => true;
+        this.pendingCloseSessions = new Set();
+        this.pendingCloseOperations = new Map();
+        this.pendingInitializations = new Set();
+        this.overlapTimers = new Set();
+        this.initializationSequence = 0;
+        this.nextSessionEpoch = 0;
+    }
+
+    setLifecycleGuard(guard) { this.lifecycleGuard = guard; }
+
+    invalidateLifecycle() {
+        ++this.lifecycleEpoch;
+        this.sessionEpoch = ++this.nextSessionEpoch;
+        this.modelInfo = null;
+        for (const name of ['myCompletionTimer', 'theirCompletionTimer', 'sessionRenewTimeout']) {
+            if (this[name]) clearTimeout(this[name]);
+            this[name] = null;
+        }
+        if (this.keepAliveInterval) clearInterval(this.keepAliveInterval);
+        this.keepAliveInterval = null;
+        for (const timer of this.overlapTimers) clearTimeout(timer);
+        this.overlapTimers.clear();
+        this.myCompletionBuffer = this.theirCompletionBuffer = '';
+        this.myCurrentUtterance = this.theirCurrentUtterance = '';
     }
 
     setCallbacks({ onTranscriptionComplete, onStatusUpdate }) {
@@ -53,6 +80,7 @@ class SttService {
     }
 
     sendToRenderer(channel, data) {
+        if (!this.lifecycleGuard()) return;
         // Listen 관련 이벤트는 Listen 윈도우에만 전송 (Ask 윈도우 충돌 방지)
         const { windowPool } = require('../../../window/windowManager');
         const listenWindow = windowPool?.get('listen');
@@ -63,8 +91,10 @@ class SttService {
     }
 
     async handleSendSystemAudioContent(data, mimeType) {
+        const epoch = this.lifecycleEpoch;
         try {
             await this.sendSystemAudioContent(data, mimeType);
+            if (epoch !== this.lifecycleEpoch || !this.lifecycleGuard()) return { success: false, error: 'local_inactive' };
             this.sendToRenderer('system-audio-data', { data });
             return { success: true };
         } catch (error) {
@@ -73,7 +103,8 @@ class SttService {
         }
     }
 
-    flushMyCompletion() {
+    flushMyCompletion(epoch = this.lifecycleEpoch) {
+        if (epoch !== this.lifecycleEpoch || !this.lifecycleGuard()) return;
         const finalText = (this.myCompletionBuffer + this.myCurrentUtterance).trim();
         if (!this.modelInfo || !finalText) return;
 
@@ -100,7 +131,8 @@ class SttService {
         }
     }
 
-    flushTheirCompletion() {
+    flushTheirCompletion(epoch = this.lifecycleEpoch) {
+        if (epoch !== this.lifecycleEpoch || !this.lifecycleGuard()) return;
         const finalText = (this.theirCompletionBuffer + this.theirCurrentUtterance).trim();
         if (!this.modelInfo || !finalText) return;
         
@@ -135,7 +167,8 @@ class SttService {
         }
 
         if (this.myCompletionTimer) clearTimeout(this.myCompletionTimer);
-        this.myCompletionTimer = setTimeout(() => this.flushMyCompletion(), COMPLETION_DEBOUNCE_MS);
+        const epoch = this.lifecycleEpoch;
+        this.myCompletionTimer = setTimeout(() => this.flushMyCompletion(epoch), COMPLETION_DEBOUNCE_MS);
     }
 
     debounceTheirCompletion(text) {
@@ -146,27 +179,34 @@ class SttService {
         }
 
         if (this.theirCompletionTimer) clearTimeout(this.theirCompletionTimer);
-        this.theirCompletionTimer = setTimeout(() => this.flushTheirCompletion(), COMPLETION_DEBOUNCE_MS);
+        const epoch = this.lifecycleEpoch;
+        this.theirCompletionTimer = setTimeout(() => this.flushTheirCompletion(epoch), COMPLETION_DEBOUNCE_MS);
     }
 
     async initializeSttSessions(language = 'en') {
+        const epoch = this.lifecycleEpoch, sessionEpoch = ++this.nextSessionEpoch, guard = this.lifecycleGuard;
+        const attempt = ++this.initializationSequence;
+        const alive = () => epoch === this.lifecycleEpoch && guard();
+        const initializing = () => alive() && attempt === this.initializationSequence;
+        const current = () => alive() && sessionEpoch === this.sessionEpoch;
         const effectiveLanguage = process.env.OPENAI_TRANSCRIBE_LANG || language || 'en';
 
         const modelInfo = await modelStateService.getCurrentModelInfo('stt');
+        if (!initializing()) return false;
         if (!modelInfo || !modelInfo.apiKey) {
             throw new Error('AI model or API key is not configured.');
         }
-        this.modelInfo = modelInfo;
         console.log(`[SttService] Initializing STT for ${modelInfo.provider} using model ${modelInfo.model}`);
 
         const handleMyMessage = message => {
+            if (!current() || !message || typeof message !== 'object') return;
             if (!this.modelInfo) {
                 console.log('[SttService] Ignoring message - session already closed');
                 return;
             }
             // console.log('[SttService] handleMyMessage', message);
             
-            if (this.modelInfo.provider === 'whisper') {
+            if (modelInfo.provider === 'whisper') {
                 // Whisper STT emits 'transcription' events with different structure
                 if (message.text && message.text.trim()) {
                     const finalText = message.text.trim();
@@ -205,7 +245,7 @@ class SttService {
                     }
                 }
                 return;
-            } else if (this.modelInfo.provider === 'gemini') {
+            } else if (modelInfo.provider === 'gemini') {
                 if (!message.serverContent?.modelTurn) {
                     console.log('[Gemini STT - Me]', JSON.stringify(message, null, 2));
                 }
@@ -237,7 +277,7 @@ class SttService {
                 });
                 
             // Deepgram 
-            } else if (this.modelInfo.provider === 'deepgram') {
+            } else if (modelInfo.provider === 'deepgram') {
                 const text = message.channel?.alternatives?.[0]?.transcript;
                 if (!text || text.trim().length === 0) return;
 
@@ -300,6 +340,7 @@ class SttService {
         };
 
         const handleTheirMessage = message => {
+            if (!current()) return;
             if (!message || typeof message !== 'object') return;
 
             if (!this.modelInfo) {
@@ -307,7 +348,7 @@ class SttService {
                 return;
             }
             
-            if (this.modelInfo.provider === 'whisper') {
+            if (modelInfo.provider === 'whisper') {
                 // Whisper STT emits 'transcription' events with different structure
                 if (message.text && message.text.trim()) {
                     const finalText = message.text.trim();
@@ -347,7 +388,7 @@ class SttService {
                     }
                 }
                 return;
-            } else if (this.modelInfo.provider === 'gemini') {
+            } else if (modelInfo.provider === 'gemini') {
                 if (!message.serverContent?.modelTurn) {
                     console.log('[Gemini STT - Them]', JSON.stringify(message, null, 2));
                 }
@@ -379,7 +420,7 @@ class SttService {
                 });
 
             // Deepgram
-            } else if (this.modelInfo.provider === 'deepgram') {
+            } else if (modelInfo.provider === 'deepgram') {
                 const text = message.channel?.alternatives?.[0]?.transcript;
                 if (!text || text.trim().length === 0) return;
 
@@ -455,35 +496,50 @@ class SttService {
         };
         
         const sttOptions = {
-            apiKey: this.modelInfo.apiKey,
+            apiKey: modelInfo.apiKey,
             language: effectiveLanguage,
-            usePortkey: this.modelInfo.provider === 'openai-glass',
-            portkeyVirtualKey: this.modelInfo.provider === 'openai-glass' ? this.modelInfo.apiKey : undefined,
+            usePortkey: modelInfo.provider === 'openai-glass',
+            portkeyVirtualKey: modelInfo.provider === 'openai-glass' ? modelInfo.apiKey : undefined,
         };
 
         // Whisper models are selected dynamically; pass the selection to both sessions and renewals.
-        if (this.modelInfo.provider === 'whisper') sttOptions.model = this.modelInfo.model;
+        if (modelInfo.provider === 'whisper') sttOptions.model = modelInfo.model;
 
         // Add sessionType for Whisper to distinguish between My and Their sessions
         const myOptions = { ...sttOptions, callbacks: mySttConfig.callbacks, sessionType: 'my' };
         const theirOptions = { ...sttOptions, callbacks: theirSttConfig.callbacks, sessionType: 'their' };
 
-        [this.mySttSession, this.theirSttSession] = await Promise.all([
-            createSTT(this.modelInfo.provider, myOptions),
-            createSTT(this.modelInfo.provider, theirOptions),
-        ]);
+        const create = async options => {
+            const session = await createSTT(modelInfo.provider, options);
+            this.pendingCloseSessions.add(session);
+            return session;
+        };
+        const creation = Promise.allSettled([create(myOptions), create(theirOptions)]);
+        this.pendingInitializations.add(creation);
+        let sessions;
+        try { sessions = await creation; } finally { this.pendingInitializations.delete(creation); }
+        if (!initializing() || sessions.some(item => item.status === 'rejected')) {
+            await Promise.allSettled(sessions.filter(item => item.status === 'fulfilled')
+                .map(item => this.closeOwnedSession(item.value)));
+            if (!initializing()) return false;
+            throw new Error('stt_initialization_failed');
+        }
+        this.sessionEpoch = sessionEpoch;
+        this.modelInfo = modelInfo;
+        [this.mySttSession, this.theirSttSession] = sessions.map(item => item.value);
 
         console.log('✅ Both STT sessions initialized successfully.');
 
         // ── Setup keep-alive heart-beats ────────────────────────────────────────
         if (this.keepAliveInterval) clearInterval(this.keepAliveInterval);
         this.keepAliveInterval = setInterval(() => {
-            this._sendKeepAlive();
+            if (current()) this._sendKeepAlive();
         }, KEEP_ALIVE_INTERVAL_MS);
 
         // ── Schedule session auto-renewal ───────────────────────────────────────
         if (this.sessionRenewTimeout) clearTimeout(this.sessionRenewTimeout);
         this.sessionRenewTimeout = setTimeout(async () => {
+            if (!current()) return;
             try {
                 console.log('[SttService] Auto-renewing STT sessions…');
                 await this.renewSessions(language);
@@ -523,6 +579,7 @@ class SttService {
             return;
         }
 
+        const epoch = this.lifecycleEpoch;
         const oldMySession = this.mySttSession;
         const oldTheirSession = this.theirSttSession;
 
@@ -534,19 +591,32 @@ class SttService {
         // pipeline, so audio continues flowing uninterrupted.
         await this.initializeSttSessions(language);
 
-        // Close the old sessions after a short overlap window.
-        setTimeout(() => {
-            try {
-                oldMySession?.close?.();
-                oldTheirSession?.close?.();
-                console.log('[SttService] Old STT sessions closed after hand-off.');
-            } catch (err) {
-                console.error('[SttService] Error closing old STT sessions:', err.message);
-            }
+        if (epoch !== this.lifecycleEpoch || !this.lifecycleGuard()) {
+            await Promise.allSettled([oldMySession, oldTheirSession].map(session => this.closeOwnedSession(session)));
+            return;
+        }
+        // Retired sessions remain owned until close succeeds, including during overlap.
+        const timer = setTimeout(() => {
+            this.overlapTimers.delete(timer);
+            return Promise.allSettled([oldMySession, oldTheirSession].map(session => this.closeOwnedSession(session)));
         }, SOCKET_OVERLAP_MS);
+        this.overlapTimers.add(timer);
+    }
+
+    closeOwnedSession(session) {
+        if (!session || !this.pendingCloseSessions.has(session)) return Promise.resolve();
+        if (this.pendingCloseOperations.has(session)) return this.pendingCloseOperations.get(session);
+        // Invoke close synchronously so completed local sockets release immediately.
+        let result;
+        try { result = session.close?.(); } catch (error) { result = Promise.reject(error); }
+        const closing = Promise.resolve(result).then(() => this.pendingCloseSessions.delete(session))
+            .finally(() => this.pendingCloseOperations.delete(session));
+        this.pendingCloseOperations.set(session, closing);
+        return closing;
     }
 
     async sendMicAudioContent(data, mimeType) {
+        if (!this.lifecycleGuard()) throw new Error('local_inactive');
         // const provider = await this.getAiProvider();
         // const isGemini = provider === 'gemini';
         
@@ -575,6 +645,7 @@ class SttService {
     }
 
     async sendSystemAudioContent(data, mimeType) {
+        if (!this.lifecycleGuard()) throw new Error('local_inactive');
         if (!this.theirSttSession) {
             throw new Error('Their STT session not active');
         }
@@ -632,9 +703,12 @@ class SttService {
     }
 
     async startMacOSAudioCapture() {
-        if (process.platform !== 'darwin' || !this.theirSttSession) return false;
+        const epoch = this.lifecycleEpoch, guard = this.lifecycleGuard;
+        const current = () => epoch === this.lifecycleEpoch && guard();
+        if (!current() || process.platform !== 'darwin' || !this.theirSttSession) return false;
 
         await this.killExistingSystemAudioDump();
+        if (!current()) return false;
         console.log('Starting macOS audio capture for "Them"...');
 
         const { app } = require('electron');
@@ -676,10 +750,13 @@ class SttService {
             throw new Error('STT model info could not be retrieved.');
         }
 
-        this.systemAudioProc.stdout.on('data', async data => {
+        if (!current()) return false;
+        const captureProc = this.systemAudioProc;
+        captureProc.stdout.on('data', async data => {
+            if (!current()) return;
             audioBuffer = Buffer.concat([audioBuffer, data]);
 
-            while (audioBuffer.length >= CHUNK_SIZE) {
+            while (current() && audioBuffer.length >= CHUNK_SIZE) {
                 const chunk = audioBuffer.slice(0, CHUNK_SIZE);
                 audioBuffer = audioBuffer.slice(CHUNK_SIZE);
 
@@ -713,12 +790,12 @@ class SttService {
 
         this.systemAudioProc.on('close', code => {
             console.log('SystemAudioDump process closed with code:', code);
-            this.systemAudioProc = null;
+            if (this.systemAudioProc === captureProc) this.systemAudioProc = null;
         });
 
         this.systemAudioProc.on('error', err => {
             console.error('SystemAudioDump process error:', err);
-            this.systemAudioProc = null;
+            if (this.systemAudioProc === captureProc) this.systemAudioProc = null;
         });
 
         return true;
@@ -737,11 +814,35 @@ class SttService {
     }
 
     stopMacOSAudioCapture() {
-        if (this.systemAudioProc) {
-            console.log('Stopping SystemAudioDump...');
-            this.systemAudioProc.kill('SIGTERM');
+        if (this.systemAudioStopPromise) return this.systemAudioStopPromise;
+        const proc = this.systemAudioProc;
+        if (!proc) return Promise.resolve();
+        if (proc.exitCode != null || proc.signalCode != null) {
             this.systemAudioProc = null;
+            return Promise.resolve();
         }
+        const stopped = new Promise((resolve, reject) => {
+            const finish = error => {
+                clearTimeout(timer);
+                proc.removeListener('close', closed);
+                proc.removeListener('error', failed);
+                if (error) reject(new Error('system_audio_cleanup_failed'));
+                else {
+                    if (this.systemAudioProc === proc) this.systemAudioProc = null;
+                    resolve();
+                }
+            };
+            const closed = () => finish();
+            const failed = () => finish(true);
+            const timer = setTimeout(failed, 5000);
+            proc.once('close', closed);
+            proc.once('error', failed);
+            try { if (proc.kill('SIGTERM') === false) failed(); } catch { failed(); }
+        });
+        this.systemAudioStopPromise = stopped;
+        return stopped.finally(() => {
+            if (this.systemAudioStopPromise === stopped) this.systemAudioStopPromise = null;
+        });
     }
 
     isSessionActive() {
@@ -749,48 +850,19 @@ class SttService {
     }
 
     async closeSessions() {
-        this.stopMacOSAudioCapture();
-
-        // Clear heartbeat / renewal timers
-        if (this.keepAliveInterval) {
-            clearInterval(this.keepAliveInterval);
-            this.keepAliveInterval = null;
-        }
-        if (this.sessionRenewTimeout) {
-            clearTimeout(this.sessionRenewTimeout);
-            this.sessionRenewTimeout = null;
-        }
-
-        // Clear timers
-        if (this.myCompletionTimer) {
-            clearTimeout(this.myCompletionTimer);
-            this.myCompletionTimer = null;
-        }
-        if (this.theirCompletionTimer) {
-            clearTimeout(this.theirCompletionTimer);
-            this.theirCompletionTimer = null;
-        }
-
-        const closePromises = [];
-        if (this.mySttSession) {
-            closePromises.push(this.mySttSession.close());
-            this.mySttSession = null;
-        }
-        if (this.theirSttSession) {
-            closePromises.push(this.theirSttSession.close());
-            this.theirSttSession = null;
-        }
-
-        await Promise.all(closePromises);
-        console.log('All STT sessions closed.');
-
-        // Reset state
-        this.myCurrentUtterance = '';
-        this.theirCurrentUtterance = '';
-        this.myCompletionBuffer = '';
-        this.theirCompletionBuffer = '';
-        this.modelInfo = null; 
+        this.invalidateLifecycle();
+        // Provider creations cannot outlive cleanup ownership, even during renewal.
+        await Promise.allSettled([...this.pendingInitializations]);
+        const sessions = [...new Set([this.mySttSession, this.theirSttSession, ...this.pendingCloseSessions])].filter(Boolean);
+        this.mySttSession = this.theirSttSession = null;
+        for (const session of sessions) this.pendingCloseSessions.add(session);
+        const results = await Promise.allSettled([
+            Promise.resolve().then(() => this.stopMacOSAudioCapture()),
+            ...sessions.map(session => this.closeOwnedSession(session)),
+        ]);
+        if (results.some(item => item.status === 'rejected') || this.pendingCloseSessions.size) throw new Error('stt_cleanup_failed');
     }
+
 }
 
-module.exports = SttService; 
+module.exports = SttService;

@@ -1,4 +1,5 @@
 import { html, css, LitElement } from '../../assets/lit-core-2.7.4.min.js';
+import { updateFeedRows } from '../meeting/keyedFeedRows.js';
 
 export class SttView extends LitElement {
     static styles = css`
@@ -76,11 +77,16 @@ export class SttView extends LitElement {
             font-size: 12px;
             font-style: italic;
         }
+        .meeting-scroll { height:280px; max-height:320px; min-height:0; box-sizing:border-box; overflow-anchor:none; user-select:text; }
+        .meeting-row { max-width:100%; align-self:stretch; background:rgba(255,255,255,.07); white-space:pre-wrap; }
+        .speaker-label { display:block; font-size:11px; font-weight:600; color:#a8ceeb; margin-bottom:3px; }
     `;
 
     static properties = {
         sttMessages: { type: Array },
         isVisible: { type: Boolean },
+        meeting: { type: Boolean },
+        snapshot: { type: Object },
     };
 
     constructor() {
@@ -88,6 +94,10 @@ export class SttView extends LitElement {
         this.sttMessages = [];
         this.isVisible = true;
         this.messageIdCounter = 0;
+        this.meeting = false;
+        this.snapshot = null;
+        this._meetingRows = new Map();
+        this._meetingInstance = null;
         this._shouldScrollAfterUpdate = false;
 
         this.handleSttUpdate = this.handleSttUpdate.bind(this);
@@ -114,6 +124,7 @@ export class SttView extends LitElement {
     }
 
     handleSttUpdate(event, { speaker, text, isFinal, isPartial }) {
+        if (this.meeting) return;
         if (text === undefined) return;
 
         const container = this.shadowRoot.querySelector('.transcription-container');
@@ -189,11 +200,27 @@ export class SttView extends LitElement {
     }
 
     getTranscriptText() {
+        if (this.meeting) return (this.snapshot?.chunks || []).map(row => `${row.speaker_name}: ${row.text}`).join('\n');
         return this.sttMessages.map(msg => `${msg.speaker}: ${msg.text}`).join('\n');
     }
 
     updated(changedProperties) {
         super.updated(changedProperties);
+        if (this.meeting) {
+            const container = this.shadowRoot.querySelector('.transcription-container');
+            if (container) {
+                updateFeedRows(container, this.snapshot?.chunks || [], this._meetingRows,
+                    row => JSON.stringify([this.snapshot.transcriptId, row.chunk_id]),
+                    () => {
+                        const node = document.createElement('div'); node.className = 'stt-message meeting-row';
+                        const speaker = document.createElement('span'); speaker.className = 'speaker-label';
+                        node.append(speaker, document.createElement('span')); return node;
+                    }, (node, row) => { node.children[0].textContent = row.speaker_name; node.children[1].textContent = row.text; },
+                    this._meetingInstance !== this.snapshot?.instanceId);
+                this._meetingInstance = this.snapshot?.instanceId;
+            }
+            return;
+        }
 
         if (changedProperties.has('sttMessages')) {
             if (this._shouldScrollAfterUpdate) {
@@ -204,6 +231,7 @@ export class SttView extends LitElement {
     }
 
     render() {
+        if (this.meeting) return html`<div class="transcription-container meeting-scroll" role="log" aria-label="Meeting transcript"></div>`;
         if (!this.isVisible) {
             return html`<div style="display: none;"></div>`;
         }
@@ -223,4 +251,4 @@ export class SttView extends LitElement {
     }
 }
 
-customElements.define('stt-view', SttView); 
+customElements.define('stt-view', SttView);
