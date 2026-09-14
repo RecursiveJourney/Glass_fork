@@ -10,10 +10,11 @@ export class MainHeader extends LitElement {
     };
 
     static styles = css`
-        .source-select { -webkit-app-region:no-drag; background:rgba(255,255,255,.08); color:inherit; border:1px solid rgba(255,255,255,.18); border-radius:7px; padding:5px 3px; font:inherit; font-size:11px; max-width:82px; cursor:pointer; }
+        .source-select { -webkit-app-region:no-drag; background:rgba(255,255,255,.08); color:var(--header-text-color, #fff); border:1px solid rgba(255,255,255,.18); border-radius:7px; padding:5px 3px; font:inherit; font-size:11px; max-width:82px; cursor:pointer; }
         .source-select option { background:#20262b; color:white; }
         .source-select:disabled { opacity:.65; cursor:default; }
         :host {
+            --header-text-color: #fff;
             display: flex;
             transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease-out;
         }
@@ -265,6 +266,10 @@ export class MainHeader extends LitElement {
             justify-content: center;
         }
 
+        .header { flex: none; }
+        .header > * { flex-shrink: 0; }
+        .setup-button, .done-button { background: transparent; color: white; border: none; cursor: pointer; font-size:12px; font-weight:500; }
+        .done-button { background:rgba(255,255,255,.6); color:black; }
         .settings-button {
             -webkit-app-region: no-drag;
             padding: 5px;
@@ -498,6 +503,10 @@ export class MainHeader extends LitElement {
     }
 
     disconnectedCallback() {
+        this._headerResizeObserver?.disconnect();
+        this._headerResizeObserver = null;
+        this._headerResizePending = null;
+        window.removeEventListener("resize", this._onViewportResize);
         super.disconnectedCallback();
         ++this._listenHydration; this._offListen?.(); this._offListen = null;
         this.removeEventListener('animationend', this.handleAnimationEnd);
@@ -515,6 +524,55 @@ export class MainHeader extends LitElement {
                 window.api.mainHeader.removeOnShortcutsUpdated(this._shortcutListener);
             }
         }
+    }
+
+    firstUpdated() {
+        this._headerResizeObserver = new ResizeObserver(() => this.resizeToContent());
+        this._headerResizeObserver.observe(this.shadowRoot.querySelector('.header'));
+        this._onViewportResize = () => this.resizeToContent();
+        window.addEventListener('resize', this._onViewportResize);
+        this.resizeToContent();
+    }
+
+    updated() { this.resizeToContent(); }
+
+    suspendWindowSizing() { this._sizingSuspended = true; }
+
+    resumeWindowSizing() {
+        this._sizingSuspended = false;
+        return this.resizeToContent();
+    }
+
+    async resizeToContent() {
+        const header = this.shadowRoot?.querySelector('.header');
+        if (!header || !this.isConnected || this._sizingSuspended || !window.api?.headerController) return;
+        const width = Math.ceil(header.getBoundingClientRect().width);
+        const height = Math.round(header.getBoundingClientRect().height);
+        if (Math.abs(window.innerWidth - width) <= 2 && Math.abs(window.innerHeight - height) <= 2) return;
+        if (this._headerResizePending) { this._headerResizeAgain = true; return; }
+        const identity = {};
+        this._headerResizePending = identity;
+        try {
+            // Native viewport, not the last request, decides whether another resize is needed.
+            await window.api.headerController.resizeHeaderWindow({ width, height });
+        } catch { /* A later content/viewport change retries; never expose configuration. */ }
+        finally {
+            if (this._headerResizePending === identity) {
+                this._headerResizePending = null;
+                if (this._headerResizeAgain && this.isConnected) {
+                    this._headerResizeAgain = false;
+                    this.resizeToContent();
+                }
+            }
+        }
+    }
+
+    async finishListen() {
+        if (this.wasJustDragged || this.isTogglingSession) return;
+        try {
+            const result = await window.api.mainHeader.sendListenButtonClick('Done');
+            this.applyListenState(result?.state);
+        } catch { /* Keep authoritative state if the request fails. */ }
     }
 
     showSettingsWindow(element) {
@@ -653,7 +711,7 @@ export class MainHeader extends LitElement {
                         `
                         : html`
                             <div class="action-text">
-                                <div class="action-text-content">${this.listenState?.source === 'local' && this.listenState.error !== 'local_cleanup_failed' && ['idle','stopped'].includes(this.listenState.phase) && !this.capabilities.localListen ? 'Set up Local' : listenButtonText}</div>
+                                <div class="action-text-content">${listenButtonText}</div>
                             </div>
                             <div class="listen-icon">
                                 ${showStopIcon
@@ -673,6 +731,10 @@ export class MainHeader extends LitElement {
                         `}
                 </button>
 
+                ${this.listenState?.phase === "stopped" && this.listenState.error !== "local_cleanup_failed"
+                    ? html`<button class="header-actions done-button" @click=${this.finishListen}>Done</button>` : ""}
+                <button class="header-actions setup-button" title="Connection and permission setup"
+                    @click=${() => window.dispatchEvent(new CustomEvent("glass-setup-requested"))}>Setup</button>
                 <div class="header-actions ask-action" @click=${() => this._handleAskClick()}>
                     <div class="action-text">
                         <div class="action-text-content">Ask</div>
@@ -682,7 +744,7 @@ export class MainHeader extends LitElement {
                     </div>
                 </div>
 
-                <div class="header-actions" @click=${() => this._handleToggleAllWindowsVisibility()}>
+                <div class="header-actions visibility-action" @click=${() => this._handleToggleAllWindowsVisibility()}>
                     <div class="action-text">
                         <div class="action-text-content">Show/Hide</div>
                     </div>
@@ -692,7 +754,9 @@ export class MainHeader extends LitElement {
                 </div>
 
                 <button 
-                    class="settings-button"
+                    class="settings-button" aria-label="Settings" title="Settings"
+                    @click=${(e) => this.showSettingsWindow(e.currentTarget)}
+                    @mousedown=${event => event.stopPropagation()}
                     @mouseenter=${(e) => this.showSettingsWindow(e.currentTarget)}
                     @mouseleave=${() => this.hideSettingsWindow()}
                 >

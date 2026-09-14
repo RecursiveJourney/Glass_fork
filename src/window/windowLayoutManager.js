@@ -1,4 +1,4 @@
-const { getWindowBounds, setWindowBounds } = require('./windowBounds');
+const { getWindowBounds, setWindowBounds, getWindowSizeLimits } = require('./windowBounds');
 const { screen } = require('electron');
 
 /**
@@ -69,7 +69,7 @@ class WindowLayoutManager {
     /**
      * @returns {{x: number, y: number} | null}
      */
-    calculateSettingsWindowPosition() {
+    calculateSettingsWindowPosition(featureLayout = null) {
         const header = this.windowPool.get('header');
         const settings = this.windowPool.get('settings');
 
@@ -91,7 +91,35 @@ class WindowLayoutManager {
         const clampedX = Math.max(workAreaX + 10, Math.min(workAreaX + screenWidth - settingsBounds.width - 10, x));
         const clampedY = Math.max(workAreaY + 10, Math.min(workAreaY + screenHeight - settingsBounds.height - 10, y));
 
-        return { x: Math.round(clampedX), y: Math.round(clampedY) };
+        const preferred = { x: Math.round(clampedX), y: Math.round(clampedY) };
+        if (this.listenSource !== 'meeting') return preferred;
+        const obstacles = ['listen', 'ask'].flatMap(name => {
+            const win = this.windowPool.get(name);
+            if (!win || win.isDestroyed() || !win.isVisible()) return [];
+            return [featureLayout?.[name] || win.getBounds()];
+        });
+        if (!obstacles.length) return preferred;
+
+        // Search spaces beside/above/below the feature windows, on the current display.
+        // Use native extents for collision checks without feeding rounded sizes into moves.
+        const size = settings.getBounds(), gap = 8;
+        const minX = workAreaX + 10, maxX = workAreaX + screenWidth - size.width - 10;
+        const minY = workAreaY + 10, maxY = workAreaY + screenHeight - size.height - 10;
+        const clampX = x => Math.max(minX, Math.min(maxX, x));
+        const clampY = y => Math.max(minY, Math.min(maxY, y));
+        const xs = [preferred.x, minX, maxX, ...obstacles.flatMap(b => [b.x - size.width - gap, b.x + b.width + gap])];
+        const ys = [preferred.y, minY, maxY, ...obstacles.flatMap(b => [b.y - size.height - gap, b.y + b.height + gap])];
+        const overlap = (point, b) => Math.max(0, Math.min(point.x + size.width + gap, b.x + b.width) - Math.max(point.x - gap, b.x))
+            * Math.max(0, Math.min(point.y + size.height + gap, b.y + b.height) - Math.max(point.y - gap, b.y));
+        const candidates = xs.flatMap(x => ys.map(y => ({ x: Math.round(clampX(x)), y: Math.round(clampY(y)) })));
+        candidates.sort((a, b) => {
+            const areaA = obstacles.reduce((sum, box) => sum + overlap(a, box), 0);
+            const areaB = obstacles.reduce((sum, box) => sum + overlap(b, box), 0);
+            return areaA - areaB || Math.hypot(a.x - preferred.x, a.y - preferred.y) - Math.hypot(b.x - preferred.x, b.y - preferred.y);
+        });
+        // On a display too small for all windows, keep every control accessible;
+        // never hide or resize a shipped window to manufacture more space.
+        return candidates[0];
     }
 
 
@@ -119,8 +147,9 @@ class WindowLayoutManager {
     calculateWindowHeightAdjustment(senderWindow, targetHeight) {
         if (!senderWindow) return null;
         const currentBounds = getWindowBounds(senderWindow);
-        const minHeight = senderWindow.getMinimumSize()[1];
-        const maxHeight = senderWindow.getMaximumSize()[1];
+        const limits = getWindowSizeLimits(senderWindow);
+        const minHeight = limits.min[1];
+        const maxHeight = limits.max[1];
         let adjustedHeight = Math.max(minHeight, targetHeight);
         if (maxHeight > 0) {
             adjustedHeight = Math.min(maxHeight, adjustedHeight);

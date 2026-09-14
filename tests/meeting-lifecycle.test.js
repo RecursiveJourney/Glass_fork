@@ -6,7 +6,7 @@ const path = require('node:path');
 const { EventEmitter } = require('node:events');
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 function harness(options = {}) {
-    const calls = [], sent = [], subscribers = new Set(), captureTimers = new Map();
+    const calls = [], layoutEvents = [], sent = [], subscribers = new Set(), captureTimers = new Map();
     let nextTimer = 0;
     let feed = { connectionStatus: 'idle', snapshot: null, error: null, nextRetryAt: null }, service;
     class Stt {
@@ -38,7 +38,7 @@ function harness(options = {}) {
     const stubs = {
         electron: {}, './stt/sttService': Stt, './summary/summaryService': Summary,
         './meeting/meetingFeedService': Feed, '../../window/windowManager': { windowPool },
-        '../../bridge/internalBridge': { emit() {} },
+        '../../bridge/internalBridge': { emit(type, data) { if(type==='listen:source-changed') layoutEvents.push(data); } },
         '../common/services/authService': { getCurrentUser: () => ({}) },
         '../common/services/modelStateService': { areProvidersConfigured: async () => { if (options.configGate) await options.configGate.promise; return options.configured !== false; } },
         '../common/services/permissionService': { checkSystemPermissions: async () => { calls.push('permissions.read'); return options.permissions ?? { microphone: 'granted', screen: 'granted', keychain: 'granted', needsSetup: false }; } },
@@ -56,7 +56,7 @@ function harness(options = {}) {
         clearTimeout: options.fakeTimers ? id => captureTimers.delete(id) : clearTimeout,
     });
     service = module.exports;
-    return { service, calls, sent, wc, captureTimers, emit(state) { feed = { ...feed, ...state }; for (const cb of subscribers) cb(feed); } };
+    return { service, calls, layoutEvents, sent, wc, captureTimers, emit(state) { feed = { ...feed, ...state }; for (const cb of subscribers) cb(feed); } };
 }
 test('failed database initialization never starts capture', async () => {
     const h = harness({ dbFails: true });
@@ -281,4 +281,14 @@ test('macOS capture stop waits for process close instead of treating a signal as
     await new Promise(r => setImmediate(r)); assert.equal(stopped, false);
     proc.emit('close', 0); await pending;
     assert.equal(h.service.systemAudioProc, null);
+});
+
+test('source changes publish only source identity to window layout',async()=>{
+ const h=harness();
+ await h.service.selectSource('meeting');
+ assert.equal(h.layoutEvents.length,1);
+ assert.deepEqual(Object.keys(h.layoutEvents[0]),['source']);
+ assert.equal(h.layoutEvents[0].source,'meeting');
+ h.service.publish({phase:'active'});
+ assert.equal(h.layoutEvents.length,1,'feed/lifecycle updates do not leak snapshot rows into geometry');
 });

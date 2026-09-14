@@ -1,0 +1,25 @@
+Glass: codex/wire2-phase2
+a7394e4ce177f8356f16d65e88b2ea366c3611f5
+ M docs/meeting-feed-subscriber.md
+ M src/ui/listen/ListenView.js
+ M src/window/smoothMovementManager.js
+ M src/window/windowBounds.js
+ M src/window/windowLayoutManager.js
+ M src/window/windowManager.js
+ M tests/helpers/meeting-fixture.html
+ M tests/window-attachment.test.js
+?? docs/wire2-phase4-checkpoint.md
+?? docs/wire2-phase4-evidence/
+?? docs/wire2-resize-checkpoint.md
+?? docs/wire2-resize-evidence/
+?? src/window/windowResize.js
+?? tests/helpers/native-resize.cjs
+?? tests/listen-resize-ack.test.js
+?? tests/native-resize.test.js
+Parent: codex/wire2-phase1
+1182c176495b9556ef6a3cb01b8168a41eb4c94f
+ M glass
+ M realtime_listener/README.md
+ M realtime_listener/docs/design.md
+ M realtime_listener/docs/live-feed-contract.md
+?? realtime_listener/docs/wire2-manual-checklist.md

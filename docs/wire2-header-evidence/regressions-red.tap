@@ -1,0 +1,586 @@
+TAP version 13
+# Subtest: shipped header controls in the native Electron renderer
+    # Subtest: local configured=true keeps every header control inside native viewport
+    not ok 1 - local configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 1.3092
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525
+        + actual - expected
+        
+        + 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: local configured=false keeps every header control inside native viewport
+    not ok 2 - local configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.2351
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":155.11607360839844,"width":72.6875,"height":26.000001907348633},{"x":159.11607360839844,"right":244.12500762939453,"width":85.0089340209961,"height":26.000001907348633},{"x":244.12501525878906,"right":367.1607360839844,"wi
+        + actual - expected
+        
+        + 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":155.11607360839844,"width":72.6875,"height":26.000001907348633},{"x":159.11607360839844,"right":244.12500762939453,"width":85.0089340209961,"height":26.000001907348633},{"x":244.12501525878906,"right":367.1607360839844,"wi'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":155.11607360839844,"width":72.6875,"height":26.000001907348633},{"x":159.11607360839844,"right":244.12500762939453,"width":85.0089340209961,"height":26.000001907348633},{"x":244.12501525878906,"right":367.1607360839844,"wi'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting configured=true keeps every header control inside native viewport
+    not ok 3 - meeting configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1807
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525
+        + actual - expected
+        
+        + 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting configured=false keeps every header control inside native viewport
+    not ok 4 - meeting configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1347
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525
+        + actual - expected
+        
+        + 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'control clipped: {"viewport":354,"header":{"x":0,"right":354.2857360839844,"width":354.2857360839844,"height":47.000003814697266},"controls":[{"x":13.000000953674316,"right":82.42857456207275,"width":69.42857360839844,"height":27.142858505249023},{"x":82.42857360839844,"right":158.45536041259766,"width":76.02678680419922,"height":26.000001907348633},{"x":162.4553680419922,"right":247.46430206298828,"width":85.0089340209961,"height":26.000001907348633},{"x":247.46429443359375,"right":370.50001525'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: stopped header retains Done alongside restart in both sources
+    not ok 5 - stopped header retains Done alongside restart in both sources
+      ---
+      duration_ms: 0.1717
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        upstream Done control retained
+        + actual - expected
+        
+        + 'upstream Done control retained'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'upstream Done control retained'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: settings supports click and accessible naming in meeting-only mode
+    not ok 6 - settings supports click and accessible naming in meeting-only mode
+      ---
+      duration_ms: 0.1276
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Settings has accessible name
+        + actual - expected
+        
+        + 'Settings has accessible name'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Settings has accessible name'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: configured shortcuts and stopped additions trigger fresh measured header sizing
+    not ok 7 - configured shortcuts and stopped additions trigger fresh measured header sizing
+      ---
+      duration_ms: 0.1541
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        updated shortcuts clipped: {"viewport":354,"right":443.1607360839844}
+        + actual - expected
+        
+        + 'updated shortcuts clipped: {"viewport":354,"right":443.1607360839844}'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'updated shortcuts clipped: {"viewport":354,"right":443.1607360839844}'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    1..7
+not ok 1 - shipped header controls in the native Electron renderer
+  ---
+  duration_ms: 1553.0915
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:2:1'
+  failureType: 'subtestsFailed'
+  error: '7 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    not ok 1 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 1.155
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        Show Transcript/Insights control remains available
+        + actual - expected
+        
+        + 'Show Transcript/Insights control remains available'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Show Transcript/Insights control remains available'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    not ok 2 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.2106
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        upstream Close still quits
+        + actual - expected
+        
+        + 'upstream Close still quits'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'upstream Close still quits'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 3 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.1323
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 4 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.1091
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 5 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0957
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 6 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.0796
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 7 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.0896
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 8 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1069
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 9 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.1148
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 10 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.1193
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 11 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0909
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 12 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.081
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 13 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0608
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 14 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.0493
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 15 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.085
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 16 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0967
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 17 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.1002
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 18 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.6483
+      type: 'test'
+      ...
+    1..18
+not ok 2 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1714.0724
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: immediate layout cancels the older animation (original VM drift reproduction)
+ok 3 - immediate layout cancels the older animation (original VM drift reproduction)
+  ---
+  duration_ms: 7.274
+  type: 'test'
+  ...
+# Subtest: native header movement follows continuously before the final moved event
+ok 4 - native header movement follows continuously before the final moved event
+  ---
+  duration_ms: 5.7609
+  type: 'test'
+  ...
+# Subtest: explicit drag synchronizes children even without native move events
+ok 5 - explicit drag synchronizes children even without native move events
+  ---
+  duration_ms: 3.8343
+  type: 'test'
+  ...
+# Subtest: drag during transcript growth preserves requested height and restores resize state
+ok 6 - drag during transcript growth preserves requested height and restores resize state
+  ---
+  duration_ms: 5.2494
+  type: 'test'
+  ...
+# Subtest: final moved event reconciles position while a child animation is active
+ok 7 - final moved event reconciles position while a child animation is active
+  ---
+  duration_ms: 3.8338
+  type: 'test'
+  ...
+# Subtest: Ask and Listen remain side by side through left and right edge drags
+ok 8 - Ask and Listen remain side by side through left and right edge drags
+  ---
+  duration_ms: 4.0636
+  type: 'test'
+  ...
+# Subtest: screen-edge transitions place Listen above then below without stale jumps
+ok 9 - screen-edge transitions place Listen above then below without stale jumps
+  ---
+  duration_ms: 4.4395
+  type: 'test'
+  ...
+# Subtest: attachment uses the destination monitor origin
+ok 10 - attachment uses the destination monitor origin
+  ---
+  duration_ms: 3.4334
+  type: 'test'
+  ...
+# Subtest: keyboard movement keeps attachment through animation and at completion
+ok 11 - keyboard movement keeps attachment through animation and at completion
+  ---
+  duration_ms: 3.6969
+  type: 'test'
+  ...
+# Subtest: manual drag supersedes a running header animation
+ok 12 - manual drag supersedes a running header animation
+  ---
+  duration_ms: 3.3819
+  type: 'test'
+  ...
+# Subtest: 175% DPI rounding does not accumulate size over repeated Listen drags
+ok 13 - 175% DPI rounding does not accumulate size over repeated Listen drags
+  ---
+  duration_ms: 6.7238
+  type: 'test'
+  ...
+# Subtest: rounded Ask + Listen bounds stay bounded during drag and transcript growth
+ok 14 - rounded Ask + Listen bounds stay bounded during drag and transcript growth
+  ---
+  duration_ms: 5.6639
+  type: 'test'
+  ...
+# Subtest: DPI rounding across below/above transitions does not change requested dimensions
+ok 15 - DPI rounding across below/above transitions does not change requested dimensions
+  ---
+  duration_ms: 4.2997
+  type: 'test'
+  ...
+# Subtest: meeting container attaches to the 445x47 source-control header
+ok 16 - meeting container attaches to the 445x47 source-control header
+  ---
+  duration_ms: 5.2853
+  type: 'test'
+  ...
+# Subtest: meeting stream/status updates with equal measurements do not restart resizing
+ok 17 - meeting stream/status updates with equal measurements do not restart resizing
+  ---
+  duration_ms: 9.4983
+  type: 'test'
+  ...
+# Subtest: meeting measurement rounds upward and caps status/error chrome at 700px
+ok 18 - meeting measurement rounds upward and caps status/error chrome at 700px
+  ---
+  duration_ms: 5.737
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+ok 19 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+  ---
+  duration_ms: 8.442
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+ok 20 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+  ---
+  duration_ms: 8.7834
+  type: 'test'
+  ...
+# Subtest: meeting and Ask keep independent heights side by side across monitors and edges
+ok 21 - meeting and Ask keep independent heights side by side across monitors and edges
+  ---
+  duration_ms: 5.4485
+  type: 'test'
+  ...
+# Subtest: Stop retains meeting geometry and switching to local resizes from local content
+ok 22 - Stop retains meeting geometry and switching to local resizes from local content
+  ---
+  duration_ms: 6.2912
+  type: 'test'
+  ...
+# Subtest: native-style locked min/max cannot replace intended limits
+ok 23 - native-style locked min/max cannot replace intended limits
+  ---
+  duration_ms: 5.5712
+  type: 'test'
+  ...
+# Subtest: drag during resize settles applied acknowledgement and restores the resize lock
+ok 24 - drag during resize settles applied acknowledgement and restores the resize lock
+  ---
+  duration_ms: 4.8172
+  type: 'test'
+  ...
+# Subtest: a superseded resize settles false and the latest request owns the lock
+ok 25 - a superseded resize settles false and the latest request owns the lock
+  ---
+  duration_ms: 4.0333
+  type: 'test'
+  ...
+# Subtest: native rejection is reported using actual bounds, not requested-size bookkeeping
+ok 26 - native rejection is reported using actual bounds, not requested-size bookkeeping
+  ---
+  duration_ms: 7.4836
+  type: 'test'
+  ...
+# Subtest: native setter failure settles the IPC response and restores the lock
+ok 27 - native setter failure settles the IPC response and restores the lock
+  ---
+  duration_ms: 3.2866
+  type: 'test'
+  ...
+# Subtest: missing windows and invalid sizes return a failed acknowledgement
+ok 28 - missing windows and invalid sizes return a failed acknowledgement
+  ---
+  duration_ms: 2.7457
+  type: 'test'
+  ...
+# Subtest: header resize during another window animation must not disappear
+not ok 29 - header resize during another window animation must not disappear
+  ---
+  duration_ms: 4.2318
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\window-attachment.test.js:569:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    added controls require resize even while Listen animates
+    
+    353 !== 520
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 520
+  actual: 353
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\window-attachment.test.js:574:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: normal Settings window is reachable without local providers and survives source-independent show/hide
+ok 30 - normal Settings window is reachable without local providers and survives source-independent show/hide
+  ---
+  duration_ms: 3.0647
+  type: 'test'
+  ...
+1..30
+# tests 55
+# suites 0
+# pass 43
+# fail 12
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1794.3673

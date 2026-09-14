@@ -1,0 +1,182 @@
+TAP version 13
+# Subtest: failed database initialization never starts capture
+ok 1 - failed database initialization never starts capture
+  ---
+  duration_ms: 3.087
+  type: 'test'
+  ...
+# Subtest: Stop while local initialization is pending prevents late capture start
+ok 2 - Stop while local initialization is pending prevents late capture start
+  ---
+  duration_ms: 5.0276
+  type: 'test'
+  ...
+# Subtest: Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+ok 3 - Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+  ---
+  duration_ms: 1.2363
+  type: 'test'
+  ...
+# Subtest: Local stop performs all cleanup even when STT close fails
+ok 4 - Local stop performs all cleanup even when STT close fails
+  ---
+  duration_ms: 1.192
+  type: 'test'
+  ...
+# Subtest: transcription pending database touch cannot persist or summarize after Stop
+ok 5 - transcription pending database touch cannot persist or summarize after Stop
+  ---
+  duration_ms: 1.0775
+  type: 'test'
+  ...
+# Subtest: default source initializes once from provider configuration and state publishes to both windows
+ok 6 - default source initializes once from provider configuration and state publishes to both windows
+  ---
+  duration_ms: 0.8253
+  type: 'test'
+  ...
+# Subtest: Local remains unavailable when existing permissions still require keychain setup
+ok 7 - Local remains unavailable when existing permissions still require keychain setup
+  ---
+  duration_ms: 0.7581
+  type: 'test'
+  ...
+# Subtest: failed database end is retried and cannot falsely unlock Meeting
+ok 8 - failed database end is retried and cannot falsely unlock Meeting
+  ---
+  duration_ms: 1.0514
+  type: 'test'
+  ...
+# Subtest: a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+ok 9 - a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+  ---
+  duration_ms: 0.9044
+  type: 'test'
+  ...
+# Subtest: source locks and Stop cancels Listen while initial capability read is pending
+ok 10 - source locks and Stop cancels Listen while initial capability read is pending
+  ---
+  duration_ms: 0.9274
+  type: 'test'
+  ...
+# Subtest: unconfigured Local request cannot create a session or start STT
+ok 11 - unconfigured Local request cannot create a session or start STT
+  ---
+  duration_ms: 0.7668
+  type: 'test'
+  ...
+# Subtest: capture readiness is local STT readiness during starting and stays false for Meeting
+ok 12 - capture readiness is local STT readiness during starting and stays false for Meeting
+  ---
+  duration_ms: 3.3106
+  type: 'test'
+  ...
+# Subtest: system audio result arriving after Stop is rejected before the bridge can render AEC
+ok 13 - system audio result arriving after Stop is rejected before the bridge can render AEC
+  ---
+  duration_ms: 1.1045
+  type: 'test'
+  ...
+# Subtest: stopMacOSAudioCapture waits until the capture process has stopped
+ok 14 - stopMacOSAudioCapture waits until the capture process has stopped
+  ---
+  duration_ms: 1.1478
+  type: 'test'
+  ...
+# Subtest: summary reset failure cannot block capture stop, STT cleanup or session end
+ok 15 - summary reset failure cannot block capture stop, STT cleanup or session end
+  ---
+  duration_ms: 0.9107
+  type: 'test'
+  ...
+# Subtest: capture acknowledgement requires matching actual sender and lifecycle
+ok 16 - capture acknowledgement requires matching actual sender and lifecycle
+  ---
+  duration_ms: 1.393
+  type: 'test'
+  ...
+# Subtest: missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+ok 17 - missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+  ---
+  duration_ms: 1.2094
+  type: 'test'
+  ...
+# Subtest: old STT provider callbacks cannot render into a restarted local lifecycle
+ok 18 - old STT provider callbacks cannot render into a restarted local lifecycle
+  ---
+  duration_ms: 2.0591
+  type: 'test'
+  ...
+# Subtest: STT initialization resolving after close disposes sessions without timers or renderer output
+ok 19 - STT initialization resolving after close disposes sessions without timers or renderer output
+  ---
+  duration_ms: 1.9225
+  type: 'test'
+  ...
+# Subtest: STT cleanup resets identity and closes each socket even if the first close throws
+ok 20 - STT cleanup resets identity and closes each socket even if the first close throws
+  ---
+  duration_ms: 1.0529
+  type: 'test'
+  ...
+# Subtest: failed STT socket cleanup remains failed on retry while the socket still refuses close
+ok 21 - failed STT socket cleanup remains failed on retry while the socket still refuses close
+  ---
+  duration_ms: 1.1269
+  type: 'test'
+  ...
+# Subtest: Stop closes old overlap sockets immediately after STT renewal
+ok 22 - Stop closes old overlap sockets immediately after STT renewal
+  ---
+  duration_ms: 1.0011
+  type: 'test'
+  ...
+# Subtest: cancelled STT initialization preserves failed socket cleanup for retry
+ok 23 - cancelled STT initialization preserves failed socket cleanup for retry
+  ---
+  duration_ms: 1.335
+  type: 'test'
+  ...
+# Subtest: failed renewal preserves current provider callbacks
+ok 24 - failed renewal preserves current provider callbacks
+  ---
+  duration_ms: 1.0237
+  type: 'test'
+  ...
+# Subtest: macOS capture stop waits for process close instead of treating a signal as completion
+ok 25 - macOS capture stop waits for process close instead of treating a signal as completion
+  ---
+  duration_ms: 1.6142
+  type: 'test'
+  ...
+# Subtest: source changes publish only source identity to window layout
+not ok 26 - source changes publish only source identity to window layout
+  ---
+  duration_ms: 1.328
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-lifecycle.test.js:286:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-lifecycle.test.js:289:9)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 25
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 103.1948

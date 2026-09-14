@@ -1,0 +1,3 @@
+PowerShell checklist blocks: 8; parse errors: 0
+JavaScript checklist blocks: 4; parse errors: 0
+Syntax checks only. No manual live command was executed by this check.

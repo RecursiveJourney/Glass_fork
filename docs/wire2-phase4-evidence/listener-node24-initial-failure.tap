@@ -1,0 +1,1125 @@
+TAP version 13
+# Subtest: combined cancellation propagates first reason and handles already-aborted signals
+ok 1 - combined cancellation propagates first reason and handles already-aborted signals
+  ---
+  duration_ms: 1.1176
+  type: 'test'
+  ...
+# Subtest: no-suggestion completes checkpoint including console-suppressed repetition
+ok 2 - no-suggestion completes checkpoint including console-suppressed repetition
+  ---
+  duration_ms: 28.4172
+  type: 'test'
+  ...
+# Subtest: a model error marks case unevaluated and consumes it without retrying
+ok 3 - a model error marks case unevaluated and consumes it without retrying
+  ---
+  duration_ms: 15.4279
+  type: 'test'
+  ...
+# Subtest: checkpoint waits for its final partial revision despite an earlier in-flight snapshot
+ok 4 - checkpoint waits for its final partial revision despite an earlier in-flight snapshot
+  ---
+  duration_ms: 14.9838
+  type: 'test'
+  ...
+# Subtest: bounded checkpoint aborts a stuck request and allows the next case
+ok 5 - bounded checkpoint aborts a stuck request and allows the next case
+  ---
+  duration_ms: 47.1413
+  type: 'test'
+  ...
+# Subtest: checkpoint cancellation does not wait for a model response
+ok 6 - checkpoint cancellation does not wait for a model response
+  ---
+  duration_ms: 1.3233
+  type: 'test'
+  ...
+# Subtest: checkpoint waiting cannot bypass the trigger interval
+ok 7 - checkpoint waiting cannot bypass the trigger interval
+  ---
+  duration_ms: 13.0462
+  type: 'test'
+  ...
+# Subtest: a slow failed checkpoint cannot retry before the waiter observes its outcome
+ok 8 - a slow failed checkpoint cannot retry before the waiter observes its outcome
+  ---
+  duration_ms: 15.2644
+  type: 'test'
+  ...
+# Subtest: rejected checkpoint event cannot inherit an earlier completed answer
+ok 9 - rejected checkpoint event cannot inherit an earlier completed answer
+  ---
+  duration_ms: 0.5769
+  type: 'test'
+  ...
+# Subtest: retained identical updates are accepted but out-of-window events are rejected for checkpoints
+ok 10 - retained identical updates are accepted but out-of-window events are rejected for checkpoints
+  ---
+  duration_ms: 0.2588
+  type: 'test'
+  ...
+# Subtest: new chunks are ordered chronologically with stable ties; input stays unchanged
+ok 11 - new chunks are ordered chronologically with stable ties; input stays unchanged
+  ---
+  duration_ms: 1.4848
+  type: 'test'
+  ...
+# Subtest: same ID replaces full entry in place without duplicates
+ok 12 - same ID replaces full entry in place without duplicates
+  ---
+  duration_ms: 0.255
+  type: 'test'
+  ...
+# Subtest: window uses monotonic greatest start time and inclusive cutoff
+ok 13 - window uses monotonic greatest start time and inclusive cutoff
+  ---
+  duration_ms: 0.221
+  type: 'test'
+  ...
+# Subtest: revision acknowledgement preserves material arriving during a request
+ok 14 - revision acknowledgement preserves material arriving during a request
+  ---
+  duration_ms: 0.2659
+  type: 'test'
+  ...
+# Subtest: corrected timestamps re-sort and invalid chunks are rejected
+ok 15 - corrected timestamps re-sort and invalid chunks are rejected
+  ---
+  duration_ms: 0.6169
+  type: 'test'
+  ...
+# Subtest: mode-specific secrets and defaults
+ok 16 - mode-specific secrets and defaults
+  ---
+  duration_ms: 2.1181
+  type: 'test'
+  ...
+# Subtest: invalid and conflicting arguments fail without echoing values
+ok 17 - invalid and conflicting arguments fail without echoing values
+  ---
+  duration_ms: 1.349
+  type: 'test'
+  ...
+# Subtest: configuration never contains keys and help needs no keys
+ok 18 - configuration never contains keys and help needs no keys
+  ---
+  duration_ms: 0.4483
+  type: 'test'
+  ...
+# Subtest: model default and environment override are captured at startup for each suggestion mode
+ok 19 - model default and environment override are captured at startup for each suggestion mode
+  ---
+  duration_ms: 0.3561
+  type: 'test'
+  ...
+# Subtest: automatic transcript and Ask sources are distinct; latest user question wins
+ok 20 - automatic transcript and Ask sources are distinct; latest user question wins
+  ---
+  duration_ms: 2.8495
+  type: 'test'
+  ...
+# Subtest: context projects only data fields and copies both sources
+ok 21 - context projects only data fields and copies both sources
+  ---
+  duration_ms: 0.2554
+  type: 'test'
+  ...
+# Subtest: disconnected Fireflies source is unavailable without losing frontend context
+ok 22 - disconnected Fireflies source is unavailable without losing frontend context
+  ---
+  duration_ms: 0.3562
+  type: 'test'
+  ...
+# Subtest: stale Fireflies source is unavailable without losing frontend context
+ok 23 - stale Fireflies source is unavailable without losing frontend context
+  ---
+  duration_ms: 0.1414
+  type: 'test'
+  ...
+# Subtest: unknown age Fireflies source is unavailable without losing frontend context
+ok 24 - unknown age Fireflies source is unavailable without losing frontend context
+  ---
+  duration_ms: 0.1754
+  type: 'test'
+  ...
+# Subtest: freshness boundary is inclusive and configurable, with empty source represented honestly
+ok 25 - freshness boundary is inclusive and configurable, with empty source represented honestly
+  ---
+  duration_ms: 0.2005
+  type: 'test'
+  ...
+# Subtest: prompt preserves framing and permits speech reports without promoting client facts
+ok 26 - prompt preserves framing and permits speech reports without promoting client facts
+  ---
+  duration_ms: 0.5261
+  type: 'test'
+  ...
+# Subtest: Gemini uses supplied context as user data only and keeps dossier server-side
+ok 27 - Gemini uses supplied context as user data only and keeps dossier server-side
+  ---
+  duration_ms: 0.8626
+  type: 'test'
+  ...
+# Subtest: default dossier path is absolute and custom paths preserve spaces
+ok 28 - default dossier path is absolute and custom paths preserve spaces
+  ---
+  duration_ms: 2.0192
+  type: 'test'
+  ...
+# Subtest: loader preserves UTF-8 text and fingerprints content
+ok 29 - loader preserves UTF-8 text and fingerprints content
+  ---
+  duration_ms: 11.5905
+  type: 'test'
+  ...
+# Subtest: missing unreadable and empty dossiers give clear errors
+ok 30 - missing unreadable and empty dossiers give clear errors
+  ---
+  duration_ms: 1.2368
+  type: 'test'
+  ...
+# Subtest: check and help never read the dossier; check reaches fake auth transport
+ok 31 - check and help never read the dossier; check reaches fake auth transport
+  ---
+  duration_ms: 1.5005
+  type: 'test'
+  ...
+# Subtest: real Fireflies envelope without transcript_id uses the selected socket meeting
+ok 32 - real Fireflies envelope without transcript_id uses the selected socket meeting
+  ---
+  duration_ms: 3.9655
+  type: 'test'
+  ...
+# Subtest: captured partial updates replace by chunk_id, including a shorter final revision
+ok 33 - captured partial updates replace by chunk_id, including a shorter final revision
+  ---
+  duration_ms: 1.5031
+  type: 'test'
+  ...
+# Subtest: envelope explicit matching IDs and flat documented payload remain supported
+ok 34 - envelope explicit matching IDs and flat documented payload remain supported
+  ---
+  duration_ms: 0.2408
+  type: 'test'
+  ...
+# Subtest: rejects nested different meeting without altering the buffer
+ok 35 - rejects nested different meeting without altering the buffer
+  ---
+  duration_ms: 0.2542
+  type: 'test'
+  ...
+# Subtest: rejects outer different meeting without altering the buffer
+ok 36 - rejects outer different meeting without altering the buffer
+  ---
+  duration_ms: 0.1674
+  type: 'test'
+  ...
+# Subtest: rejects conflicting envelope IDs without altering the buffer
+ok 37 - rejects conflicting envelope IDs without altering the buffer
+  ---
+  duration_ms: 0.1679
+  type: 'test'
+  ...
+# Subtest: rejects wrong event type without altering the buffer
+ok 38 - rejects wrong event type without altering the buffer
+  ---
+  duration_ms: 0.155
+  type: 'test'
+  ...
+# Subtest: rejects null payload without altering the buffer
+ok 39 - rejects null payload without altering the buffer
+  ---
+  duration_ms: 0.1804
+  type: 'test'
+  ...
+# Subtest: rejects array payload without altering the buffer
+ok 40 - rejects array payload without altering the buffer
+  ---
+  duration_ms: 0.1924
+  type: 'test'
+  ...
+# Subtest: rejects empty explicit ID without altering the buffer
+ok 41 - rejects empty explicit ID without altering the buffer
+  ---
+  duration_ms: 0.222
+  type: 'test'
+  ...
+# Subtest: rejects null explicit ID without altering the buffer
+ok 42 - rejects null explicit ID without altering the buffer
+  ---
+  duration_ms: 0.139
+  type: 'test'
+  ...
+# Subtest: rejects missing chunk ID without altering the buffer
+ok 43 - rejects missing chunk ID without altering the buffer
+  ---
+  duration_ms: 0.127
+  type: 'test'
+  ...
+# Subtest: rejects invalid time without altering the buffer
+ok 44 - rejects invalid time without altering the buffer
+  ---
+  duration_ms: 0.1019
+  type: 'test'
+  ...
+# Subtest: missing meeting ID without trusted socket/replay context is still rejected
+ok 45 - missing meeting ID without trusted socket/replay context is still rejected
+  ---
+  duration_ms: 0.1401
+  type: 'test'
+  ...
+# Subtest: offline replay binds omitted IDs locally without rewriting the raw fixture
+ok 46 - offline replay binds omitted IDs locally without rewriting the raw fixture
+  ---
+  duration_ms: 0.3635
+  type: 'test'
+  ...
+# Subtest: check reports auth.success
+ok 47 - check reports auth.success
+  ---
+  duration_ms: 3.8624
+  type: 'test'
+  ...
+# Subtest: check reports auth.failed
+ok 48 - check reports auth.failed
+  ---
+  duration_ms: 0.372
+  type: 'test'
+  ...
+# Subtest: check reports connection.error
+ok 49 - check reports connection.error
+  ---
+  duration_ms: 0.2958
+  type: 'test'
+  ...
+# Subtest: check reports connect_error
+ok 50 - check reports connect_error
+  ---
+  duration_ms: 0.3502
+  type: 'test'
+  ...
+# Subtest: check timeout is inconclusive
+ok 51 - check timeout is inconclusive
+  ---
+  duration_ms: 18.4209
+  type: 'test'
+  ...
+# Subtest: empty and paused-only discovery is inconclusive
+ok 52 - empty and paused-only discovery is inconclusive
+  ---
+  duration_ms: 0.921
+  type: 'test'
+  ...
+# Subtest: discovery prints all meetings and selects first active
+ok 53 - discovery prints all meetings and selects first active
+  ---
+  duration_ms: 0.3757
+  type: 'test'
+  ...
+# Subtest: explicit transcript bypasses discovery
+ok 54 - explicit transcript bypasses discovery
+  ---
+  duration_ms: 0.1803
+  type: 'test'
+  ...
+# Subtest: HTTP and GraphQL failures are distinguishable
+ok 55 - HTTP and GraphQL failures are distinguishable
+  ---
+  duration_ms: 1.4485
+  type: 'test'
+  ...
+# Subtest: discovery has the check deadline too
+ok 56 - discovery has the check deadline too
+  ---
+  duration_ms: 12.3639
+  type: 'test'
+  ...
+# Subtest: check can be cancelled
+ok 57 - check can be cancelled
+  ---
+  duration_ms: 23.3979
+  type: 'test'
+  ...
+# Subtest: live reconnect retains auth and registers one transcript handler
+ok 58 - live reconnect retains auth and registers one transcript handler
+  ---
+  duration_ms: 26.5025
+  type: 'test'
+  ...
+# Subtest: live auth rejection stops retries and reports fatal failure
+ok 59 - live auth rejection stops retries and reports fatal failure
+  ---
+  duration_ms: 12.289
+  type: 'test'
+  ...
+# Subtest: Socket.IO manager reconnect state is logged and handlers cleaned on close
+ok 60 - Socket.IO manager reconnect state is logged and handlers cleaned on close
+  ---
+  duration_ms: 0.6474
+  type: 'test'
+  ...
+# Subtest: auth deadline callback routes logger failure through onFatal
+ok 61 - auth deadline callback routes logger failure through onFatal
+  ---
+  duration_ms: 29.6381
+  type: 'test'
+  ...
+# Subtest: reconnect timer routes logger failure through onFatal
+ok 62 - reconnect timer routes logger failure through onFatal
+  ---
+  duration_ms: 30.993
+  type: 'test'
+  ...
+# Subtest: live exposes authenticated and disconnected lifecycle independently of diagnostic logs
+ok 63 - live exposes authenticated and disconnected lifecycle independently of diagnostic logs
+  ---
+  duration_ms: 0.8519
+  type: 'test'
+  ...
+# Subtest: shared structured result preserves text, finish reason and upstream usage
+ok 64 - shared structured result preserves text, finish reason and upstream usage
+  ---
+  duration_ms: 4.0791
+  type: 'test'
+  ...
+# Subtest: structured Gemini errors identify upstream status, transport, timeout and empty output
+ok 65 - structured Gemini errors identify upstream status, transport, timeout and empty output
+  ---
+  duration_ms: 1.4203
+  type: 'test'
+  ...
+# Subtest: unavailable usage is omitted and unknown finish reason is not invented
+ok 66 - unavailable usage is omitted and unknown finish reason is not invented
+  ---
+  duration_ms: 0.3298
+  type: 'test'
+  ...
+# Subtest: malformed Gemini response structures and null rejection produce typed upstream failures
+ok 67 - malformed Gemini response structures and null rejection produce typed upstream failures
+  ---
+  duration_ms: 1.1684
+  type: 'test'
+  ...
+# Subtest: REST request uses configured model, header key and exact framing
+ok 68 - REST request uses configured model, header key and exact framing
+  ---
+  duration_ms: 3.2256
+  type: 'test'
+  ...
+# Subtest: HTTP failure and empty or blocked responses are errors
+ok 69 - HTTP failure and empty or blocked responses are errors
+  ---
+  duration_ms: 1.3463
+  type: 'test'
+  ...
+# Subtest: dossier follows original framing verbatim and latest-question rule is one sentence
+ok 70 - dossier follows original framing verbatim and latest-question rule is one sentence
+  ---
+  duration_ms: 0.6885
+  type: 'test'
+  ...
+# Subtest: one loaded dossier is reused for repeated requests without another file read
+ok 71 - one loaded dossier is reused for repeated requests without another file read
+  ---
+  duration_ms: 6.4262
+  type: 'test'
+  ...
+# Subtest: actual HTTP uses separated context and latest Ask, without leaking sources to system rules/logs
+ok 72 - actual HTTP uses separated context and latest Ask, without leaking sources to system rules/logs
+  ---
+  duration_ms: 70.9436
+  type: 'test'
+  ...
+# Subtest: request snapshot is immutable across partial updates and does not acknowledge periodic material
+ok 73 - request snapshot is immutable across partial updates and does not acknowledge periodic material
+  ---
+  duration_ms: 16.9499
+  type: 'test'
+  ...
+# Subtest: concurrent requests capture their own revision and frontend question
+ok 74 - concurrent requests capture their own revision and frontend question
+  ---
+  duration_ms: 19.6916
+  type: 'test'
+  ...
+# Subtest: OpenAI ignores client system/developer while including server Fireflies snapshot in JSON and SSE
+ok 75 - OpenAI ignores client system/developer while including server Fireflies snapshot in JSON and SSE
+  ---
+  duration_ms: 14.4996
+  type: 'test'
+  ...
+# Subtest: disconnected snapshot excludes speech from native JSON/NDJSON
+ok 76 - disconnected snapshot excludes speech from native JSON/NDJSON
+  ---
+  duration_ms: 13.1642
+  type: 'test'
+  ...
+# Subtest: stale snapshot excludes speech from native JSON/NDJSON
+ok 77 - stale snapshot excludes speech from native JSON/NDJSON
+  ---
+  duration_ms: 14.3863
+  type: 'test'
+  ...
+# Subtest: empty snapshot excludes speech from native JSON/NDJSON
+ok 78 - empty snapshot excludes speech from native JSON/NDJSON
+  ---
+  duration_ms: 9.3813
+  type: 'test'
+  ...
+# Subtest: binds IPv4 and IPv6 loopback on the same port; health and native models are shaped for Glass
+ok 79 - binds IPv4 and IPv6 loopback on the same port; health and native models are shaped for Glass
+  ---
+  duration_ms: 102.7954
+  type: 'test'
+  ...
+# Subtest: native nonstream response exposes message.content and completion metadata
+ok 80 - native nonstream response exposes message.content and completion metadata
+  ---
+  duration_ms: 19.6254
+  type: 'test'
+  ...
+# Subtest: native streaming emits newline-terminated NDJSON with full content and terminal done
+ok 81 - native streaming emits newline-terminated NDJSON with full content and terminal done
+  ---
+  duration_ms: 11.5343
+  type: 'test'
+  ...
+# Subtest: native system context is data, images are ignored, dossier is the actual shared system instruction
+ok 82 - native system context is data, images are ignored, dossier is the actual shared system instruction
+  ---
+  duration_ms: 8.8781
+  type: 'test'
+  ...
+# Subtest: OpenAI ignores and logs system/developer roles without their content; maps text parts in order
+not ok 83 - OpenAI ignores and logs system/developer roles without their content; maps text parts in order
+  ---
+  duration_ms: 4.8555
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\realtime_listener\\test\\http-server.test.js:69:1'
+  failureType: 'testCodeFailure'
+  error: 'fetch failed'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    node:internal/deps/undici/undici:16416:13
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///C:/Users/User/digital_twin/realtime_listener/test/http-server.test.js:75:15)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: OpenAI nonstream and models expose standard objects with honest usage
+ok 84 - OpenAI nonstream and models expose standard objects with honest usage
+  ---
+  duration_ms: 10.6824
+  type: 'test'
+  ...
+# Subtest: OpenAI SSE reconstructs Unicode, role, finish, optional usage and DONE
+ok 85 - OpenAI SSE reconstructs Unicode, role, finish, optional usage and DONE
+  ---
+  duration_ms: 5.9803
+  type: 'test'
+  ...
+# Subtest: WRAPPER_TOKEN protects both v1 routes but never native routes
+ok 86 - WRAPPER_TOKEN protects both v1 routes but never native routes
+  ---
+  duration_ms: 11.921
+  type: 'test'
+  ...
+# Subtest: configured secrets are absent from suggestions, errors and logs
+ok 87 - configured secrets are absent from suggestions, errors and logs
+  ---
+  duration_ms: 4.1111
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: missing model
+ok 88 - malformed OpenAI request returns 400: missing model
+  ---
+  duration_ms: 3.546
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: missing messages
+ok 89 - malformed OpenAI request returns 400: missing messages
+  ---
+  duration_ms: 7.5858
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: empty messages
+ok 90 - malformed OpenAI request returns 400: empty messages
+  ---
+  duration_ms: 6.1157
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad role
+ok 91 - malformed OpenAI request returns 400: bad role
+  ---
+  duration_ms: 5.7875
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad content
+ok 92 - malformed OpenAI request returns 400: bad content
+  ---
+  duration_ms: 4.7076
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad stream
+ok 93 - malformed OpenAI request returns 400: bad stream
+  ---
+  duration_ms: 4.7093
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: tools
+ok 94 - malformed OpenAI request returns 400: tools
+  ---
+  duration_ms: 4.0258
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: images on OpenAI
+ok 95 - malformed OpenAI request returns 400: images on OpenAI
+  ---
+  duration_ms: 4.2858
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: system only
+ok 96 - malformed OpenAI request returns 400: system only
+  ---
+  duration_ms: 4.7816
+  type: 'test'
+  ...
+# Subtest: bad JSON, oversized bodies, unknown models/routes and methods return errors; next request still succeeds
+ok 97 - bad JSON, oversized bodies, unknown models/routes and methods return errors; next request still succeeds
+  ---
+  duration_ms: 9.8777
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 429: quota
+ok 98 - upstream error maps to 429: quota
+  ---
+  duration_ms: 6.8623
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 503: unavailable
+ok 99 - upstream error maps to 503: unavailable
+  ---
+  duration_ms: 6.2727
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: bad upstream credential
+ok 100 - upstream error maps to 502: bad upstream credential
+  ---
+  duration_ms: 7.248
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: upstream failure
+ok 101 - upstream error maps to 502: upstream failure
+  ---
+  duration_ms: 6.4655
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: network
+ok 102 - upstream error maps to 502: network
+  ---
+  duration_ms: 5.4218
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 504: timeout
+ok 103 - upstream error maps to 504: timeout
+  ---
+  duration_ms: 4.7844
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: empty
+ok 104 - upstream error maps to 502: empty
+  ---
+  duration_ms: 5.0629
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 500: private internal details
+ok 105 - upstream error maps to 500: private internal details
+  ---
+  duration_ms: 6.7474
+  type: 'test'
+  ...
+# Subtest: parallel requests keep context and results isolated
+ok 106 - parallel requests keep context and results isolated
+  ---
+  duration_ms: 41.5014
+  type: 'test'
+  ...
+# Subtest: bounded generation returns 504 even when injected adapter ignores cancellation
+ok 107 - bounded generation returns 504 even when injected adapter ignores cancellation
+  ---
+  duration_ms: 30.3643
+  type: 'test'
+  ...
+# Subtest: disconnect aborts inference; shutdown aborts pending work and closes both listeners
+ok 108 - disconnect aborts inference; shutdown aborts pending work and closes both listeners
+  ---
+  duration_ms: 6.6549
+  type: 'test'
+  ...
+# Subtest: second loopback bind failure releases the first listener
+ok 109 - second loopback bind failure releases the first listener
+  ---
+  duration_ms: 2.9478
+  type: 'test'
+  ...
+# Subtest: malformed Gemini payload maps to 502 through both HTTP adapters
+ok 110 - malformed Gemini payload maps to 502 through both HTTP adapters
+  ---
+  duration_ms: 4.4784
+  type: 'test'
+  ...
+# Subtest: shutdown cancels active inference that ignores abort without waiting for its completion
+ok 111 - shutdown cancels active inference that ignores abort without waiting for its completion
+  ---
+  duration_ms: 3.5604
+  type: 'test'
+  ...
+# Subtest: shutdown completes while a client stops reading a large SSE response
+ok 112 - shutdown completes while a client stops reading a large SSE response
+  ---
+  duration_ms: 88.1057
+  type: 'test'
+  ...
+# Subtest: request body deadline returns native 408 and server remains healthy
+ok 113 - request body deadline returns native 408 and server remains healthy
+  ---
+  duration_ms: 36.4871
+  type: 'test'
+  ...
+# Subtest: live route obeys optional v1 authentication, method checks and both loopbacks
+ok 114 - live route obeys optional v1 authentication, method checks and both loopbacks
+  ---
+  duration_ms: 116.5588
+  type: 'test'
+  ...
+# Subtest: live route reports unattached mode without starting a connection or inference
+ok 115 - live route reports unattached mode without starting a connection or inference
+  ---
+  duration_ms: 8.7393
+  type: 'test'
+  ...
+# Subtest: snapshot first, ordered events, heartbeat comments and reconnect always replace state
+ok 116 - snapshot first, ordered events, heartbeat comments and reconnect always replace state
+  ---
+  duration_ms: 59.7218
+  type: 'test'
+  ...
+# Subtest: all feed payloads and diagnostics use existing redaction
+ok 117 - all feed payloads and diagnostics use existing redaction
+  ---
+  duration_ms: 7.6645
+  type: 'test'
+  ...
+# Subtest: bounded slow-reader disconnect does not block other subscribers or ingestion
+ok 118 - bounded slow-reader disconnect does not block other subscribers or ingestion
+  ---
+  duration_ms: 21.1229
+  type: 'test'
+  ...
+# Subtest: drain deadline disconnects a stalled reader even below the byte cap
+ok 119 - drain deadline disconnects a stalled reader even below the byte cap
+  ---
+  duration_ms: 74.2113
+  type: 'test'
+  ...
+# Subtest: shutdown detaches subscribers and closes both listeners promptly
+ok 120 - shutdown detaches subscribers and closes both listeners promptly
+  ---
+  duration_ms: 5.3337
+  type: 'test'
+  ...
+# Subtest: terminal feed status closes the stream and releases subscription
+ok 121 - terminal feed status closes the stream and releases subscription
+  ---
+  duration_ms: 3.6226
+  type: 'test'
+  ...
+# Subtest: connecting after live-session close sends the terminal snapshot then ends
+ok 122 - connecting after live-session close sends the terminal snapshot then ends
+  ---
+  duration_ms: 3.274
+  type: 'test'
+  ...
+# Subtest: two HTTP subscribers share one Fireflies connection and generation loop; reconnect dedupes by attempt ID
+ok 123 - two HTTP subscribers share one Fireflies connection and generation loop; reconnect dedupes by attempt ID
+  ---
+  duration_ms: 9.7891
+  type: 'test'
+  ...
+# Subtest: two feed observers share one transport and inference loop with separate sequence and revision
+ok 124 - two feed observers share one transport and inference loop with separate sequence and revision
+  ---
+  duration_ms: 9.1303
+  type: 'test'
+  ...
+# Subtest: transcript events are full corrected, reordered and evicted snapshots; identical retransmits publish nothing
+ok 125 - transcript events are full corrected, reordered and evicted snapshots; identical retransmits publish nothing
+  ---
+  duration_ms: 1.7927
+  type: 'test'
+  ...
+# Subtest: initial subscription attachment is gap-free during reentrant updates and observers receive ordered isolated copies
+ok 126 - initial subscription attachment is gap-free during reentrant updates and observers receive ordered isolated copies
+  ---
+  duration_ms: 1.9949
+  type: 'test'
+  ...
+# Subtest: feed retains stale and disconnected chunks while Ask omits them, using the existing timer for status
+ok 127 - feed retains stale and disconnected chunks while Ask omits them, using the existing timer for status
+  ---
+  duration_ms: 1.3089
+  type: 'test'
+  ...
+# Subtest: retry attempts have unique IDs and errors retain pending material; completed history retains twenty including no-suggestion
+ok 128 - retry attempts have unique IDs and errors retain pending material; completed history retains twenty including no-suggestion
+  ---
+  duration_ms: 4.5369
+  type: 'test'
+  ...
+# Subtest: unfinished generation is in bootstrap; unsubscribe and close release observers and suppress late completion
+ok 129 - unfinished generation is in bootstrap; unsubscribe and close release observers and suppress late completion
+  ---
+  duration_ms: 1.505
+  type: 'test'
+  ...
+# Subtest: new sessions reset feed identity and throwing observers cannot abort generation
+ok 130 - new sessions reset feed identity and throwing observers cannot abort generation
+  ---
+  duration_ms: 1.41
+  type: 'test'
+  ...
+# Subtest: all newly exposed snapshots, transcript, suggestions and errors are redacted
+ok 131 - all newly exposed snapshots, transcript, suggestions and errors are redacted
+  ---
+  duration_ms: 1.5837
+  type: 'test'
+  ...
+# Subtest: loop event observer failures and reentrant ticks cannot change scheduling or acknowledgement
+ok 132 - loop event observer failures and reentrant ticks cannot change scheduling or acknowledgement
+  ---
+  duration_ms: 0.3726
+  type: 'test'
+  ...
+# Subtest: closing from a started observer cancels before inference without an unhandled rejection
+ok 133 - closing from a started observer cancels before inference without an unhandled rejection
+  ---
+  duration_ms: 7.2105
+  type: 'test'
+  ...
+# Subtest: loop keeps existing rejection propagation when a diagnostic sink fails
+ok 134 - loop keeps existing rejection propagation when a diagnostic sink fails
+  ---
+  duration_ms: 0.6915
+  type: 'test'
+  ...
+# Subtest: terminal observers may close reentrantly without closing the transport twice
+ok 135 - terminal observers may close reentrantly without closing the transport twice
+  ---
+  duration_ms: 0.4802
+  type: 'test'
+  ...
+# Subtest: a correction outside the window still publishes removal of its formerly retained chunk
+ok 136 - a correction outside the window still publishes removal of its formerly retained chunk
+  ---
+  duration_ms: 0.4488
+  type: 'test'
+  ...
+# Subtest: live session authenticates once and shares a copied snapshot while periodic suggestions continue
+ok 137 - live session authenticates once and shares a copied snapshot while periodic suggestions continue
+  ---
+  duration_ms: 14.0629
+  type: 'test'
+  ...
+# Subtest: Ask omits disconnected or stale chunks without changing periodic buffer semantics
+ok 138 - Ask omits disconnected or stale chunks without changing periodic buffer semantics
+  ---
+  duration_ms: 20.6265
+  type: 'test'
+  ...
+# Subtest: live startup waits for authentication and rejects timeout with full transport cleanup
+ok 139 - live startup waits for authentication and rejects timeout with full transport cleanup
+  ---
+  duration_ms: 30.4353
+  type: 'test'
+  ...
+# Subtest: no meeting and authentication rejection fail startup without a periodic timer
+ok 140 - no meeting and authentication rejection fail startup without a periodic timer
+  ---
+  duration_ms: 2.5329
+  type: 'test'
+  ...
+# Subtest: aborting during discovery stops startup without connecting
+ok 141 - aborting during discovery stops startup without connecting
+  ---
+  duration_ms: 1.2315
+  type: 'test'
+  ...
+# Subtest: post-start fatal authentication closes capture and notifies CLI once
+ok 142 - post-start fatal authentication closes capture and notifies CLI once
+  ---
+  duration_ms: 0.8007
+  type: 'test'
+  ...
+# Subtest: lifecycle abort cancels in-flight periodic inference and removes listeners
+ok 143 - lifecycle abort cancels in-flight periodic inference and removes listeners
+  ---
+  duration_ms: 0.7538
+  type: 'test'
+  ...
+# Subtest: authentication success followed by fatal in the same turn still rejects startup
+ok 144 - authentication success followed by fatal in the same turn still rejects startup
+  ---
+  duration_ms: 0.6221
+  type: 'test'
+  ...
+# Subtest: closing a successful session removes startup and lifetime abort listeners
+ok 145 - closing a successful session removes startup and lifetime abort listeners
+  ---
+  duration_ms: 0.5776
+  type: 'test'
+  ...
+# Subtest: cancelling an HTTP Ask leaves capture and periodic suggestions running
+ok 146 - cancelling an HTTP Ask leaves capture and periodic suggestions running
+  ---
+  duration_ms: 41.7367
+  type: 'test'
+  ...
+# Subtest: offline replay runs entire CLI without credentials and writes valid JSONL
+ok 147 - offline replay runs entire CLI without credentials and writes valid JSONL
+  ---
+  duration_ms: 600.744
+  type: 'test'
+  ...
+# Subtest: CLI reports missing key with exit 2, without its value
+ok 148 - CLI reports missing key with exit 2, without its value
+  ---
+  duration_ms: 52.7878
+  type: 'test'
+  ...
+# Subtest: replay pauses ingestion at checkpoints and never passes their labels to the model
+ok 149 - replay pauses ingestion at checkpoints and never passes their labels to the model
+  ---
+  duration_ms: 31.2234
+  type: 'test'
+  ...
+# Subtest: missing dossier fails before replay creates logs; help ignores it
+ok 150 - missing dossier fails before replay creates logs; help ignores it
+  ---
+  duration_ms: 108.7638
+  type: 'test'
+  ...
+# Subtest: demo replay produces four mapped mock outcomes and seven partial replacements
+ok 151 - demo replay produces four mapped mock outcomes and seven partial replacements
+  ---
+  duration_ms: 179.3798
+  type: 'test'
+  ...
+# Subtest: captured Fireflies wire events run through the complete mocked replay CLI
+ok 152 - captured Fireflies wire events run through the complete mocked replay CLI
+  ---
+  duration_ms: 407.7795
+  type: 'test'
+  ...
+# Subtest: inherited Socket.IO DEBUG cannot print an auth key
+ok 153 - inherited Socket.IO DEBUG cannot print an auth key
+  ---
+  duration_ms: 209.1598
+  type: 'test'
+  ...
+# Subtest: serve CLI starts with Gemini only, never loads Socket.IO and logs redacted metadata
+ok 154 - serve CLI starts with Gemini only, never loads Socket.IO and logs redacted metadata
+  ---
+  duration_ms: 207.7368
+  type: 'test'
+  ...
+# Subtest: serve missing dossier fails before listening or creating logs
+ok 155 - serve missing dossier fails before listening or creating logs
+  ---
+  duration_ms: 62.6947
+  type: 'test'
+  ...
+# Subtest: combined CLI authenticates one attachment and serves HTTP before fatal auth closes everything
+ok 156 - combined CLI authenticates one attachment and serves HTTP before fatal auth closes everything
+  ---
+  duration_ms: 615.7745
+  type: 'test'
+  ...
+# Subtest: combined CLI discovery and auth failures never bind HTTP
+ok 157 - combined CLI discovery and auth failures never bind HTTP
+  ---
+  duration_ms: 190.1548
+  type: 'test'
+  ...
+# Subtest: combined CLI port bind failure closes its authenticated attachment
+ok 158 - combined CLI port bind failure closes its authenticated attachment
+  ---
+  duration_ms: 124.1082
+  type: 'test'
+  ...
+# Subtest: combined CLI wires its existing live session into the authenticated SSE route
+ok 159 - combined CLI wires its existing live session into the authenticated SSE route
+  ---
+  duration_ms: 143.0576
+  type: 'test'
+  ...
+# Subtest: serve requires Gemini only, has port 11434 and component dossier, and serializes no secrets
+ok 160 - serve requires Gemini only, has port 11434 and component dossier, and serializes no secrets
+  ---
+  duration_ms: 3.5907
+  type: 'test'
+  ...
+# Subtest: serve rejects conflicting modes and invalid ports
+ok 161 - serve rejects conflicting modes and invalid ports
+  ---
+  duration_ms: 0.8353
+  type: 'test'
+  ...
+# Subtest: WRAPPER_TOKEN field and configured value are redacted
+ok 162 - WRAPPER_TOKEN field and configured value are redacted
+  ---
+  duration_ms: 1.1449
+  type: 'test'
+  ...
+# Subtest: serve attachment requires explicit opt-in and both keys
+ok 163 - serve attachment requires explicit opt-in and both keys
+  ---
+  duration_ms: 0.5824
+  type: 'test'
+  ...
+# Subtest: console and JSONL redact nested secrets and sensitive fields
+ok 164 - console and JSONL redact nested secrets and sensitive fields
+  ---
+  duration_ms: 7.5271
+  type: 'test'
+  ...
+# Subtest: only changed material triggers and attempts are spaced by 20 seconds
+ok 165 - only changed material triggers and attempts are spaced by 20 seconds
+  ---
+  duration_ms: 4.2138
+  type: 'test'
+  ...
+# Subtest: one in-flight request; new material survives snapshot acknowledgement
+ok 166 - one in-flight request; new material survives snapshot acknowledgement
+  ---
+  duration_ms: 0.5824
+  type: 'test'
+  ...
+# Subtest: failure keeps material pending and retry obeys throttle
+ok 167 - failure keeps material pending and retry obeys throttle
+  ---
+  duration_ms: 0.6515
+  type: 'test'
+  ...
+# Subtest: consecutive no-suggestion results suppressed only in console
+ok 168 - consecutive no-suggestion results suppressed only in console
+  ---
+  duration_ms: 2.4192
+  type: 'test'
+  ...
+# Subtest: malformed and wrong-meeting events are logged but not ingested
+ok 169 - malformed and wrong-meeting events are logged but not ingested
+  ---
+  duration_ms: 0.3207
+  type: 'test'
+  ...
+# Subtest: closing cancels the request and prevents further suggestions
+ok 170 - closing cancels the request and prevents further suggestions
+  ---
+  duration_ms: 0.8779
+  type: 'test'
+  ...
+# Subtest: snapshot atomically copies selected meeting revision and replacement chunks without acknowledging
+ok 171 - snapshot atomically copies selected meeting revision and replacement chunks without acknowledging
+  ---
+  duration_ms: 0.4087
+  type: 'test'
+  ...
+# Subtest: exports a real HTTP evaluation harness
+ok 172 - exports a real HTTP evaluation harness
+  ---
+  duration_ms: 0.9965
+  type: 'test'
+  ...
+# Subtest: uses latest revision, isolates rubric, preserves raw output and does not acknowledge
+ok 173 - uses latest revision, isolates rubric, preserves raw output and does not acknowledge
+  ---
+  duration_ms: 51.9243
+  type: 'test'
+  ...
+# Subtest: HTTP model error is terminal and retained without retry
+ok 174 - HTTP model error is terminal and retained without retry
+  ---
+  duration_ms: 9.9485
+  type: 'test'
+  ...
+# Subtest: deadline bounds an uncooperative model adapter
+ok 175 - deadline bounds an uncooperative model adapter
+  ---
+  duration_ms: 57.0908
+  type: 'test'
+  ...
+# Subtest: no suggestion completes once but fails answer-required gate
+ok 176 - no suggestion completes once but fails answer-required gate
+  ---
+  duration_ms: 5.8188
+  type: 'test'
+  ...
+# Subtest: tone checks case insensitivity and mechanical source names
+ok 177 - tone checks case insensitivity and mechanical source names
+  ---
+  duration_ms: 0.1345
+  type: 'test'
+  ...
+# Subtest: natural date is accepted and marked for human claim review
+ok 178 - natural date is accepted and marked for human claim review
+  ---
+  duration_ms: 0.3981
+  type: 'test'
+  ...
+# Subtest: fixtures cover E-J, unavailable sources, Hi variants and both APIs
+ok 179 - fixtures cover E-J, unavailable sources, Hi variants and both APIs
+  ---
+  duration_ms: 3.2263
+  type: 'test'
+  ...
+# Subtest: separate cases cannot inherit prior conversation
+ok 180 - separate cases cannot inherit prior conversation
+  ---
+  duration_ms: 10.0267
+  type: 'test'
+  ...
+# Subtest: explicit conflicting years cannot satisfy natural supporting-date checks
+ok 181 - explicit conflicting years cannot satisfy natural supporting-date checks
+  ---
+  duration_ms: 0.3096
+  type: 'test'
+  ...
+# Subtest: real native NDJSON and v1 SSE preserve output text
+ok 182 - real native NDJSON and v1 SSE preserve output text
+  ---
+  duration_ms: 12.4483
+  type: 'test'
+  ...
+# Subtest: evaluation persists every model failure and later completion without retries
+ok 183 - evaluation persists every model failure and later completion without retries
+  ---
+  duration_ms: 12.8513
+  type: 'test'
+  ...
+# Subtest: known credentials are redacted from returned raw responses and error evidence
+ok 184 - known credentials are redacted from returned raw responses and error evidence
+  ---
+  duration_ms: 3.7074
+  type: 'test'
+  ...
+1..184
+# tests 184
+# suites 0
+# pass 183
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1677.085

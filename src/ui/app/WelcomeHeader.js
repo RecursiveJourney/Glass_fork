@@ -27,6 +27,7 @@ export class WelcomeHeader extends LitElement {
             display: inline-flex;
             -webkit-app-region: drag;
         }
+        .meeting-back { -webkit-app-region: no-drag; color: white; background: #444; border: none; border-radius: 5px; padding: 5px; cursor: pointer; align-self: flex-start; }
         .close-button {
             -webkit-app-region: no-drag;
             position: absolute;
@@ -161,6 +162,7 @@ export class WelcomeHeader extends LitElement {
     `;
 
     static properties = {
+        returnCallback: { type: Function },
         loginCallback: { type: Function },
         apiKeyCallback: { type: Function },
     };
@@ -187,6 +189,7 @@ export class WelcomeHeader extends LitElement {
         return html`
             <div class="container">
                 <button class="close-button" @click=${this.handleClose}>×</button>
+                ${this.returnCallback ? html`<button class="meeting-back" @click=${this.returnCallback}>Back to source selection</button>` : ""}
                 <div class="header-section">
                     <div class="title">Welcome to Glass</div>
                     <div class="subtitle">Choose how to connect your AI model</div>

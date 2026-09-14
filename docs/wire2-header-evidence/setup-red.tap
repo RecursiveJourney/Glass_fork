@@ -1,0 +1,207 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    not ok 1 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 1.2618
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        added Setup route exposes upstream Welcome choices
+        + actual - expected
+        
+        + 'added Setup route exposes upstream Welcome choices'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'added Setup route exposes upstream Welcome choices'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    not ok 2 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.2166
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        Show Transcript/Insights control remains available
+        + actual - expected
+        
+        + 'Show Transcript/Insights control remains available'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Show Transcript/Insights control remains available'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    not ok 3 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.1701
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        upstream Close still quits
+        + actual - expected
+        
+        + 'upstream Close still quits'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'upstream Close still quits'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 4 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.1417
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 5 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.0928
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 6 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0826
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 7 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.0785
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 8 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.0964
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 9 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1097
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 10 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.1209
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 11 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0826
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 12 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0876
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 13 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.0558
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 14 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0519
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 15 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.0492
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 16 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0615
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 17 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0814
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 18 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0461
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 19 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0862
+      type: 'test'
+      ...
+    1..19
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1655.1705
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 20
+# suites 0
+# pass 16
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1725.1577

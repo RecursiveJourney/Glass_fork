@@ -55,6 +55,7 @@ export class PermissionHeader extends LitElement {
             pointer-events: none;
         }
 
+        .meeting-back { -webkit-app-region: no-drag; align-self:flex-start; margin-bottom:8px; padding:4px 8px; color:white; background:#444; border:none; border-radius:4px; cursor:pointer; }
         .close-button {
             -webkit-app-region: no-drag;
             position: absolute;
@@ -283,8 +284,8 @@ export class PermissionHeader extends LitElement {
 
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('userMode')) {
-            const newHeight = this.userMode === 'firebase' ? 280 : 220;
+        if (changedProperties.has('userMode') || changedProperties.has('backCallback')) {
+            const newHeight = (this.userMode === 'firebase' ? 280 : 220) + (this.backCallback ? 32 : 0);
             console.log(`[PermissionHeader] User mode changed to ${this.userMode}, requesting resize to ${newHeight}px`);
             this.dispatchEvent(new CustomEvent('request-resize', {
                 detail: { height: newHeight },
@@ -471,7 +472,6 @@ export class PermissionHeader extends LitElement {
     }
 
     handleClose() {
-        if (this.backCallback) return this.backCallback();
         console.log('Close button clicked');
         if (window.api) {
             window.api.common.quitApplication();
@@ -480,17 +480,18 @@ export class PermissionHeader extends LitElement {
 
     render() {
         const isKeychainRequired = this.userMode === 'firebase';
-        const containerHeight = isKeychainRequired ? 280 : 220;
+        const containerHeight = (isKeychainRequired ? 280 : 220) + (this.backCallback ? 32 : 0);
         const keychainOk = !isKeychainRequired || this.keychainGranted === 'granted';
         const allGranted = this.microphoneGranted === 'granted' && this.screenGranted === 'granted' && keychainOk;
 
         return html`
             <div class="container" style="height: ${containerHeight}px">
-                <button class="close-button" @click=${this.handleClose} title=${this.backCallback ? 'Back to source selection' : 'Close application'}>
+                <button class="close-button" @click=${this.handleClose} title="Close application">
                     <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor">
                         <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.2" />
                     </svg>
                 </button>
+                ${this.backCallback ? html`<button class="meeting-back" @click=${this.backCallback}>Back</button>` : ""}
                 <h1 class="title">Permission Setup Required</h1>
 
                 <div class="form-content ${allGranted ? 'all-granted' : ''}">

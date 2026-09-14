@@ -1,0 +1,30 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const {spawn}=require('node:child_process'),path=require('node:path');
+test('native locked window grows from 224px to Meeting while preserving configured limits',{timeout:30000},async()=>{
+    const env={...process.env};delete env.ELECTRON_RUN_AS_NODE;
+    const child=spawn(require('electron'),[path.join(__dirname,'helpers/native-resize.cjs')],{env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+    let output='';child.stdout.on('data',c=>output+=c);child.stderr.resume();
+    const timer=setTimeout(()=>child.kill(),25000);
+    let code;try{code=await new Promise((resolve,reject)=>{child.on('exit',resolve);child.on('error',reject);});}finally{clearTimeout(timer);}
+    const line=output.split(/\r?\n/).find(x=>x.startsWith('NATIVE_RESIZE:'));
+    assert.ok(line,'native diagnostic completed');const r=JSON.parse(line.slice(14));
+    assert.equal(r.failed,undefined);assert.equal(code,0);
+    assert.ok(Math.abs(r.headerGrown.bounds.width-462)<=2,'header width rejected at 175%: '+JSON.stringify(r.headerInitial)+' -> '+JSON.stringify(r.headerGrown));
+    assert.equal(r.headerGrown.ack.applied,true,'both header axes applied');
+    assert.equal(r.headerViewport.dpr,1.75);
+    assert.ok(r.headerViewport.width>=462,'actual renderer viewport accommodates full content');
+    assert.ok(Math.abs(r.headerRepeated.bounds.width-462)<=2,'repeated native lock/unlock preserves width intent');
+    assert.equal(r.headerRepeated.cached.width,462,'DPI correction never inflates the requested-width cache');
+    console.log('Native header at 175%: '+JSON.stringify({initial:r.headerInitial,grown:r.headerGrown,viewport:r.headerViewport,repeated:r.headerRepeated}));
+    assert.ok(Math.abs(r.locked.height-223)<=2,JSON.stringify(r));
+    assert.ok(Math.abs(r.grown.height-614)<=2,'614px requested but OS remained at '+r.grown.height+'px; '+JSON.stringify(r));
+    assert.equal(r.grown.resizable,false);assert.equal(r.grown.ack.applied,true);
+    assert.ok(Math.abs(r.grown.ack.height-r.grown.height)<=2);
+    assert.ok(Math.abs(r.capped.height-900)<=2,'original maxHeight 900 survives unlocking');
+    const intersects=(a,b)=>a.x<b.x+b.width&&b.x<a.x+a.width&&a.y<b.y+b.height&&b.y<a.y+a.height;
+    assert.equal(intersects(r.meetingSettings.settings,r.meetingSettings.listen),false,'native Settings avoids Meeting overlay');
+    assert.equal(intersects(r.meetingSettingsWithAsk.settings,r.meetingSettingsWithAsk.listen),false);
+    assert.equal(intersects(r.meetingSettingsWithAsk.settings,r.meetingSettingsWithAsk.ask),false);
+    console.log('Native Meeting Settings at 175%: '+JSON.stringify({withoutAsk:r.meetingSettings,withAsk:r.meetingSettingsWithAsk}));
+    assert.equal(r.capped.resizable,false);assert.equal(r.capped.ack.applied,false,'clamped request is not accepted as 1000px');
+});

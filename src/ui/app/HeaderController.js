@@ -34,13 +34,19 @@ class HeaderTransitionManager {
             if (type === 'welcome') {
                 this.welcomeHeader = document.createElement('welcome-header');
                 this.welcomeHeader.loginCallback = () => this.handleLoginOption();
+                if (this.localSetup) this.welcomeHeader.returnCallback = () => this.transitionToMainHeader();
                 this.welcomeHeader.apiKeyCallback = () => this.handleApiKeyOption();
+                this.welcomeHeader.addEventListener('content-changed', () => {
+                    const container = this.welcomeHeader?.shadowRoot.querySelector('.container');
+                    if (container) this._resizeForWelcome(Math.ceil(container.getBoundingClientRect().height));
+                });
                 this.headerContainer.appendChild(this.welcomeHeader);
                 console.log('[HeaderController] ensureHeader: Header of type:', type, 'created.');
             } else if (type === 'apikey') {
                 this.apiKeyHeader = document.createElement('apikey-header');
                 this.apiKeyHeader.stateUpdateCallback = (userState) => this.handleStateUpdate(userState);
-                this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
+                this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
+                if (this.localSetup) this.apiKeyHeader.returnCallback = () => this.transitionToMainHeader();
                 this.apiKeyHeader.addEventListener('request-resize', e => {
                     this._resizeForApiKey(e.detail.height); 
                 });
@@ -81,6 +87,11 @@ class HeaderTransitionManager {
             this.localSetup = true;
             if (await window.api.apiKeyHeader.areProvidersConfigured()) this.transitionToPermissionHeader();
             else this.handleApiKeyOption();
+        });
+
+        window.addEventListener('glass-setup-requested', () => {
+            this.localSetup = true;
+            this.transitionToWelcomeHeader();
         });
 
         if (window.api) {
@@ -170,7 +181,8 @@ class HeaderTransitionManager {
         this.ensureHeader('apikey');
         // ApiKeyHeader에 뒤로가기 콜백 설정
         if (this.apiKeyHeader) {
-            this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
+            this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
+            if (this.localSetup) this.apiKeyHeader.returnCallback = () => this.transitionToMainHeader();
         }
     }
 
@@ -241,27 +253,31 @@ class HeaderTransitionManager {
 
     async _resizeForMain() {
         if (!window.api) return;
+        if (this.mainHeader) return this.mainHeader.resumeWindowSizing();
         console.log('[HeaderController] _resizeForMain: Resizing window to 445x47');
         return window.api.headerController.resizeHeaderWindow({ width: 445, height: 47 }).catch(() => {});
     }
 
     async _resizeForApiKey(height = 370) {
         if (!window.api) return;
+        this.mainHeader?.suspendWindowSizing();
         console.log(`[HeaderController] _resizeForApiKey: Resizing window to 456x${height}`);
         return window.api.headerController.resizeHeaderWindow({ width: 456, height: height }).catch(() => {});
     }
 
     async _resizeForPermissionHeader(height) {
         if (!window.api) return;
+        this.mainHeader?.suspendWindowSizing();
         const finalHeight = height || 220;
         return window.api.headerController.resizeHeaderWindow({ width: 285, height: finalHeight })
             .catch(() => {});
     }
 
-    async _resizeForWelcome() {
+    async _resizeForWelcome(height = 364) {
         if (!window.api) return;
-        console.log('[HeaderController] _resizeForWelcome: Resizing window to 456x370');
-        return window.api.headerController.resizeHeaderWindow({ width: 456, height: 364 })
+        this.mainHeader?.suspendWindowSizing();
+        console.log('[HeaderController] _resizeForWelcome: Resizing window to content height');
+        return window.api.headerController.resizeHeaderWindow({ width: 456, height })
             .catch(() => {});
     }
 

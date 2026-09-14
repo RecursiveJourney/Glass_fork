@@ -1,0 +1,380 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: source selector stays readable when host text defaults to black
+    not ok 1 - source selector stays readable when host text defaults to black
+      ---
+      duration_ms: 1.1462
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        selector must use explicit white header text
+        + actual - expected
+        
+        + 'selector must use explicit white header text'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'selector must use explicit white header text'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: departing MainHeader cannot compete with a pending Setup resize
+    ok 2 - departing MainHeader cannot compete with a pending Setup resize
+      ---
+      duration_ms: 0.1441
+      type: 'test'
+      ...
+    # Subtest: added Setup controls must not hide the original Welcome options or permission title
+    ok 3 - added Setup controls must not hide the original Welcome options or permission title
+      ---
+      duration_ms: 0.1142
+      type: 'test'
+      ...
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    ok 4 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 0.0909
+      type: 'test'
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    ok 5 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.0975
+      type: 'test'
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    ok 6 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.0754
+      type: 'test'
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 7 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.0768
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 8 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.0935
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 9 - stopped session can restart from the header
+      ---
+      duration_ms: 0.1089
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 10 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.1198
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 11 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.1184
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 12 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.0607
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 13 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.0759
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 14 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0521
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 15 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0709
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 16 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.0695
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 17 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0572
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 18 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.559
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 19 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0688
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 20 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0446
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 21 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0442
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 22 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0399
+      type: 'test'
+      ...
+    1..22
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 2004.6016
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: immediate layout cancels the older animation (original VM drift reproduction)
+ok 2 - immediate layout cancels the older animation (original VM drift reproduction)
+  ---
+  duration_ms: 6.8306
+  type: 'test'
+  ...
+# Subtest: native header movement follows continuously before the final moved event
+ok 3 - native header movement follows continuously before the final moved event
+  ---
+  duration_ms: 4.6542
+  type: 'test'
+  ...
+# Subtest: explicit drag synchronizes children even without native move events
+ok 4 - explicit drag synchronizes children even without native move events
+  ---
+  duration_ms: 3.4324
+  type: 'test'
+  ...
+# Subtest: drag during transcript growth preserves requested height and restores resize state
+ok 5 - drag during transcript growth preserves requested height and restores resize state
+  ---
+  duration_ms: 4.4829
+  type: 'test'
+  ...
+# Subtest: final moved event reconciles position while a child animation is active
+ok 6 - final moved event reconciles position while a child animation is active
+  ---
+  duration_ms: 3.196
+  type: 'test'
+  ...
+# Subtest: Ask and Listen remain side by side through left and right edge drags
+ok 7 - Ask and Listen remain side by side through left and right edge drags
+  ---
+  duration_ms: 3.2555
+  type: 'test'
+  ...
+# Subtest: screen-edge transitions place Listen above then below without stale jumps
+ok 8 - screen-edge transitions place Listen above then below without stale jumps
+  ---
+  duration_ms: 3.4855
+  type: 'test'
+  ...
+# Subtest: attachment uses the destination monitor origin
+ok 9 - attachment uses the destination monitor origin
+  ---
+  duration_ms: 3.0304
+  type: 'test'
+  ...
+# Subtest: keyboard movement keeps attachment through animation and at completion
+ok 10 - keyboard movement keeps attachment through animation and at completion
+  ---
+  duration_ms: 3.6337
+  type: 'test'
+  ...
+# Subtest: manual drag supersedes a running header animation
+ok 11 - manual drag supersedes a running header animation
+  ---
+  duration_ms: 3.3303
+  type: 'test'
+  ...
+# Subtest: 175% DPI rounding does not accumulate size over repeated Listen drags
+ok 12 - 175% DPI rounding does not accumulate size over repeated Listen drags
+  ---
+  duration_ms: 6.5652
+  type: 'test'
+  ...
+# Subtest: rounded Ask + Listen bounds stay bounded during drag and transcript growth
+ok 13 - rounded Ask + Listen bounds stay bounded during drag and transcript growth
+  ---
+  duration_ms: 6.1091
+  type: 'test'
+  ...
+# Subtest: DPI rounding across below/above transitions does not change requested dimensions
+ok 14 - DPI rounding across below/above transitions does not change requested dimensions
+  ---
+  duration_ms: 4.3351
+  type: 'test'
+  ...
+# Subtest: meeting container attaches to the 445x47 source-control header
+ok 15 - meeting container attaches to the 445x47 source-control header
+  ---
+  duration_ms: 5.2168
+  type: 'test'
+  ...
+# Subtest: meeting stream/status updates with equal measurements do not restart resizing
+ok 16 - meeting stream/status updates with equal measurements do not restart resizing
+  ---
+  duration_ms: 9.5377
+  type: 'test'
+  ...
+# Subtest: meeting measurement rounds upward and caps status/error chrome at 700px
+ok 17 - meeting measurement rounds upward and caps status/error chrome at 700px
+  ---
+  duration_ms: 5.3208
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+ok 18 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+  ---
+  duration_ms: 7.8264
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+ok 19 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+  ---
+  duration_ms: 7.5548
+  type: 'test'
+  ...
+# Subtest: meeting and Ask keep independent heights side by side across monitors and edges
+ok 20 - meeting and Ask keep independent heights side by side across monitors and edges
+  ---
+  duration_ms: 5.5851
+  type: 'test'
+  ...
+# Subtest: Stop retains meeting geometry and switching to local resizes from local content
+ok 21 - Stop retains meeting geometry and switching to local resizes from local content
+  ---
+  duration_ms: 6.233
+  type: 'test'
+  ...
+# Subtest: native-style locked min/max cannot replace intended limits
+ok 22 - native-style locked min/max cannot replace intended limits
+  ---
+  duration_ms: 4.1317
+  type: 'test'
+  ...
+# Subtest: drag during resize settles applied acknowledgement and restores the resize lock
+ok 23 - drag during resize settles applied acknowledgement and restores the resize lock
+  ---
+  duration_ms: 3.3321
+  type: 'test'
+  ...
+# Subtest: a superseded resize settles false and the latest request owns the lock
+ok 24 - a superseded resize settles false and the latest request owns the lock
+  ---
+  duration_ms: 4.0345
+  type: 'test'
+  ...
+# Subtest: native rejection is reported using actual bounds, not requested-size bookkeeping
+ok 25 - native rejection is reported using actual bounds, not requested-size bookkeeping
+  ---
+  duration_ms: 4.293
+  type: 'test'
+  ...
+# Subtest: native setter failure settles the IPC response and restores the lock
+ok 26 - native setter failure settles the IPC response and restores the lock
+  ---
+  duration_ms: 5.1011
+  type: 'test'
+  ...
+# Subtest: missing windows and invalid sizes return a failed acknowledgement
+ok 27 - missing windows and invalid sizes return a failed acknowledgement
+  ---
+  duration_ms: 2.946
+  type: 'test'
+  ...
+# Subtest: header resize during another window animation must not disappear
+ok 28 - header resize during another window animation must not disappear
+  ---
+  duration_ms: 3.9646
+  type: 'test'
+  ...
+# Subtest: normal Settings window is reachable without local providers and survives source-independent show/hide
+ok 29 - normal Settings window is reachable without local providers and survives source-independent show/hide
+  ---
+  duration_ms: 3.3273
+  type: 'test'
+  ...
+# Subtest: a rejected header width is reconciled even when the requested height applies
+ok 30 - a rejected header width is reconciled even when the requested height applies
+  ---
+  duration_ms: 4.34
+  type: 'test'
+  ...
+# Subtest: Meeting Settings avoids Listen and Ask at screen edges and follows layout changes
+not ok 31 - Meeting Settings avoids Listen and Ask at screen edges and follows layout changes
+  ---
+  duration_ms: 5.1494
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\window-attachment.test.js:598:1'
+  failureType: 'testCodeFailure'
+  error: 'Settings overlaps meeting transcript'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    clear (C:\Users\User\digital_twin\glass\tests\window-attachment.test.js:604:11)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\window-attachment.test.js:607:2)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: Local Settings retains its shipped placement formula
+ok 32 - Local Settings retains its shipped placement formula
+  ---
+  duration_ms: 5.3765
+  type: 'test'
+  ...
+1..32
+# tests 54
+# suites 0
+# pass 51
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2072.7836

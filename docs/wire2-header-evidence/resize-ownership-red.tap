@@ -1,0 +1,171 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: departing MainHeader cannot compete with a pending Setup resize
+    not ok 1 - departing MainHeader cannot compete with a pending Setup resize
+      ---
+      duration_ms: 1.1723
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        old header must not overwrite in-flight setup dimensions
+        + actual - expected
+        
+        + 'old header must not overwrite in-flight setup dimensions'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'old header must not overwrite in-flight setup dimensions'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: added Setup controls must not hide the original Welcome options or permission title
+    ok 2 - added Setup controls must not hide the original Welcome options or permission title
+      ---
+      duration_ms: 0.1447
+      type: 'test'
+      ...
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    ok 3 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 0.1207
+      type: 'test'
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    ok 4 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.0851
+      type: 'test'
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    ok 5 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.0931
+      type: 'test'
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 6 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.0781
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 7 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.076
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 8 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0974
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 9 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.1117
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 10 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.124
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 11 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1286
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 12 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.0576
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 13 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0512
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 14 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0554
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 15 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.084
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 16 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0487
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 17 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.0431
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 18 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0907
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 19 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.109
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 20 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0751
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 21 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0539
+      type: 'test'
+      ...
+    1..21
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1895.4604
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 22
+# suites 0
+# pass 20
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1962.3014

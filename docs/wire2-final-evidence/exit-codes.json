@@ -1,0 +1,26 @@
+[
+  {
+    "name": "glass-node20.tap",
+    "exit": 0
+  },
+  {
+    "name": "listener-node20.tap",
+    "exit": 0
+  },
+  {
+    "name": "build-node20.txt",
+    "exit": 0
+  },
+  {
+    "name": "glass-node24.tap",
+    "exit": 0
+  },
+  {
+    "name": "listener-node24.tap",
+    "exit": 0
+  },
+  {
+    "name": "build-node24.txt",
+    "exit": 0
+  }
+]

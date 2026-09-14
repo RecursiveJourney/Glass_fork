@@ -1,0 +1,3 @@
+PASS: added diff lines and 69 untracked files checked (PNG screenshots excluded from text scan); no configured credential or common key-pattern matches.
+PASS: changes limited to approved header restoration/resize code, tests, docs and prior Phase 4 work; listener source/tests, Ask, capture, repositories and provider settings unchanged.
+PASS: both staging areas empty, both HEADs unchanged, git diff --check clean. No commits.

@@ -1,0 +1,33 @@
+Glass HEAD: a7394e4
+ M docs/meeting-feed-subscriber.md
+ M src/ui/app/ApiKeyHeader.js
+ M src/ui/app/HeaderController.js
+ M src/ui/app/MainHeader.js
+ M src/ui/app/PermissionHeader.js
+ M src/ui/app/WelcomeHeader.js
+ M src/ui/listen/ListenView.js
+ M src/window/smoothMovementManager.js
+ M src/window/windowBounds.js
+ M src/window/windowLayoutManager.js
+ M src/window/windowManager.js
+ M tests/helpers/meeting-fixture.html
+ M tests/helpers/meeting-renderer.cjs
+ M tests/window-attachment.test.js
+?? docs/wire2-header-checkpoint.md
+?? docs/wire2-header-evidence/
+?? docs/wire2-phase4-checkpoint.md
+?? docs/wire2-phase4-evidence/
+?? docs/wire2-resize-checkpoint.md
+?? docs/wire2-resize-evidence/
+?? src/window/windowResize.js
+?? tests/header-controls.test.js
+?? tests/helpers/header-controls.cjs
+?? tests/helpers/native-resize.cjs
+?? tests/listen-resize-ack.test.js
+?? tests/native-resize.test.js
+Parent HEAD: 1182c17
+ M glass
+ M realtime_listener/README.md
+ M realtime_listener/docs/design.md
+ M realtime_listener/docs/live-feed-contract.md
+?? realtime_listener/docs/wire2-manual-checklist.md

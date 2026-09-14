@@ -1,0 +1,725 @@
+diff --git a/src/ui/app/HeaderController.js b/src/ui/app/HeaderController.js
+index 6202781..be5b3f8 100644
+--- a/src/ui/app/HeaderController.js
++++ b/src/ui/app/HeaderController.js
+@@ -40,7 +40,7 @@ class HeaderTransitionManager {
+             } else if (type === 'apikey') {
+                 this.apiKeyHeader = document.createElement('apikey-header');
+                 this.apiKeyHeader.stateUpdateCallback = (userState) => this.handleStateUpdate(userState);
+-                this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
++                this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
+                 this.apiKeyHeader.addEventListener('request-resize', e => {
+                     this._resizeForApiKey(e.detail.height); 
+                 });
+@@ -48,6 +48,7 @@ class HeaderTransitionManager {
+                 console.log('[HeaderController] ensureHeader: Header of type:', type, 'created.');
+             } else if (type === 'permission') {
+                 this.permissionHeader = document.createElement('permission-setup');
++                if (this.localSetup) this.permissionHeader.backCallback = () => this.transitionToMainHeader();
+                 this.permissionHeader.addEventListener('request-resize', e => {
+                     this._resizeForPermissionHeader(e.detail.height); 
+                 });
+@@ -76,6 +77,11 @@ class HeaderTransitionManager {
+         this.handleApiKeyOption = this.handleApiKeyOption.bind(this);
+ 
+         this._bootstrap();
++        window.addEventListener('listen-setup-requested', async () => {
++            this.localSetup = true;
++            if (await window.api.apiKeyHeader.areProvidersConfigured()) this.transitionToPermissionHeader();
++            else this.handleApiKeyOption();
++        });
+ 
+         if (window.api) {
+             window.api.headerController.onUserStateChanged((event, userState) => {
+@@ -91,6 +97,8 @@ class HeaderTransitionManager {
+                 }
+             });
+             window.api.headerController.onForceShowApiKeyHeader(async () => {
++                const capabilities = await window.api.listen.getCapabilities();
++                if (capabilities.meeting) { await this.transitionToMainHeader(); return; }
+                 console.log('[HeaderController] Received broadcast to show apikey header. Switching now.');
+                 const isConfigured = await window.api.apiKeyHeader.areProvidersConfigured();
+                 if (!isConfigured) {
+@@ -127,6 +135,10 @@ class HeaderTransitionManager {
+ 
+     //////// after_modelStateService ////////
+     async handleStateUpdate(userState) {
++        const update = this._stateUpdate = (this._stateUpdate || 0) + 1;
++        const capabilities = await window.api.listen.getCapabilities();
++        if (update !== this._stateUpdate) return;
++        if (capabilities.meeting) { await this.transitionToMainHeader(); return; }
+         const isConfigured = await window.api.apiKeyHeader.areProvidersConfigured();
+ 
+         if (isConfigured) {
+@@ -158,7 +170,7 @@ class HeaderTransitionManager {
+         this.ensureHeader('apikey');
+         // ApiKeyHeader에 뒤로가기 콜백 설정
+         if (this.apiKeyHeader) {
+-            this.apiKeyHeader.backCallback = () => this.transitionToWelcomeHeader();
++            this.apiKeyHeader.backCallback = () => this.localSetup ? this.transitionToMainHeader() : this.transitionToWelcomeHeader();
+         }
+     }
+ 
+@@ -218,6 +230,7 @@ class HeaderTransitionManager {
+     }
+ 
+     async transitionToMainHeader(animate = true) {
++        this.localSetup = false;
+         if (this.currentHeaderType === 'main') {
+             return this._resizeForMain();
+         }
+@@ -228,8 +241,8 @@ class HeaderTransitionManager {
+ 
+     async _resizeForMain() {
+         if (!window.api) return;
+-        console.log('[HeaderController] _resizeForMain: Resizing window to 353x47');
+-        return window.api.headerController.resizeHeaderWindow({ width: 353, height: 47 }).catch(() => {});
++        console.log('[HeaderController] _resizeForMain: Resizing window to 445x47');
++        return window.api.headerController.resizeHeaderWindow({ width: 445, height: 47 }).catch(() => {});
+     }
+ 
+     async _resizeForApiKey(height = 370) {
+diff --git a/src/ui/app/MainHeader.js b/src/ui/app/MainHeader.js
+index 175c71d..0847a2a 100644
+--- a/src/ui/app/MainHeader.js
++++ b/src/ui/app/MainHeader.js
+@@ -5,9 +5,14 @@ export class MainHeader extends LitElement {
+         isTogglingSession: { type: Boolean, state: true },
+         shortcuts: { type: Object, state: true },
+         listenSessionStatus: { type: String, state: true },
++        listenState: { type: Object, state: true },
++        capabilities: { type: Object, state: true },
+     };
+ 
+     static styles = css`
++        .source-select { -webkit-app-region:no-drag; background:rgba(255,255,255,.08); color:inherit; border:1px solid rgba(255,255,255,.18); border-radius:7px; padding:5px 3px; font:inherit; font-size:11px; max-width:82px; cursor:pointer; }
++        .source-select option { background:#20262b; color:white; }
++        .source-select:disabled { opacity:.65; cursor:default; }
+         :host {
+             display: flex;
+             transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease-out;
+@@ -349,6 +354,9 @@ export class MainHeader extends LitElement {
+         this.settingsHideTimer = null;
+         this.isTogglingSession = false;
+         this.listenSessionStatus = 'beforeSession';
++        this.listenState = null;
++        this.capabilities = { meeting:true, localListen:false, ask:true };
++        this._listenHydration = 0;
+         this.animationEndTimer = null;
+         this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
+         this.handleMouseMove = this.handleMouseMove.bind(this);
+@@ -361,7 +369,7 @@ export class MainHeader extends LitElement {
+         switch (status) {
+             case 'beforeSession': return 'Listen';
+             case 'inSession'   : return 'Stop';
+-            case 'afterSession': return 'Done';
++            case 'afterSession': return 'Listen';
+             default            : return 'Listen';
+         }
+     }
+@@ -473,19 +481,13 @@ export class MainHeader extends LitElement {
+ 
+         if (window.api) {
+ 
+-            this._sessionStateTextListener = (event, { success }) => {
+-                if (success) {
+-                    this.listenSessionStatus = ({
+-                        beforeSession: 'inSession',
+-                        inSession: 'afterSession',
+-                        afterSession: 'beforeSession',
+-                    })[this.listenSessionStatus] || 'beforeSession';
+-                } else {
+-                    this.listenSessionStatus = 'beforeSession';
+-                }
+-                this.isTogglingSession = false; // ✨ 로딩 상태만 해제
+-            };
+-            window.api.mainHeader.onListenChangeSessionResult(this._sessionStateTextListener);
++            const identity = ++this._listenHydration;
++            this._offListen = window.api.listen.onState(state => this.applyListenState(state));
++            window.api.listen.getCapabilities().then(capabilities => {
++                if (identity !== this._listenHydration) return;
++                this.capabilities = capabilities;
++                return window.api.listen.getState();
++            }).then(state => { if (identity === this._listenHydration) this.applyListenState(state); }).catch(() => {});
+ 
+             this._shortcutListener = (event, keybinds) => {
+                 console.log('[MainHeader] Received updated shortcuts:', keybinds);
+@@ -497,6 +499,7 @@ export class MainHeader extends LitElement {
+ 
+     disconnectedCallback() {
+         super.disconnectedCallback();
++        ++this._listenHydration; this._offListen?.(); this._offListen = null;
+         this.removeEventListener('animationend', this.handleAnimationEnd);
+         
+         if (this.animationEndTimer) {
+@@ -540,16 +543,39 @@ export class MainHeader extends LitElement {
+         this.isTogglingSession = true;
+ 
+         try {
++            if (this.listenState?.source === 'local' && this.listenState.error !== 'local_cleanup_failed' && ['idle','stopped'].includes(this.listenState.phase)) {
++                this.capabilities = await window.api.listen.getCapabilities();
++                if (!this.capabilities.localListen) {
++                    window.dispatchEvent(new CustomEvent('listen-setup-requested'));
++                    return;
++                }
++            }
+             const listenButtonText = this._getListenButtonText(this.listenSessionStatus);
+             if (window.api) {
+-                await window.api.mainHeader.sendListenButtonClick(listenButtonText);
++                const result = await window.api.mainHeader.sendListenButtonClick(listenButtonText);
++                this.applyListenState(result?.state);
+             }
+         } catch (error) {
+             console.error('IPC invoke for session change failed:', error);
+             this.isTogglingSession = false;
++        } finally {
++            this.isTogglingSession = false;
+         }
+     }
+ 
++    applyListenState(state) {
++        if (!state || (this.listenState && state.version <= this.listenState.version)) return;
++        this.listenState = state;
++        this.listenSessionStatus = ['starting','active','stopping'].includes(state.phase) || state.error === 'local_cleanup_failed' ? 'inSession' : state.phase === 'stopped' ? 'afterSession' : 'beforeSession';
++        this.isTogglingSession = ['starting','stopping'].includes(state.phase);
++    }
++
++    async selectSource(event) {
++        const result = await window.api.listen.selectSource(event.target.value);
++        this.applyListenState(result?.state);
++        event.target.value = this.listenState?.source || 'local';
++    }
++
+     async _handleAskClick() {
+         if (this.wasJustDragged) return;
+ 
+@@ -609,6 +635,11 @@ export class MainHeader extends LitElement {
+ 
+         return html`
+             <div class="header" @mousedown=${this.handleMouseDown}>
++                <select class="source-select" aria-label="Transcript source" .value=${this.listenState?.source || 'local'}
++                    ?disabled=${!this.listenState || this.listenState.error === 'local_cleanup_failed' || ['starting','active','stopping'].includes(this.listenState.phase)}
++                    @mousedown=${event => event.stopPropagation()} @change=${this.selectSource}>
++                    <option value="local">Local</option><option value="meeting">Meeting</option>
++                </select>
+                 <button 
+                     class="listen-button ${Object.keys(buttonClasses).filter(k => buttonClasses[k]).join(' ')}"
+                     @click=${this._handleListenClick}
+@@ -622,7 +653,7 @@ export class MainHeader extends LitElement {
+                         `
+                         : html`
+                             <div class="action-text">
+-                                <div class="action-text-content">${listenButtonText}</div>
++                                <div class="action-text-content">${this.listenState?.source === 'local' && this.listenState.error !== 'local_cleanup_failed' && ['idle','stopped'].includes(this.listenState.phase) && !this.capabilities.localListen ? 'Set up Local' : listenButtonText}</div>
+                             </div>
+                             <div class="listen-icon">
+                                 ${showStopIcon
+diff --git a/src/ui/app/PermissionHeader.js b/src/ui/app/PermissionHeader.js
+index c90a830..33874a1 100644
+--- a/src/ui/app/PermissionHeader.js
++++ b/src/ui/app/PermissionHeader.js
+@@ -267,6 +267,7 @@ export class PermissionHeader extends LitElement {
+         keychainGranted: { type: String },
+         isChecking: { type: String },
+         continueCallback: { type: Function },
++        backCallback: { type: Function },
+         userMode: { type: String }, // 'local' or 'firebase'
+     };
+ 
+@@ -470,6 +471,7 @@ export class PermissionHeader extends LitElement {
+     }
+ 
+     handleClose() {
++        if (this.backCallback) return this.backCallback();
+         console.log('Close button clicked');
+         if (window.api) {
+             window.api.common.quitApplication();
+@@ -484,7 +486,7 @@ export class PermissionHeader extends LitElement {
+ 
+         return html`
+             <div class="container" style="height: ${containerHeight}px">
+-                <button class="close-button" @click=${this.handleClose} title="Close application">
++                <button class="close-button" @click=${this.handleClose} title=${this.backCallback ? 'Back to source selection' : 'Close application'}>
+                     <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor">
+                         <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.2" />
+                     </svg>
+@@ -583,4 +585,4 @@ export class PermissionHeader extends LitElement {
+     }
+ }
+ 
+-customElements.define('permission-setup', PermissionHeader); 
+\ No newline at end of file
++customElements.define('permission-setup', PermissionHeader);
+diff --git a/src/ui/listen/ListenView.js b/src/ui/listen/ListenView.js
+index cac9ce3..58494a4 100644
+--- a/src/ui/listen/ListenView.js
++++ b/src/ui/listen/ListenView.js
+@@ -1,9 +1,15 @@
+ import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
+ import './stt/SttView.js';
+ import './summary/SummaryView.js';
++import './meeting/SuggestionsView.js';
+ 
+ export class ListenView extends LitElement {
+     static styles = css`
++        .meeting-section-title { margin:0; padding:10px 12px 4px; font-size:11px; line-height:16px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#bdcbd4; }
++        .assistant-container.meeting-layout { height:auto; }
++        .meeting-layout section { min-height:0; border-top:1px solid rgba(255,255,255,.09); }
++        .meeting-layout .bar-left-text { font-size:12px; white-space:normal; }
++        .meeting-note { padding:8px 12px; font-size:12px; color:#f0c5a5; }
+         :host {
+             display: block;
+             width: 400px;
+@@ -427,6 +433,7 @@ export class ListenView extends LitElement {
+         captureStartTime: { type: Number },
+         isSessionActive: { type: Boolean },
+         hasCompletedRecording: { type: Boolean },
++        listenState: { type: Object },
+     };
+ 
+     constructor() {
+@@ -443,6 +450,9 @@ export class ListenView extends LitElement {
+         this.isThrottled = false;
+         this.copyState = 'idle';
+         this.copyTimeout = null;
++        this.listenState = null;
++        this._hydration = 0;
++        this._lastHeight = null;
+ 
+         this.adjustWindowHeight = this.adjustWindowHeight.bind(this);
+     }
+@@ -453,7 +463,13 @@ export class ListenView extends LitElement {
+         if (this.isSessionActive) {
+             this.startTimer();
+         }
+-        if (window.api) {
++        if (window.api?.listen) {
++            const identity = ++this._hydration;
++            this._offListen = window.api.listen.onState(state => this.applyListenState(state));
++            window.api.listen.getState().then(state => {
++                if (identity === this._hydration) this.applyListenState(state);
++            }).catch(() => {});
++        } else if (window.api) {
+             window.api.listenView.onSessionStateChanged((event, { isActive }) => {
+                 const wasActive = this.isSessionActive;
+                 this.isSessionActive = isActive;
+@@ -481,6 +497,8 @@ export class ListenView extends LitElement {
+ 
+     disconnectedCallback() {
+         super.disconnectedCallback();
++        ++this._hydration;
++        this._offListen?.(); this._offListen = null;
+         this.stopTimer();
+ 
+         if (this.adjustHeightThrottle) {
+@@ -493,6 +511,7 @@ export class ListenView extends LitElement {
+     }
+ 
+     startTimer() {
++        this.stopTimer();
+         this.captureStartTime = Date.now();
+         this.timerInterval = setInterval(() => {
+             const elapsed = Math.floor((Date.now() - this.captureStartTime) / 1000);
+@@ -517,6 +536,12 @@ export class ListenView extends LitElement {
+ 
+         this.updateComplete
+             .then(() => {
++                if (!this.isConnected) return;
++                if (this.listenState?.source === 'meeting') {
++                    const container = this.shadowRoot.querySelector('.assistant-container');
++                    if (container) this.resizeIfChanged(Math.min(700, Math.ceil(container.getBoundingClientRect().height)));
++                    return;
++                }
+                 const topBar = this.shadowRoot.querySelector('.top-bar');
+                 const activeContent = this.viewMode === 'transcript'
+                     ? this.shadowRoot.querySelector('stt-view')
+@@ -536,13 +561,63 @@ export class ListenView extends LitElement {
+                     `[Height Adjusted] Mode: ${this.viewMode}, TopBar: ${topBarHeight}px, Content: ${contentHeight}px, Ideal: ${idealHeight}px, Target: ${targetHeight}px`
+                 );
+ 
+-                window.api.listenView.adjustWindowHeight('listen', targetHeight);
++                this.resizeIfChanged(targetHeight);
+             })
+             .catch(error => {
+                 console.error('Error in adjustWindowHeight:', error);
+             });
+     }
+ 
++    resizeIfChanged(height) {
++        if (height === this._lastHeight) return;
++        this._lastHeight = height;
++        window.api.listenView.adjustWindowHeight('listen', height);
++    }
++
++    applyListenState(state) {
++        if (!state || (this.listenState && state.version <= this.listenState.version)) return;
++        const previous = this.listenState;
++        this.listenState = state;
++        this.isSessionActive = ['starting', 'active', 'stopping'].includes(state.phase);
++        this.hasCompletedRecording = state.phase === 'stopped';
++        if (!previous || state.lifecycleId !== previous.lifecycleId) {
++            if (this.isSessionActive) this.startTimer();
++            if (state.source === 'local') {
++                const hydration = this._hydration;
++                this.updateComplete.then(() => {
++                    if (hydration !== this._hydration || this.listenState !== state) return;
++                    this.shadowRoot.querySelector('stt-view')?.resetTranscript();
++                    this.shadowRoot.querySelector('summary-view')?.resetAnalysis();
++                });
++            }
++        }
++        if (!this.isSessionActive) this.stopTimer();
++    }
++
++    meetingStatus() {
++        const state = this.listenState;
++        if (state.phase === 'stopped') return state.feed?.snapshot?.closed ? 'Meeting ended' : 'Stopped';
++        if (state.phase === 'idle') return 'Ready to connect';
++        const transport = state.feed?.connectionStatus;
++        const names = { connecting:'Connecting…', reconnecting:'Reconnecting…', 'auth-required':'Check meeting credentials in the main process', closed:'Meeting ended', stopped:'Stopped' };
++        if (names[transport]) return names[transport];
++        const availability = state.feed?.snapshot?.availability;
++        return ({ stale:'Transcript is stale', disconnected:'Fireflies disconnected', empty:'Waiting for speech', available:'Live' })[availability] || 'Connecting…';
++    }
++
++    renderMeeting() {
++        const snapshot = this.listenState.feed?.snapshot || null;
++        return html`<div class="assistant-container meeting-layout">
++            <div class="top-bar"><div class="bar-left-text">Meeting · ${this.meetingStatus()}</div>
++                <button class="copy-button" aria-label="Copy meeting transcript and suggestions" @click=${this.handleCopy}>Copy</button></div>
++            ${this.listenState.error ? html`<div class="meeting-note" role="status">${this.listenState.error}</div>` : ''}
++            <section aria-label="Transcript"><h2 class="meeting-section-title">Transcript</h2>
++                <stt-view .meeting=${true} .snapshot=${snapshot}></stt-view></section>
++            <section aria-label="Suggestions"><h2 class="meeting-section-title">Suggestions ${snapshot?.generation?.state === 'running' ? '· Preparing…' : ''}</h2>
++                <suggestions-view .snapshot=${snapshot}></suggestions-view></section>
++        </div>`;
++    }
++
+     toggleViewMode() {
+         this.viewMode = this.viewMode === 'insights' ? 'transcript' : 'insights';
+         this.requestUpdate();
+@@ -563,7 +638,9 @@ export class ListenView extends LitElement {
+ 
+         let textToCopy = '';
+ 
+-        if (this.viewMode === 'transcript') {
++        if (this.listenState?.source === 'meeting') {
++            textToCopy = [this.shadowRoot.querySelector('stt-view')?.getTranscriptText(), this.shadowRoot.querySelector('suggestions-view')?.getSuggestionsText()].filter(Boolean).join('\n\n');
++        } else if (this.viewMode === 'transcript') {
+             const sttView = this.shadowRoot.querySelector('stt-view');
+             textToCopy = sttView ? sttView.getTranscriptText() : '';
+         } else {
+@@ -608,7 +685,7 @@ export class ListenView extends LitElement {
+     updated(changedProperties) {
+         super.updated(changedProperties);
+ 
+-        if (changedProperties.has('viewMode')) {
++        if (changedProperties.has('viewMode') || changedProperties.has('listenState')) {
+             this.adjustWindowHeight();
+         }
+     }
+@@ -624,6 +701,8 @@ export class ListenView extends LitElement {
+     }
+ 
+     render() {
++        if (!this.listenState && window.api?.listen) return html`<div class="assistant-container"><div class="top-bar">Loading Listen state…</div></div>`;
++        if (this.listenState?.source === 'meeting') return this.renderMeeting();
+         const displayText = this.isHovering
+             ? this.viewMode === 'transcript'
+                 ? 'Copy Transcript'
+diff --git a/src/ui/listen/audioCore/listenCapture.js b/src/ui/listen/audioCore/listenCapture.js
+index ade889e..317275c 100644
+--- a/src/ui/listen/audioCore/listenCapture.js
++++ b/src/ui/listen/audioCore/listenCapture.js
+@@ -345,6 +345,7 @@ async function setupMicProcessing(micStream) {
+ function setupLinuxMicProcessing(micStream) {
+     // Setup microphone audio processing for Linux
+     const micAudioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
++    audioContext = micAudioContext;
+     const micSource = micAudioContext.createMediaStreamSource(micStream);
+     const micProcessor = micAudioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
+ 
+@@ -489,7 +490,7 @@ async function startCapture(screenshotIntervalSeconds = 5, imageQuality = 'mediu
+             });
+ 
+             // Get microphone input for Linux
+-            let micMediaStream = null;
++            micMediaStream = null;
+             try {
+                 micMediaStream = await navigator.mediaDevices.getUserMedia({
+                     audio: {
+@@ -567,47 +568,34 @@ async function startCapture(screenshotIntervalSeconds = 5, imageQuality = 'mediu
+     } catch (err) {
+         console.error('Error starting capture:', err);
+         // Note: pickleGlass.e() is not available in this context, commenting out
+-        // pickleGlass.e().setStatus('error');
++        // The lifecycle must receive a failed start acknowledgement.
++        return false;
+     }
++    return Boolean(mediaStream || micMediaStream);
+ }
+ 
+-function stopCapture() {
+-    // Clean up microphone resources
+-    if (audioProcessor) {
+-        audioProcessor.disconnect();
+-        audioProcessor = null;
+-    }
+-    if (audioContext) {
+-        audioContext.close();
+-        audioContext = null;
+-    }
+-
+-    // Clean up system audio resources
+-    if (systemAudioProcessor) {
+-        systemAudioProcessor.disconnect();
+-        systemAudioProcessor = null;
+-    }
+-    if (systemAudioContext) {
+-        systemAudioContext.close();
+-        systemAudioContext = null;
+-    }
+-
+-    // Stop and release media stream tracks
+-    if (mediaStream) {
+-        mediaStream.getTracks().forEach(track => track.stop());
+-        mediaStream = null;
+-    }
+-    if (micMediaStream) {
+-        micMediaStream.getTracks().forEach(t => t.stop());
+-        micMediaStream = null;
+-    }
+-
+-    // Stop macOS audio capture if running
+-    if (isMacOS) {
+-        window.api.listenCapture.stopMacosSystemAudio().catch(err => {
+-            console.error('Error stopping macOS audio:', err);
++let pendingCaptureCleanup = [];
++async function stopCapture() {
++    const resources = { audioProcessor, audioContext, systemAudioProcessor, systemAudioContext, mediaStream, micMediaStream };
++    audioProcessor = audioContext = systemAudioProcessor = systemAudioContext = mediaStream = micMediaStream = null;
++    const retries = pendingCaptureCleanup;
++    pendingCaptureCleanup = [];
++    const attempt = async fn => { try { await fn(); } catch { pendingCaptureCleanup.push(fn); } };
++    for (const retry of retries) await attempt(retry);
++    await attempt(() => resources.audioProcessor?.disconnect());
++    await attempt(() => resources.systemAudioProcessor?.disconnect());
++    for (const stream of [resources.mediaStream, resources.micMediaStream]) {
++        await attempt(async () => {
++            for (const track of stream?.getTracks() || []) await attempt(() => track.stop());
+         });
+     }
++    await attempt(() => resources.audioContext?.close());
++    await attempt(() => resources.systemAudioContext?.close());
++    if (isMacOS) await attempt(async () => {
++        const result = await window.api.listenCapture.stopMacosSystemAudio();
++        if (result?.success === false) throw new Error('capture_cleanup_failed');
++    });
++    if (pendingCaptureCleanup.length) throw new Error('capture_cleanup_failed');
+ }
+ 
+ // ---------------------------
+@@ -629,4 +617,4 @@ if (typeof window !== 'undefined') {
+     window.pickleGlass = window.pickleGlass || {};
+     window.pickleGlass.startCapture = startCapture;
+     window.pickleGlass.stopCapture = stopCapture;
+-} 
+\ No newline at end of file
++}
+diff --git a/src/ui/listen/audioCore/renderer.js b/src/ui/listen/audioCore/renderer.js
+index f4ed906..3b01f9f 100644
+--- a/src/ui/listen/audioCore/renderer.js
++++ b/src/ui/listen/audioCore/renderer.js
+@@ -14,16 +14,29 @@ window.pickleGlass = {
+ };
+ 
+ 
+-window.api.renderer.onChangeListenCaptureState((_event, { status }) => {
++let captureQueue = Promise.resolve();
++let latestLifecycle = -1;
++window.api.renderer.onChangeListenCaptureState((_event, { status, lifecycleId }) => {
+     if (!isListenView) {
+         console.log('[Renderer] Non-listen view: ignoring capture-state change');
+         return;
+     }
+-    if (status === "stop") {
+-        console.log('[Renderer] Session ended – stopping local capture');
+-        listenCapture.stopCapture();
+-    } else {
+-        console.log('[Renderer] Session initialized – starting local capture');
+-        listenCapture.startCapture();
+-    }
++    if (!Number.isSafeInteger(lifecycleId) || !['start','stop'].includes(status)) return;
++    latestLifecycle = Math.max(latestLifecycle, lifecycleId);
++    captureQueue = captureQueue.then(async () => {
++        let success = false;
++        try {
++            if (lifecycleId === latestLifecycle) {
++                if (status === 'stop') { await listenCapture.stopCapture(); success = true; }
++                else {
++                    success = await listenCapture.startCapture() !== false;
++                    if (lifecycleId !== latestLifecycle || !success) { success = false; await listenCapture.stopCapture(); }
++                }
++            }
++        } catch {
++            success = false;
++            if (status === 'start') { try { await listenCapture.stopCapture(); } catch { /* Ack remains failed. */ } }
++        }
++        try { await window.api.listen.ackCapture({ status, lifecycleId, success }); } catch { /* Main timeout handles a lost acknowledgement. */ }
++    });
+ });
+diff --git a/src/ui/listen/meeting/SuggestionsView.js b/src/ui/listen/meeting/SuggestionsView.js
+new file mode 100644
+index 0000000..b8576d3
+--- /dev/null
++++ b/src/ui/listen/meeting/SuggestionsView.js
+@@ -0,0 +1,29 @@
++import { html, css, LitElement } from '../../assets/lit-core-2.7.4.min.js';
++import { updateFeedRows } from './keyedFeedRows.js';
++
++export class SuggestionsView extends LitElement {
++    static properties = { snapshot: { type: Object } };
++    static styles = css`
++        :host { display:block; min-height:0; color:#f0f5f7; }
++        .suggestions-container { height:200px; max-height:260px; overflow-y:auto; overflow-anchor:none; padding:8px 12px; box-sizing:border-box; user-select:text; }
++        article { border-left:2px solid #93ceb7; padding:10px 12px; margin:0 0 10px; background:rgba(147,206,183,.07); border-radius:2px 8px 8px 2px; font-size:13px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
++        .empty { padding:10px 12px; color:#b2bec5; font-size:12px; }
++    `;
++    constructor() { super(); this.snapshot = null; this._rows = new Map(); this._instance = null; }
++    updated() {
++        const container = this.shadowRoot.querySelector('.suggestions-container');
++        if (!container) return;
++        const snapshot = this.snapshot;
++        const rows = (snapshot?.suggestions || []).slice(-(snapshot?.suggestionHistoryLimit || 20)).filter(row => !row.noSuggestion);
++        updateFeedRows(container, rows, this._rows, row => JSON.stringify([snapshot.instanceId, row.attemptId]),
++            () => document.createElement('article'), (node, row) => { node.textContent = row.text; }, this._instance !== snapshot?.instanceId);
++        this._instance = snapshot?.instanceId;
++    }
++    getSuggestionsText() { return (this.snapshot?.suggestions || []).filter(row => !row.noSuggestion).map(row => row.text).join('\n\n'); }
++    render() {
++        const visible = this.snapshot?.suggestions?.some(row => !row.noSuggestion);
++        return html`<div class="suggestions-container" role="log" aria-label="Automatic suggestions"></div>
++            ${visible ? '' : html`<div class="empty">${this.snapshot?.generation?.state === 'running' ? 'Preparing a suggestion…' : 'Suggestions appear here when ready.'}</div>`}`;
++    }
++}
++customElements.define('suggestions-view', SuggestionsView);
+diff --git a/src/ui/listen/meeting/keyedFeedRows.js b/src/ui/listen/meeting/keyedFeedRows.js
+new file mode 100644
+index 0000000..e98af49
+--- /dev/null
++++ b/src/ui/listen/meeting/keyedFeedRows.js
+@@ -0,0 +1,25 @@
++// Keep keyed DOM nodes and the reader's visual anchor across corrections/reordering/eviction.
++// All payload content is assigned through textContent by the caller.
++export function updateFeedRows(container, rows, cache, keyOf, create, update, reset = false) {
++    const bottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 12;
++    const top = container.getBoundingClientRect().top;
++    const anchor = [...container.children].find(node => node.dataset.rowKey && node.getBoundingClientRect().bottom > top);
++    const anchorKey = anchor?.dataset.rowKey;
++    const offset = anchor ? anchor.getBoundingClientRect().top - top : 0;
++    const oldTop = container.scrollTop;
++    if (reset) { cache.clear(); container.replaceChildren(); }
++    const retained = new Set();
++    for (const row of rows) {
++        const key = keyOf(row); retained.add(key);
++        let node = cache.get(key);
++        if (!node) { node = create(); node.dataset.rowKey = key; cache.set(key, node); }
++        update(node, row);
++        container.append(node);
++    }
++    for (const [key, node] of cache) if (!retained.has(key)) { node.remove(); cache.delete(key); }
++    if (reset || bottom) container.scrollTop = container.scrollHeight;
++    else {
++        const target = cache.get(anchorKey);
++        container.scrollTop = target ? container.scrollTop + target.getBoundingClientRect().top - top - offset : oldTop;
++    }
++}
+diff --git a/src/ui/listen/stt/SttView.js b/src/ui/listen/stt/SttView.js
+index 0d95850..fc856d7 100644
+--- a/src/ui/listen/stt/SttView.js
++++ b/src/ui/listen/stt/SttView.js
+@@ -1,4 +1,5 @@
+ import { html, css, LitElement } from '../../assets/lit-core-2.7.4.min.js';
++import { updateFeedRows } from '../meeting/keyedFeedRows.js';
+ 
+ export class SttView extends LitElement {
+     static styles = css`
+@@ -76,11 +77,16 @@ export class SttView extends LitElement {
+             font-size: 12px;
+             font-style: italic;
+         }
++        .meeting-scroll { height:280px; max-height:320px; min-height:0; box-sizing:border-box; overflow-anchor:none; user-select:text; }
++        .meeting-row { max-width:100%; align-self:stretch; background:rgba(255,255,255,.07); white-space:pre-wrap; }
++        .speaker-label { display:block; font-size:11px; font-weight:600; color:#a8ceeb; margin-bottom:3px; }
+     `;
+ 
+     static properties = {
+         sttMessages: { type: Array },
+         isVisible: { type: Boolean },
++        meeting: { type: Boolean },
++        snapshot: { type: Object },
+     };
+ 
+     constructor() {
+@@ -88,6 +94,10 @@ export class SttView extends LitElement {
+         this.sttMessages = [];
+         this.isVisible = true;
+         this.messageIdCounter = 0;
++        this.meeting = false;
++        this.snapshot = null;
++        this._meetingRows = new Map();
++        this._meetingInstance = null;
+         this._shouldScrollAfterUpdate = false;
+ 
+         this.handleSttUpdate = this.handleSttUpdate.bind(this);
+@@ -114,6 +124,7 @@ export class SttView extends LitElement {
+     }
+ 
+     handleSttUpdate(event, { speaker, text, isFinal, isPartial }) {
++        if (this.meeting) return;
+         if (text === undefined) return;
+ 
+         const container = this.shadowRoot.querySelector('.transcription-container');
+@@ -189,11 +200,27 @@ export class SttView extends LitElement {
+     }
+ 
+     getTranscriptText() {
++        if (this.meeting) return (this.snapshot?.chunks || []).map(row => `${row.speaker_name}: ${row.text}`).join('\n');
+         return this.sttMessages.map(msg => `${msg.speaker}: ${msg.text}`).join('\n');
+     }
+ 
+     updated(changedProperties) {
+         super.updated(changedProperties);
++        if (this.meeting) {
++            const container = this.shadowRoot.querySelector('.transcription-container');
++            if (container) {
++                updateFeedRows(container, this.snapshot?.chunks || [], this._meetingRows,
++                    row => JSON.stringify([this.snapshot.transcriptId, row.chunk_id]),
++                    () => {
++                        const node = document.createElement('div'); node.className = 'stt-message meeting-row';
++                        const speaker = document.createElement('span'); speaker.className = 'speaker-label';
++                        node.append(speaker, document.createElement('span')); return node;
++                    }, (node, row) => { node.children[0].textContent = row.speaker_name; node.children[1].textContent = row.text; },
++                    this._meetingInstance !== this.snapshot?.instanceId);
++                this._meetingInstance = this.snapshot?.instanceId;
++            }
++            return;
++        }
+ 
+         if (changedProperties.has('sttMessages')) {
+             if (this._shouldScrollAfterUpdate) {
+@@ -204,6 +231,7 @@ export class SttView extends LitElement {
+     }
+ 
+     render() {
++        if (this.meeting) return html`<div class="transcription-container meeting-scroll" role="log" aria-label="Meeting transcript"></div>`;
+         if (!this.isVisible) {
+             return html`<div style="display: none;"></div>`;
+         }
+@@ -223,4 +251,4 @@ export class SttView extends LitElement {
+     }
+ }
+ 
+-customElements.define('stt-view', SttView); 
+\ No newline at end of file
++customElements.define('stt-view', SttView);

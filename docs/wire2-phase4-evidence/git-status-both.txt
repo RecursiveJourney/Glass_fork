@@ -1,0 +1,24 @@
+Glass: C:/Users/User/digital_twin/glass
+$ git rev-parse HEAD
+a7394e4ce177f8356f16d65e88b2ea366c3611f5
+$ git branch --show-current
+codex/wire2-phase2
+$ git status --short
+ M docs/meeting-feed-subscriber.md
+ M tests/window-attachment.test.js
+?? docs/wire2-phase4-checkpoint.md
+?? docs/wire2-phase4-evidence/
+$ git diff --cached --name-only
+
+Parent: C:/Users/User/digital_twin
+$ git rev-parse HEAD
+1182c176495b9556ef6a3cb01b8168a41eb4c94f
+$ git branch --show-current
+codex/wire2-phase1
+$ git status --short
+ M glass
+ M realtime_listener/README.md
+ M realtime_listener/docs/design.md
+ M realtime_listener/docs/live-feed-contract.md
+?? realtime_listener/docs/wire2-manual-checklist.md
+$ git diff --cached --name-only

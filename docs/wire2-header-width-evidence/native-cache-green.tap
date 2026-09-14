@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: native locked window grows from 224px to Meeting while preserving configured limits
+ok 1 - native locked window grows from 224px to Meeting while preserving configured limits
+  ---
+  duration_ms: 2277.1851
+  type: 'test'
+  ...
+# Subtest: immediate layout cancels the older animation (original VM drift reproduction)
+ok 2 - immediate layout cancels the older animation (original VM drift reproduction)
+  ---
+  duration_ms: 6.8201
+  type: 'test'
+  ...
+# Subtest: native header movement follows continuously before the final moved event
+ok 3 - native header movement follows continuously before the final moved event
+  ---
+  duration_ms: 4.2078
+  type: 'test'
+  ...
+# Subtest: explicit drag synchronizes children even without native move events
+ok 4 - explicit drag synchronizes children even without native move events
+  ---
+  duration_ms: 3.5752
+  type: 'test'
+  ...
+# Subtest: drag during transcript growth preserves requested height and restores resize state
+ok 5 - drag during transcript growth preserves requested height and restores resize state
+  ---
+  duration_ms: 4.1902
+  type: 'test'
+  ...
+# Subtest: final moved event reconciles position while a child animation is active
+ok 6 - final moved event reconciles position while a child animation is active
+  ---
+  duration_ms: 3.2126
+  type: 'test'
+  ...
+# Subtest: Ask and Listen remain side by side through left and right edge drags
+ok 7 - Ask and Listen remain side by side through left and right edge drags
+  ---
+  duration_ms: 3.2984
+  type: 'test'
+  ...
+# Subtest: screen-edge transitions place Listen above then below without stale jumps
+ok 8 - screen-edge transitions place Listen above then below without stale jumps
+  ---
+  duration_ms: 3.5524
+  type: 'test'
+  ...
+# Subtest: attachment uses the destination monitor origin
+ok 9 - attachment uses the destination monitor origin
+  ---
+  duration_ms: 3.3917
+  type: 'test'
+  ...
+# Subtest: keyboard movement keeps attachment through animation and at completion
+ok 10 - keyboard movement keeps attachment through animation and at completion
+  ---
+  duration_ms: 3.6967
+  type: 'test'
+  ...
+# Subtest: manual drag supersedes a running header animation
+ok 11 - manual drag supersedes a running header animation
+  ---
+  duration_ms: 3.3477
+  type: 'test'
+  ...
+# Subtest: 175% DPI rounding does not accumulate size over repeated Listen drags
+ok 12 - 175% DPI rounding does not accumulate size over repeated Listen drags
+  ---
+  duration_ms: 6.5067
+  type: 'test'
+  ...
+# Subtest: rounded Ask + Listen bounds stay bounded during drag and transcript growth
+ok 13 - rounded Ask + Listen bounds stay bounded during drag and transcript growth
+  ---
+  duration_ms: 5.599
+  type: 'test'
+  ...
+# Subtest: DPI rounding across below/above transitions does not change requested dimensions
+ok 14 - DPI rounding across below/above transitions does not change requested dimensions
+  ---
+  duration_ms: 4.2383
+  type: 'test'
+  ...
+# Subtest: meeting container attaches to the 445x47 source-control header
+ok 15 - meeting container attaches to the 445x47 source-control header
+  ---
+  duration_ms: 5.1621
+  type: 'test'
+  ...
+# Subtest: meeting stream/status updates with equal measurements do not restart resizing
+ok 16 - meeting stream/status updates with equal measurements do not restart resizing
+  ---
+  duration_ms: 9.1851
+  type: 'test'
+  ...
+# Subtest: meeting measurement rounds upward and caps status/error chrome at 700px
+ok 17 - meeting measurement rounds upward and caps status/error chrome at 700px
+  ---
+  duration_ms: 5.5305
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+ok 18 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+  ---
+  duration_ms: 8.1158
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+ok 19 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+  ---
+  duration_ms: 7.7945
+  type: 'test'
+  ...
+# Subtest: meeting and Ask keep independent heights side by side across monitors and edges
+ok 20 - meeting and Ask keep independent heights side by side across monitors and edges
+  ---
+  duration_ms: 4.9949
+  type: 'test'
+  ...
+# Subtest: Stop retains meeting geometry and switching to local resizes from local content
+ok 21 - Stop retains meeting geometry and switching to local resizes from local content
+  ---
+  duration_ms: 6.4051
+  type: 'test'
+  ...
+# Subtest: native-style locked min/max cannot replace intended limits
+ok 22 - native-style locked min/max cannot replace intended limits
+  ---
+  duration_ms: 5.1317
+  type: 'test'
+  ...
+# Subtest: drag during resize settles applied acknowledgement and restores the resize lock
+ok 23 - drag during resize settles applied acknowledgement and restores the resize lock
+  ---
+  duration_ms: 3.2488
+  type: 'test'
+  ...
+# Subtest: a superseded resize settles false and the latest request owns the lock
+ok 24 - a superseded resize settles false and the latest request owns the lock
+  ---
+  duration_ms: 4.4212
+  type: 'test'
+  ...
+# Subtest: native rejection is reported using actual bounds, not requested-size bookkeeping
+ok 25 - native rejection is reported using actual bounds, not requested-size bookkeeping
+  ---
+  duration_ms: 6.2498
+  type: 'test'
+  ...
+# Subtest: native setter failure settles the IPC response and restores the lock
+ok 26 - native setter failure settles the IPC response and restores the lock
+  ---
+  duration_ms: 3.2116
+  type: 'test'
+  ...
+# Subtest: missing windows and invalid sizes return a failed acknowledgement
+ok 27 - missing windows and invalid sizes return a failed acknowledgement
+  ---
+  duration_ms: 2.9982
+  type: 'test'
+  ...
+# Subtest: header resize during another window animation must not disappear
+ok 28 - header resize during another window animation must not disappear
+  ---
+  duration_ms: 4.2501
+  type: 'test'
+  ...
+# Subtest: normal Settings window is reachable without local providers and survives source-independent show/hide
+ok 29 - normal Settings window is reachable without local providers and survives source-independent show/hide
+  ---
+  duration_ms: 3.5682
+  type: 'test'
+  ...
+# Subtest: a rejected header width is reconciled even when the requested height applies
+ok 30 - a rejected header width is reconciled even when the requested height applies
+  ---
+  duration_ms: 4.8284
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2340.0672

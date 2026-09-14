@@ -7,7 +7,7 @@ window.api = {
  listen: { getState:async()=>current, getCapabilities:async()=>({meeting:true,localListen:false,ask:true}),
    selectSource:async source=>{selections.push(source);return {success:true,state:{...current,source,version:current.version+1}}},
    onState:callback=>{listeners.add(callback);return()=>listeners.delete(callback)} },
- listenView:{ onSessionStateChanged(){},removeOnSessionStateChanged(){},adjustWindowHeight:(_name,height)=>resizes.push(height) },
+ listenView:{ onSessionStateChanged(){},removeOnSessionStateChanged(){},adjustWindowHeight:async(_name,height)=>{resizes.push(height);return {applied:true,height}} },
  sttView:{onSttUpdate(){},removeOnSttUpdate(){}},summaryView:{onSummaryUpdate(){},removeAllSummaryUpdateListeners(){}},
  mainHeader:{onListenChangeSessionResult(){},removeOnListenChangeSessionResult(){},onShortcutsUpdated(){},removeOnShortcutsUpdated(){},
    sendListenButtonClick:async action=>{commands.push(action);return {success:true,state:current}},sendAskButtonClick:async()=>{asks++},sendHeaderAnimationFinished(){}},

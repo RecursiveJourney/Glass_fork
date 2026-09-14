@@ -1,6 +1,6 @@
-# Meeting feed subscriber — Wire 2, Phase 2
+# Meeting feed subscriber — Wire 2
 
-This main-process service consumes the [Phase 1 feed contract](../../realtime_listener/docs/live-feed-contract.md). It does not capture audio, open Fireflies connections, invoke generation, use the Ollama request queue, or create a database session. The existing Listen UI does not call this service yet.
+This main-process service consumes the [final feed contract](../../realtime_listener/docs/live-feed-contract.md). It does not capture audio, open Fireflies connections, invoke generation, use the Ollama request queue, or create a database session. The Phase 3 Listen lifecycle now owns it and exposes authoritative state to the header and overlay. Ask remains enabled and independently owns its existing request/session behavior.
 
 ## Configuration and ownership
 
@@ -27,14 +27,14 @@ State has this shape:
 
 The snapshot retains transcript data during transport interruptions and explicit Stop, with `connectionStatus` making that condition visible. A valid reconnect snapshot atomically replaces all transcript, history, identity, sequence, and pending-attempt state. A different instance therefore cannot inherit rows or attempts from the previous instance, even for the same meeting ID. Data arriving on a cancelled connection is ignored.
 
-| Renderer API, exposed but unused | Main IPC | Result |
+| Legacy renderer API (not used by the overlay) | Main IPC | Result |
 | --- | --- | --- |
-| `window.api.meetingFeed.start()` | `meeting-feed:start` | `{ success, state }` or a fixed error |
-| `window.api.meetingFeed.stop()` | `meeting-feed:stop` | `{ success, state }` or a fixed error |
+| `window.api.meetingFeed.start()` | `meeting-feed:start` | Authoritative Listen lifecycle result; Meeting source required |
+| `window.api.meetingFeed.stop()` | `meeting-feed:stop` | Authoritative Listen lifecycle result; Meeting source required |
 | `window.api.meetingFeed.getState()` | `meeting-feed:get-state` | Current state |
 | `window.api.meetingFeed.onState(callback)` | `meeting-feed:state` push | Returns a listener-specific cleanup function |
 
-Pushes target the existing Listen window. The preload wrapper passes only state, never the Electron event. No renderer component subscribes yet. The API is separate from local Listen controls, STT events, and provider calls. It does not implement source switching or stop an independently running local Listen session; that lifecycle is a Phase 3 decision.
+Legacy feed pushes target the Listen window. The preload wrapper passes only state, never the Electron event. The overlay instead uses `window.api.listen.getState()/onState()` and the `listen:state` channel, carrying `{source, phase, lifecycleId, version, error, feed}` to both header and Listen. `getCapabilities()` supplies non-secret per-action flags; `selectSource()` is guarded by the main lifecycle. Start/Stop uses the existing Listen action IPC with real result propagation. `ackCapture()` validates the Listen webContents and lifecycle; it is only for local capture. Meeting Stop retains the last view and cancels this subscriber. See [the final lifecycle contract](../../realtime_listener/docs/live-feed-contract.md#glass-lifecycle-ipc-and-presentation).
 
 ## Reducer and recovery
 
@@ -47,10 +47,15 @@ Pushes target the existing Listen window. The preload wrapper passes only state,
 - Network failure, EOF, HTTP 503, and protocol recovery use uniform jitter from half-cap to cap, where `cap = min(30000, 1000 * 2^n)` milliseconds. Initial delay is 500–1000 ms; maximum delay is 15000–30000 ms. Retry count resets only after 30 seconds following a valid bootstrap on the same healthy connection. Server-provided SSE retry fields do not override this policy.
 - HTTP 401 enters `auth-required` with no automatic retry. Terminal `closed: true` applies the final snapshot/status and stops retries. An explicit Start can begin another subscription. Explicit Stop cancels even a pending retry.
 
-## Verification and remaining work
+## Verification and live acceptance
 
 Run the full Glass tests from this checkout on Node 20 and 24. `tests/meeting-feed-service.test.js` uses deterministic transport/timer fakes plus native local HTTP; `tests/meeting-feed-ipc.test.js` loads the actual bridge/preload/Listen modules with capture, generation, and database dependencies replaced by assertions/stubs. `tests/meeting-feed-integration.test.js` imports the sibling committed `realtime_listener` modules and runs the actual server/live-session feed with fake Fireflies and a counted suggestion adapter. The integration test therefore requires the parent Digital Twin checkout.
 
-The checkpoint contains raw TAP evidence. These tests do not contact Fireflies or a model. Electron UI rendering, real meeting credentials, packaging, summary rendering, and overlay sizing are not exercised in this phase.
+The Phase 2 checkpoint preserves its original raw TAP evidence. Phase 3 adds actual Electron renderer, Ask-independence and lifecycle tests; Phase 4 adds meeting window-attachment coverage. These suites use synthetic transports/data and do not contact Fireflies or a model. Physical device/display behavior, real meeting credentials, packaging and provider-backed summary behavior are not established by those tests.
 
-After Phase 3 approval, inventory consumers of a local database session ID before implementing source switching: summary reset/persistence, Ask context/history/session linking, and session-table/repository readers. Provider-settings amnesia investigation, transcript/suggestion rendering, overlay sizing, and local capture behavior belong to that later checkpoint.
+The reviewed session-ID inventory was implemented with Ask's revised independent behavior. Meeting never passes its IDs into repositories or ingests its rows into local SummaryService/history. Provider configuration and native Ask production paths remain unchanged. Follow the [manual checklist](../../realtime_listener/docs/wire2-manual-checklist.md) for live acceptance; the live matrix is now accepted; see [final acceptance](wire2-final-checkpoint.md), including the fresh-profile manual gap.
+
+
+## Confirmed window resizing
+
+The existing `adjust-window-height` IPC now resolves `{ applied, height }` after native resize completion or cancellation. `applied` is true only when the actual native height matches the requested height within two DIP. ListenView caches the confirmed actual height, coalesces pending requests, and does not cache rejected sizes. Configured bounds remain separate from Windows' temporary locked-window min/max sizes. See [the resize checkpoint](wire2-resize-checkpoint.md); real-overlay manual scrolling and live bottom-follow passed in the accepted matrix.

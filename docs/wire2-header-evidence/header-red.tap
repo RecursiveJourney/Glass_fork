@@ -1,0 +1,111 @@
+TAP version 13
+# Subtest: shipped header controls in the native Electron renderer
+    # Subtest: local configured=true keeps every header control inside native viewport
+    ok 1 - local configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.6349
+      type: 'test'
+      ...
+    # Subtest: local configured=false keeps every header control inside native viewport
+    ok 2 - local configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1045
+      type: 'test'
+      ...
+    # Subtest: meeting configured=true keeps every header control inside native viewport
+    ok 3 - meeting configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1236
+      type: 'test'
+      ...
+    # Subtest: meeting configured=false keeps every header control inside native viewport
+    ok 4 - meeting configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.0897
+      type: 'test'
+      ...
+    # Subtest: stopped header retains Done alongside restart in both sources
+    not ok 5 - stopped header retains Done alongside restart in both sources
+      ---
+      duration_ms: 0.8189
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        upstream Done control retained
+        + actual - expected
+        
+        + 'upstream Done control retained'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'upstream Done control retained'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: settings supports click and accessible naming in meeting-only mode
+    not ok 6 - settings supports click and accessible naming in meeting-only mode
+      ---
+      duration_ms: 0.1929
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Settings has accessible name
+        + actual - expected
+        
+        + 'Settings has accessible name'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Settings has accessible name'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: configured shortcuts and stopped additions trigger fresh measured header sizing
+    ok 7 - configured shortcuts and stopped additions trigger fresh measured header sizing
+      ---
+      duration_ms: 0.1149
+      type: 'test'
+      ...
+    1..7
+not ok 1 - shipped header controls in the native Electron renderer
+  ---
+  duration_ms: 1473.6421
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:2:1'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 8
+# suites 0
+# pass 5
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1546.9985

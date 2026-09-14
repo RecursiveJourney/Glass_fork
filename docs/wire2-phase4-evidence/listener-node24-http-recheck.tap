@@ -1,0 +1,220 @@
+TAP version 13
+# Subtest: binds IPv4 and IPv6 loopback on the same port; health and native models are shaped for Glass
+ok 1 - binds IPv4 and IPv6 loopback on the same port; health and native models are shaped for Glass
+  ---
+  duration_ms: 45.4727
+  type: 'test'
+  ...
+# Subtest: native nonstream response exposes message.content and completion metadata
+ok 2 - native nonstream response exposes message.content and completion metadata
+  ---
+  duration_ms: 10.7422
+  type: 'test'
+  ...
+# Subtest: native streaming emits newline-terminated NDJSON with full content and terminal done
+ok 3 - native streaming emits newline-terminated NDJSON with full content and terminal done
+  ---
+  duration_ms: 7.1542
+  type: 'test'
+  ...
+# Subtest: native system context is data, images are ignored, dossier is the actual shared system instruction
+ok 4 - native system context is data, images are ignored, dossier is the actual shared system instruction
+  ---
+  duration_ms: 5.4677
+  type: 'test'
+  ...
+# Subtest: OpenAI ignores and logs system/developer roles without their content; maps text parts in order
+ok 5 - OpenAI ignores and logs system/developer roles without their content; maps text parts in order
+  ---
+  duration_ms: 5.0728
+  type: 'test'
+  ...
+# Subtest: OpenAI nonstream and models expose standard objects with honest usage
+ok 6 - OpenAI nonstream and models expose standard objects with honest usage
+  ---
+  duration_ms: 4.9892
+  type: 'test'
+  ...
+# Subtest: OpenAI SSE reconstructs Unicode, role, finish, optional usage and DONE
+ok 7 - OpenAI SSE reconstructs Unicode, role, finish, optional usage and DONE
+  ---
+  duration_ms: 5.0108
+  type: 'test'
+  ...
+# Subtest: WRAPPER_TOKEN protects both v1 routes but never native routes
+ok 8 - WRAPPER_TOKEN protects both v1 routes but never native routes
+  ---
+  duration_ms: 11.6887
+  type: 'test'
+  ...
+# Subtest: configured secrets are absent from suggestions, errors and logs
+ok 9 - configured secrets are absent from suggestions, errors and logs
+  ---
+  duration_ms: 3.8984
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: missing model
+ok 10 - malformed OpenAI request returns 400: missing model
+  ---
+  duration_ms: 3.3469
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: missing messages
+ok 11 - malformed OpenAI request returns 400: missing messages
+  ---
+  duration_ms: 3.4255
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: empty messages
+ok 12 - malformed OpenAI request returns 400: empty messages
+  ---
+  duration_ms: 4.0011
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad role
+ok 13 - malformed OpenAI request returns 400: bad role
+  ---
+  duration_ms: 3.0594
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad content
+ok 14 - malformed OpenAI request returns 400: bad content
+  ---
+  duration_ms: 3.1068
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: bad stream
+ok 15 - malformed OpenAI request returns 400: bad stream
+  ---
+  duration_ms: 3.0551
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: tools
+ok 16 - malformed OpenAI request returns 400: tools
+  ---
+  duration_ms: 3.4638
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: images on OpenAI
+ok 17 - malformed OpenAI request returns 400: images on OpenAI
+  ---
+  duration_ms: 3.1969
+  type: 'test'
+  ...
+# Subtest: malformed OpenAI request returns 400: system only
+ok 18 - malformed OpenAI request returns 400: system only
+  ---
+  duration_ms: 3.0476
+  type: 'test'
+  ...
+# Subtest: bad JSON, oversized bodies, unknown models/routes and methods return errors; next request still succeeds
+ok 19 - bad JSON, oversized bodies, unknown models/routes and methods return errors; next request still succeeds
+  ---
+  duration_ms: 8.6193
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 429: quota
+ok 20 - upstream error maps to 429: quota
+  ---
+  duration_ms: 5.4836
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 503: unavailable
+ok 21 - upstream error maps to 503: unavailable
+  ---
+  duration_ms: 4.4786
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: bad upstream credential
+ok 22 - upstream error maps to 502: bad upstream credential
+  ---
+  duration_ms: 4.6592
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: upstream failure
+ok 23 - upstream error maps to 502: upstream failure
+  ---
+  duration_ms: 4.5322
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: network
+ok 24 - upstream error maps to 502: network
+  ---
+  duration_ms: 4.461
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 504: timeout
+ok 25 - upstream error maps to 504: timeout
+  ---
+  duration_ms: 4.4573
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 502: empty
+ok 26 - upstream error maps to 502: empty
+  ---
+  duration_ms: 5.2456
+  type: 'test'
+  ...
+# Subtest: upstream error maps to 500: private internal details
+ok 27 - upstream error maps to 500: private internal details
+  ---
+  duration_ms: 4.45
+  type: 'test'
+  ...
+# Subtest: parallel requests keep context and results isolated
+ok 28 - parallel requests keep context and results isolated
+  ---
+  duration_ms: 37.3937
+  type: 'test'
+  ...
+# Subtest: bounded generation returns 504 even when injected adapter ignores cancellation
+ok 29 - bounded generation returns 504 even when injected adapter ignores cancellation
+  ---
+  duration_ms: 31.0617
+  type: 'test'
+  ...
+# Subtest: disconnect aborts inference; shutdown aborts pending work and closes both listeners
+ok 30 - disconnect aborts inference; shutdown aborts pending work and closes both listeners
+  ---
+  duration_ms: 6.6951
+  type: 'test'
+  ...
+# Subtest: second loopback bind failure releases the first listener
+ok 31 - second loopback bind failure releases the first listener
+  ---
+  duration_ms: 2.7656
+  type: 'test'
+  ...
+# Subtest: malformed Gemini payload maps to 502 through both HTTP adapters
+ok 32 - malformed Gemini payload maps to 502 through both HTTP adapters
+  ---
+  duration_ms: 4.4403
+  type: 'test'
+  ...
+# Subtest: shutdown cancels active inference that ignores abort without waiting for its completion
+ok 33 - shutdown cancels active inference that ignores abort without waiting for its completion
+  ---
+  duration_ms: 3.6576
+  type: 'test'
+  ...
+# Subtest: shutdown completes while a client stops reading a large SSE response
+ok 34 - shutdown completes while a client stops reading a large SSE response
+  ---
+  duration_ms: 85.2745
+  type: 'test'
+  ...
+# Subtest: request body deadline returns native 408 and server remains healthy
+ok 35 - request body deadline returns native 408 and server remains healthy
+  ---
+  duration_ms: 40.5339
+  type: 'test'
+  ...
+1..35
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 480.8149

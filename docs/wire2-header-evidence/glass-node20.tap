@@ -1,0 +1,1467 @@
+TAP version 13
+# Subtest: shipped header controls in the native Electron renderer
+    # Subtest: local configured=true keeps every header control inside native viewport
+    ok 1 - local configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 1.3098
+      ...
+    # Subtest: local configured=false keeps every header control inside native viewport
+    ok 2 - local configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1939
+      ...
+    # Subtest: meeting configured=true keeps every header control inside native viewport
+    ok 3 - meeting configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1189
+      ...
+    # Subtest: meeting configured=false keeps every header control inside native viewport
+    ok 4 - meeting configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1118
+      ...
+    # Subtest: all shipped controls remain visible and functional in active and stopped Local/Meeting states
+    ok 5 - all shipped controls remain visible and functional in active and stopped Local/Meeting states
+      ---
+      duration_ms: 0.1839
+      ...
+    # Subtest: stopped header retains Done alongside restart in both sources
+    ok 6 - stopped header retains Done alongside restart in both sources
+      ---
+      duration_ms: 0.1005
+      ...
+    # Subtest: settings supports click and accessible naming in meeting-only mode
+    ok 7 - settings supports click and accessible naming in meeting-only mode
+      ---
+      duration_ms: 0.0979
+      ...
+    # Subtest: configured shortcuts and stopped additions trigger fresh measured header sizing
+    ok 8 - configured shortcuts and stopped additions trigger fresh measured header sizing
+      ---
+      duration_ms: 0.2817
+      ...
+    # Subtest: opening Setup cannot be resized back to the old MainHeader by a late viewport event
+    ok 9 - opening Setup cannot be resized back to the old MainHeader by a late viewport event
+      ---
+      duration_ms: 0.4029
+      ...
+    # Subtest: normal Settings renderer remains browsable without providers in Meeting
+    ok 10 - normal Settings renderer remains browsable without providers in Meeting
+      ---
+      duration_ms: 0.3155
+      ...
+    1..10
+ok 1 - shipped header controls in the native Electron renderer
+  ---
+  duration_ms: 6235.3736
+  ...
+# Subtest: resize cache waits for applied acknowledgement and tolerates fractional DPI
+ok 2 - resize cache waits for applied acknowledgement and tolerates fractional DPI
+  ---
+  duration_ms: 4.1976
+  ...
+# Subtest: OS-rejected height is never cached and a subsequent update can retry
+ok 3 - OS-rejected height is never cached and a subsequent update can retry
+  ---
+  duration_ms: 1.8795
+  ...
+# Subtest: IPC rejection is contained and never acknowledges a size
+ok 4 - IPC rejection is contained and never acknowledges a size
+  ---
+  duration_ms: 1.9735
+  ...
+# Subtest: only the latest changed measurement follows an in-flight resize
+ok 5 - only the latest changed measurement follows an in-flight resize
+  ---
+  duration_ms: 8.2365
+  ...
+# Subtest: SQLite Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+ok 6 - SQLite Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+  ---
+  duration_ms: 36.9642
+  ...
+# Subtest: Firebase Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+ok 7 - Firebase Ask requests touch an Ask row without promotion; only explicit Listen requests promote
+  ---
+  duration_ms: 8.7851
+  ...
+# Subtest: Ask keeps screenshot, streaming persistence and screen-only shortcut while Meeting is selected
+ok 8 - Ask keeps screenshot, streaming persistence and screen-only shortcut while Meeting is selected
+  ---
+  duration_ms: 15.6586
+  ...
+# Subtest: Meeting source lifecycle and feed do not import or call Ask or provider mutation APIs
+ok 9 - Meeting source lifecycle and feed do not import or call Ask or provider mutation APIs
+  ---
+  duration_ms: 0.8689
+  ...
+# Subtest: capture Stop acknowledges only after asynchronous resource release
+ok 10 - capture Stop acknowledges only after asynchronous resource release
+  ---
+  duration_ms: 10.0003
+  ...
+# Subtest: late local capture completion is released before stop ack and stale start is rejected
+ok 11 - late local capture completion is released before stop ack and stale start is rejected
+  ---
+  duration_ms: 2.753
+  ...
+# Subtest: failed start is cleaned and acknowledged as failed
+ok 12 - failed start is cleaned and acknowledged as failed
+  ---
+  duration_ms: 1.9221
+  ...
+# Subtest: capture cleanup attempts every resource even if one disconnect throws
+ok 13 - capture cleanup attempts every resource even if one disconnect throws
+  ---
+  duration_ms: 3.4065
+  ...
+# Subtest: Linux capture owns and releases microphone, display and audio context before Stop completes
+ok 14 - Linux capture owns and releases microphone, display and audio context before Stop completes
+  ---
+  duration_ms: 3.5717
+  ...
+# Subtest: failed capture release remains owned until a successful cleanup retry
+ok 15 - failed capture release remains owned until a successful cleanup retry
+  ---
+  duration_ms: 1.6275
+  ...
+# Subtest: Glass subscribers consume the committed live session over both authenticated loopbacks without owning work
+ok 16 - Glass subscribers consume the committed live session over both authenticated loopbacks without owning work
+  ---
+  duration_ms: 152.3876
+  ...
+# Subtest: Listen service exposes an idle meeting state without constructing or starting a subscriber
+ok 17 - Listen service exposes an idle meeting state without constructing or starting a subscriber
+  ---
+  duration_ms: 7.3753
+  ...
+# Subtest: meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+ok 18 - meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+  ---
+  duration_ms: 2.2924
+  ...
+# Subtest: existing app cleanup closes the meeting subscription through closeSession
+ok 19 - existing app cleanup closes the meeting subscription through closeSession
+  ---
+  duration_ms: 2.8359
+  ...
+# Subtest: actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+ok 20 - actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+  ---
+  duration_ms: 2.6558
+  ...
+# Subtest: authoritative Listen IPC preserves result, capture sender and Ask independence
+ok 21 - authoritative Listen IPC preserves result, capture sender and Ask independence
+  ---
+  duration_ms: 1.8086
+  ...
+# Subtest: preload exposes no config setter or Electron event and returns per-listener cleanup
+ok 22 - preload exposes no config setter or Electron event and returns per-listener cleanup
+  ---
+  duration_ms: 4.8981
+  ...
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+ok 23 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 10.7269
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+ok 24 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 8.7215
+  ...
+# Subtest: CR-only terminal snapshot applies immediately before EOF and never schedules retry
+ok 25 - CR-only terminal snapshot applies immediately before EOF and never schedules retry
+  ---
+  duration_ms: 1.4528
+  ...
+# Subtest: CRLF split across chunks accepts CR immediately and swallows the later LF
+ok 26 - CRLF split across chunks accepts CR immediately and swallows the later LF
+  ---
+  duration_ms: 2.9893
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+ok 27 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 1.9918
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+ok 28 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 5.7733
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+ok 29 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 2.4734
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+ok 30 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 1.7952
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+ok 31 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 1.3795
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+ok 32 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 1.3545
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 33 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.7511
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 34 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 1.2377
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+ok 35 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 1.1494
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+ok 36 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 1.4757
+  ...
+# Subtest: request EOF before response retries immediately, and late request close is isolated
+ok 37 - request EOF before response retries immediately, and late request close is isolated
+  ---
+  duration_ms: 1.2454
+  ...
+# Subtest: owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+ok 38 - owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+  ---
+  duration_ms: 3.237
+  ...
+# Subtest: snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+ok 39 - snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+  ---
+  duration_ms: 4.2236
+  ...
+# Subtest: malformed delta does not partially apply sequence or transcript changes
+ok 40 - malformed delta does not partially apply sequence or transcript changes
+  ---
+  duration_ms: 2.2106
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+ok 41 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 3.2424
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+ok 42 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 1.2519
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+ok 43 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 2.2021
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+ok 44 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.8441
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+ok 45 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 2.5806
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+ok 46 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 2.1312
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+ok 47 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 1.4482
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+ok 48 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 5.5035
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+ok 49 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 33.8464
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+ok 50 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 54.8326
+  ...
+# Subtest: native request response callback is detached when Stop occurs before headers
+ok 51 - native request response callback is detached when Stop occurs before headers
+  ---
+  duration_ms: 3.4922
+  ...
+# Subtest: failed database initialization never starts capture
+ok 52 - failed database initialization never starts capture
+  ---
+  duration_ms: 8.2195
+  ...
+# Subtest: Stop while local initialization is pending prevents late capture start
+ok 53 - Stop while local initialization is pending prevents late capture start
+  ---
+  duration_ms: 15.8719
+  ...
+# Subtest: Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+ok 54 - Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+  ---
+  duration_ms: 2.2383
+  ...
+# Subtest: Local stop performs all cleanup even when STT close fails
+ok 55 - Local stop performs all cleanup even when STT close fails
+  ---
+  duration_ms: 3.3375
+  ...
+# Subtest: transcription pending database touch cannot persist or summarize after Stop
+ok 56 - transcription pending database touch cannot persist or summarize after Stop
+  ---
+  duration_ms: 1.9436
+  ...
+# Subtest: default source initializes once from provider configuration and state publishes to both windows
+ok 57 - default source initializes once from provider configuration and state publishes to both windows
+  ---
+  duration_ms: 1.8643
+  ...
+# Subtest: Local remains unavailable when existing permissions still require keychain setup
+ok 58 - Local remains unavailable when existing permissions still require keychain setup
+  ---
+  duration_ms: 1.4196
+  ...
+# Subtest: failed database end is retried and cannot falsely unlock Meeting
+ok 59 - failed database end is retried and cannot falsely unlock Meeting
+  ---
+  duration_ms: 3.274
+  ...
+# Subtest: a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+ok 60 - a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+  ---
+  duration_ms: 2.0083
+  ...
+# Subtest: source locks and Stop cancels Listen while initial capability read is pending
+ok 61 - source locks and Stop cancels Listen while initial capability read is pending
+  ---
+  duration_ms: 1.6334
+  ...
+# Subtest: unconfigured Local request cannot create a session or start STT
+ok 62 - unconfigured Local request cannot create a session or start STT
+  ---
+  duration_ms: 1.34
+  ...
+# Subtest: capture readiness is local STT readiness during starting and stays false for Meeting
+ok 63 - capture readiness is local STT readiness during starting and stays false for Meeting
+  ---
+  duration_ms: 7.5809
+  ...
+# Subtest: system audio result arriving after Stop is rejected before the bridge can render AEC
+ok 64 - system audio result arriving after Stop is rejected before the bridge can render AEC
+  ---
+  duration_ms: 2.1031
+  ...
+# Subtest: stopMacOSAudioCapture waits until the capture process has stopped
+ok 65 - stopMacOSAudioCapture waits until the capture process has stopped
+  ---
+  duration_ms: 5.3708
+  ...
+# Subtest: summary reset failure cannot block capture stop, STT cleanup or session end
+ok 66 - summary reset failure cannot block capture stop, STT cleanup or session end
+  ---
+  duration_ms: 13.7874
+  ...
+# Subtest: capture acknowledgement requires matching actual sender and lifecycle
+ok 67 - capture acknowledgement requires matching actual sender and lifecycle
+  ---
+  duration_ms: 4.1954
+  ...
+# Subtest: missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+ok 68 - missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+  ---
+  duration_ms: 2.4122
+  ...
+# Subtest: old STT provider callbacks cannot render into a restarted local lifecycle
+ok 69 - old STT provider callbacks cannot render into a restarted local lifecycle
+  ---
+  duration_ms: 4.2512
+  ...
+# Subtest: STT initialization resolving after close disposes sessions without timers or renderer output
+ok 70 - STT initialization resolving after close disposes sessions without timers or renderer output
+  ---
+  duration_ms: 2.4714
+  ...
+# Subtest: STT cleanup resets identity and closes each socket even if the first close throws
+ok 71 - STT cleanup resets identity and closes each socket even if the first close throws
+  ---
+  duration_ms: 1.7211
+  ...
+# Subtest: failed STT socket cleanup remains failed on retry while the socket still refuses close
+ok 72 - failed STT socket cleanup remains failed on retry while the socket still refuses close
+  ---
+  duration_ms: 1.8347
+  ...
+# Subtest: Stop closes old overlap sockets immediately after STT renewal
+ok 73 - Stop closes old overlap sockets immediately after STT renewal
+  ---
+  duration_ms: 1.815
+  ...
+# Subtest: cancelled STT initialization preserves failed socket cleanup for retry
+ok 74 - cancelled STT initialization preserves failed socket cleanup for retry
+  ---
+  duration_ms: 3.5655
+  ...
+# Subtest: failed renewal preserves current provider callbacks
+ok 75 - failed renewal preserves current provider callbacks
+  ---
+  duration_ms: 1.7156
+  ...
+# Subtest: macOS capture stop waits for process close instead of treating a signal as completion
+ok 76 - macOS capture stop waits for process close instead of treating a signal as completion
+  ---
+  duration_ms: 2.4537
+  ...
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: departing MainHeader cannot compete with a pending Setup resize
+    ok 1 - departing MainHeader cannot compete with a pending Setup resize
+      ---
+      duration_ms: 1.0377
+      ...
+    # Subtest: added Setup controls must not hide the original Welcome options or permission title
+    ok 2 - added Setup controls must not hide the original Welcome options or permission title
+      ---
+      duration_ms: 0.1271
+      ...
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    ok 3 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 0.1207
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    ok 4 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.1789
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    ok 5 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.1235
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 6 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.123
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 7 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.099
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 8 - stopped session can restart from the header
+      ---
+      duration_ms: 0.1753
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 9 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.2004
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 10 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.2092
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 11 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1163
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 12 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.2181
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 13 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.2977
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 14 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.276
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 15 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.1694
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 16 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.1045
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 17 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.1513
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 18 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.1465
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 19 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.1401
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 20 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.1434
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 21 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.1579
+      ...
+    1..21
+ok 77 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 2847.6678
+  ...
+# Subtest: native locked window grows from 224px to Meeting while preserving configured limits
+ok 78 - native locked window grows from 224px to Meeting while preserving configured limits
+  ---
+  duration_ms: 2214.9477
+  ...
+# Subtest: win32: healthy endpoint is usable without a local installation
+ok 79 - win32: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 16.2876
+  ...
+# Subtest: linux: healthy endpoint is usable without a local installation
+ok 80 - linux: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 0.9758
+  ...
+# Subtest: darwin: healthy endpoint is usable without a local installation
+ok 81 - darwin: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 1.201
+  ...
+# Subtest: missing binary and unhealthy endpoint remain uninstalled
+ok 82 - missing binary and unhealthy endpoint remain uninstalled
+  ---
+  duration_ms: 2.0946
+  ...
+# Subtest: connection failure remains uninstalled without throwing
+ok 83 - connection failure remains uninstalled without throwing
+  ---
+  duration_ms: 1.0364
+  ...
+# Subtest: local binary preserves installed-but-stopped status
+ok 84 - local binary preserves installed-but-stopped status
+  ---
+  duration_ms: 2.1211
+  ...
+# Subtest: macOS application detection still succeeds without a health probe
+ok 85 - macOS application detection still succeeds without a health probe
+  ---
+  duration_ms: 0.9092
+  ...
+# Subtest: both status entry points expose endpoint-only models
+ok 86 - both status entry points expose endpoint-only models
+  ---
+  duration_ms: 2.845
+  ...
+# Subtest: discovery inserts a missing model with fallback size and remains idempotent
+ok 87 - discovery inserts a missing model with fallback size and remains idempotent
+  ---
+  duration_ms: 2.6481
+  ...
+# Subtest: discovery refreshes an existing model and preserves a zero size
+ok 88 - discovery refreshes an existing model and preserves a zero size
+  ---
+  duration_ms: 1.2575
+  ...
+# Subtest: readiness waits for asynchronous synchronization before returning
+ok 89 - readiness waits for asynchronous synchronization before returning
+  ---
+  duration_ms: 14.514
+  ...
+# Subtest: installed but stopped service is started before readiness synchronization
+ok 90 - installed but stopped service is started before readiness synchronization
+  ---
+  duration_ms: 1.9864
+  ...
+# Subtest: first welcome submission registers, selects and warms a discovered model before a timer tick
+ok 91 - first welcome submission registers, selects and warms a discovered model before a timer tick
+  ---
+  duration_ms: 14.2029
+  ...
+# Subtest: discovery without Ollama registration is not configured
+ok 92 - discovery without Ollama registration is not configured
+  ---
+  duration_ms: 1.3631
+  ...
+# Subtest: empty Ollama registration key is not configured
+ok 93 - empty Ollama registration key is not configured
+  ---
+  duration_ms: 0.603
+  ...
+# Subtest: Ollama registration without installed models is not configured
+ok 94 - Ollama registration without installed models is not configured
+  ---
+  duration_ms: 0.7649
+  ...
+# Subtest: Ollama without an STT provider is not configured
+ok 95 - Ollama without an STT provider is not configured
+  ---
+  duration_ms: 0.5207
+  ...
+# Subtest: cloud provider with LLM and STT remains configured without Ollama models
+ok 96 - cloud provider with LLM and STT remains configured without Ollama models
+  ---
+  duration_ms: 0.6396
+  ...
+# Subtest: cloud provider without a key remains unconfigured
+ok 97 - cloud provider without a key remains unconfigured
+  ---
+  duration_ms: 0.469
+  ...
+# Subtest: Whisper alone still cannot satisfy the LLM requirement
+ok 98 - Whisper alone still cannot satisfy the LLM requirement
+  ---
+  duration_ms: 0.4927
+  ...
+# Subtest: Firebase login still bypasses local provider configuration
+ok 99 - Firebase login still bypasses local provider configuration
+  ---
+  duration_ms: 0.4419
+  ...
+# Subtest: confirmation centers a disputed span within one full context window
+ok 100 - confirmation centers a disputed span within one full context window
+  ---
+  duration_ms: 3.0836
+  ...
+# Subtest: scheduled confirmation cannot be sampled before its declared readiness
+ok 101 - scheduled confirmation cannot be sampled before its declared readiness
+  ---
+  duration_ms: 0.6149
+  ...
+# Subtest: retained audio boundary shifts full context to the right
+ok 102 - retained audio boundary shifts full context to the right
+  ---
+  duration_ms: 0.3338
+  ...
+# Subtest: final confirmation clamps to EOF and preserves every trailing sample
+ok 103 - final confirmation clamps to EOF and preserves every trailing sample
+  ---
+  duration_ms: 0.3683
+  ...
+# Subtest: final short retained buffer uses available context without waiting
+ok 104 - final short retained buffer uses available context without waiting
+  ---
+  duration_ms: 0.3492
+  ...
+# Subtest: odd sample spans remain integer and maximize the weaker edge
+ok 105 - odd sample spans remain integer and maximize the weaker edge
+  ---
+  duration_ms: 0.245
+  ...
+# Subtest: a span exactly at the input ceiling fits with no additional context
+ok 106 - a span exactly at the input ceiling fits with no additional context
+  ---
+  duration_ms: 1.4138
+  ...
+# Subtest: invalid, future, unretained, and over-ceiling spans are rejected
+ok 107 - invalid, future, unretained, and over-ceiling spans are rejected
+  ---
+  duration_ms: 1.0299
+  ...
+# Subtest: near the earliest retained sample confirmation never waits beyond the hard bound
+ok 108 - near the earliest retained sample confirmation never waits beyond the hard bound
+  ---
+  duration_ms: 0.6007
+  ...
+# Subtest: agreement-independent diversity shifts a full window three seconds later
+ok 109 - agreement-independent diversity shifts a full window three seconds later
+  ---
+  duration_ms: 2.9226
+  ...
+# Subtest: diversity samples every other continuing analysis, not completed short utterances
+ok 110 - diversity samples every other continuing analysis, not completed short utterances
+  ---
+  duration_ms: 0.4446
+  ...
+# Subtest: EOF clamps a requested diverse window without extending the source
+ok 111 - EOF clamps a requested diverse window without extending the source
+  ---
+  duration_ms: 0.2033
+  ...
+# Subtest: diversity bounds obey input and additional-handoff ceilings at all offsets
+ok 112 - diversity bounds obey input and additional-handoff ceilings at all offsets
+  ---
+  duration_ms: 1.3762
+  ...
+# Subtest: invalid ordinals and source coordinates are rejected
+ok 113 - invalid ordinals and source coordinates are rejected
+  ---
+  duration_ms: 0.6206
+  ...
+# Subtest: diverse observations contribute deeper evidence without advancing the regular cursor
+ok 114 - diverse observations contribute deeper evidence without advancing the regular cursor
+  ---
+  duration_ms: 3.4446
+  ...
+# Subtest: diversity can recover a previously absent interior word
+ok 115 - diversity can recover a previously absent interior word
+  ---
+  duration_ms: 0.9493
+  ...
+# Subtest: observation IDs are idempotent and cannot claim simultaneous confirmation status
+ok 116 - observation IDs are idempotent and cannot claim simultaneous confirmation status
+  ---
+  duration_ms: 0.6394
+  ...
+# Subtest: exports a stateful resampler
+ok 117 - exports a stateful resampler
+  ---
+  duration_ms: 2.019
+  ...
+# Subtest: arbitrary packet boundaries retain exact converter phase and sample count
+ok 118 - arbitrary packet boundaries retain exact converter phase and sample count
+  ---
+  duration_ms: 1988.1288
+  ...
+# Subtest: short residual tails and every phase match the one-shot helper
+ok 119 - short residual tails and every phase match the one-shot helper
+  ---
+  duration_ms: 20.2905
+  ...
+# Subtest: odd-byte rejection and discontinuity do not mutate stream state
+ok 120 - odd-byte rejection and discontinuity do not mutate stream state
+  ---
+  duration_ms: 0.7287
+  ...
+# Subtest: near-zero input is processed and never rejected by an energy threshold
+ok 121 - near-zero input is processed and never rejected by an energy threshold
+  ---
+  duration_ms: 23.0503
+  ...
+# Subtest: silence metadata advances the sample clock and preserves filter boundary context
+ok 122 - silence metadata advances the sample clock and preserves filter boundary context
+  ---
+  duration_ms: 23.1101
+  ...
+# Subtest: fixed 1.5-second original-input telemetry has exact RMS and zero counts
+ok 123 - fixed 1.5-second original-input telemetry has exact RMS and zero counts
+  ---
+  duration_ms: 66.0345
+  ...
+# Subtest: instances keep channel filter and telemetry state isolated
+ok 124 - instances keep channel filter and telemetry state isolated
+  ---
+  duration_ms: 56.2352
+  ...
+# Subtest: flush emits residual once and disallows further capture
+ok 125 - flush emits residual once and disallows further capture
+  ---
+  duration_ms: 0.5524
+  ...
+# Subtest: invalid channels and unbounded inputs are rejected
+ok 126 - invalid channels and unbounded inputs are rejected
+  ---
+  duration_ms: 0.6191
+  ...
+# Subtest: exports pure constructors and validators
+ok 127 - exports pure constructors and validators
+  ---
+  duration_ms: 3.6194
+  ...
+# Subtest: audio construction owns copied bytes including a Uint8Array view
+ok 128 - audio construction owns copied bytes including a Uint8Array view
+  ---
+  duration_ms: 2.0129
+  ...
+# Subtest: accepts silence without allocating audio and rejects attached bytes
+ok 129 - accepts silence without allocating audio and rejects attached bytes
+  ---
+  duration_ms: 0.8197
+  ...
+# Subtest: rejects malformed identities, version and stale expected identity
+ok 130 - rejects malformed identities, version and stale expected identity
+  ---
+  duration_ms: 5.1062
+  ...
+# Subtest: rejects invalid PCM sizing, timing and unsafe sample ranges
+ok 131 - rejects invalid PCM sizing, timing and unsafe sample ranges
+  ---
+  duration_ms: 1.1021
+  ...
+# Subtest: only model window 512 is accepted; transport feed 480 and 512 both work
+ok 132 - only model window 512 is accepted; transport feed 480 and 512 both work
+  ---
+  duration_ms: 0.8814
+  ...
+# Subtest: all commands and reply types have bounded validated envelopes
+ok 133 - all commands and reply types have bounded validated envelopes
+  ---
+  duration_ms: 1.0938
+  ...
+# Subtest: result ranges, timings, text bounds and commitment watermark are validated
+ok 134 - result ranges, timings, text bounds and commitment watermark are validated
+  ---
+  duration_ms: 1.3183
+  ...
+# Subtest: telemetry is compact metadata with no transcript or raw audio
+ok 135 - telemetry is compact metadata with no transcript or raw audio
+  ---
+  duration_ms: 1.4709
+  ...
+# Subtest: init requires all five model paths and rejects missing or oversized paths
+ok 136 - init requires all five model paths and rejects missing or oversized paths
+  ---
+  duration_ms: 0.6794
+  ...
+# Subtest: planner boundary preferred-silence is valid in result and telemetry replies
+ok 137 - planner boundary preferred-silence is valid in result and telemetry replies
+  ---
+  duration_ms: 0.4928
+  ...
+# Subtest: planner boundary flush is valid in result and telemetry replies
+ok 138 - planner boundary flush is valid in result and telemetry replies
+  ---
+  duration_ms: 0.2724
+  ...
+# Subtest: exports span constructors and a pure transactional reducer
+ok 139 - exports span constructors and a pure transactional reducer
+  ---
+  duration_ms: 2.5082
+  ...
+# Subtest: v1 span updates carry explicit 16 kHz source positions and provisional/final flags
+ok 140 - v1 span updates carry explicit 16 kHz source positions and provisional/final flags
+  ---
+  duration_ms: 2.7273
+  ...
+# Subtest: constructors copy span values and removal arrays
+ok 141 - constructors copy span values and removal arrays
+  ---
+  duration_ms: 0.2675
+  ...
+# Subtest: emission projection strips internal evidence and keeps absolute 16 kHz samples unchanged
+ok 142 - emission projection strips internal evidence and keeps absolute 16 kHz samples unchanged
+  ---
+  duration_ms: 1.7489
+  ...
+# Subtest: span updates enforce bounded collections and text
+ok 143 - span updates enforce bounded collections and text
+  ---
+  duration_ms: 1.7129
+  ...
+# Subtest: span fields reject unsafe integers, invalid ranges, flags, and source clocks
+ok 144 - span fields reject unsafe integers, invalid ranges, flags, and source clocks
+  ---
+  duration_ms: 1.6352
+  ...
+# Subtest: span IDs are unique and disjoint from removal IDs
+ok 145 - span IDs are unique and disjoint from removal IDs
+  ---
+  duration_ms: 0.56
+  ...
+# Subtest: closed wire schema rejects audio, credentials, and internal span metadata
+ok 146 - closed wire schema rejects audio, credentials, and internal span metadata
+  ---
+  duration_ms: 0.6288
+  ...
+# Subtest: span updates retain expected session and generation checks
+ok 147 - span updates retain expected session and generation checks
+  ---
+  duration_ms: 1.0537
+  ...
+# Subtest: provisional revisions and merge removals produce an owned map
+ok 148 - provisional revisions and merge removals produce an owned map
+  ---
+  duration_ms: 0.4784
+  ...
+# Subtest: stale revisions and duplicate delivery are idempotent
+ok 149 - stale revisions and duplicate delivery are idempotent
+  ---
+  duration_ms: 0.6467
+  ...
+# Subtest: finalization uses a new revision and final spans cannot be revised or removed
+ok 150 - finalization uses a new revision and final spans cannot be revised or removed
+  ---
+  duration_ms: 0.467
+  ...
+# Subtest: invalid multi-span transactions leave every input value unchanged
+ok 151 - invalid multi-span transactions leave every input value unchanged
+  ---
+  duration_ms: 0.4704
+  ...
+# Subtest: BPE tokens preserve words, punctuation, contractions and source times
+ok 152 - BPE tokens preserve words, punctuation, contractions and source times
+  ---
+  duration_ms: 3.3257
+  ...
+# Subtest: numeric BPE pieces and standalone spaces use the raw result text
+ok 153 - numeric BPE pieces and standalone spaces use the raw result text
+  ---
+  duration_ms: 0.5082
+  ...
+# Subtest: malformed token timing and source bounds are rejected
+ok 154 - malformed token timing and source bounds are rejected
+  ---
+  duration_ms: 2.1662
+  ...
+# Subtest: first observation displays all words provisionally, including the trailing edge
+ok 155 - first observation displays all words provisionally, including the trailing edge
+  ---
+  duration_ms: 1.8367
+  ...
+# Subtest: natural end is not finality while source audio remains retained
+ok 156 - natural end is not finality while source audio remains retained
+  ---
+  duration_ms: 2.3783
+  ...
+# Subtest: deeper evidence immediately replaces a provisional span using the same ID
+ok 157 - deeper evidence immediately replaces a provisional span using the same ID
+  ---
+  duration_ms: 2.1564
+  ...
+# Subtest: best edge distance wins even if the last arriving observation is weaker
+ok 158 - best edge distance wins even if the last arriving observation is weaker
+  ---
+  duration_ms: 1.7976
+  ...
+# Subtest: source clock finalizes exactly at the 25-second retention age
+ok 159 - source clock finalizes exactly at the 25-second retention age
+  ---
+  duration_ms: 1.539
+  ...
+# Subtest: silence alone advances finalization without another decoder result
+ok 160 - silence alone advances finalization without another decoder result
+  ---
+  duration_ms: 0.4577
+  ...
+# Subtest: late decoder output cannot alter a finalized span or resurrect a duplicate
+ok 161 - late decoder output cannot alter a finalized span or resurrect a duplicate
+  ---
+  duration_ms: 0.5805
+  ...
+# Subtest: stop settles every displayed tail then rejects further observations
+ok 162 - stop settles every displayed tail then rejects further observations
+  ---
+  duration_ms: 0.4703
+  ...
+# Subtest: a dispute never blocks provisionals before or after its own span
+ok 163 - a dispute never blocks provisionals before or after its own span
+  ---
+  duration_ms: 1.3122
+  ...
+# Subtest: a covered omission does not silently erase the best known negation
+ok 164 - a covered omission does not silently erase the best known negation
+  ---
+  duration_ms: 0.4619
+  ...
+# Subtest: split and merged alternatives are atomic replacements, not duplicate suffixes
+ok 165 - split and merged alternatives are atomic replacements, not duplicate suffixes
+  ---
+  duration_ms: 0.5049
+  ...
+# Subtest: a matching prefix does not discard the rest of a split hypothesis
+ok 166 - a matching prefix does not discard the rest of a split hypothesis
+  ---
+  duration_ms: 1.136
+  ...
+# Subtest: repeated words retain distinct occurrence IDs through revisions
+ok 167 - repeated words retain distinct occurrence IDs through revisions
+  ---
+  duration_ms: 0.4439
+  ...
+# Subtest: duplicate result IDs do not produce duplicate provisional events
+ok 168 - duplicate result IDs do not produce duplicate provisional events
+  ---
+  duration_ms: 0.3132
+  ...
+# Subtest: invalid future source clocks and word bounds do not age existing spans
+ok 169 - invalid future source clocks and word bounds do not age existing spans
+  ---
+  duration_ms: 0.5963
+  ...
+# Subtest: settled anchors prevent timestamp drift from reopening a word at the cutoff
+ok 170 - settled anchors prevent timestamp drift from reopening a word at the cutoff
+  ---
+  duration_ms: 0.3368
+  ...
+# Subtest: a late natural completion may reanalyse a zero-new-audio final context
+ok 171 - a late natural completion may reanalyse a zero-new-audio final context
+  ---
+  duration_ms: 0.623
+  ...
+# Subtest: pure silence has no decode and remains bounded
+ok 172 - pure silence has no decode and remains bounded
+  ---
+  duration_ms: 2383.1628
+  ...
+# Subtest: natural VAD range keeps both allowances and exact original samples
+ok 173 - natural VAD range keeps both allowances and exact original samples
+  ---
+  duration_ms: 11.7289
+  ...
+# Subtest: continuous speech forces handoff by 18.75s with input <=19.5s
+ok 174 - continuous speech forces handoff by 18.75s with input <=19.5s
+  ---
+  duration_ms: 795.0205
+  ...
+# Subtest: silence candidates do not postpone the three-second revisable analysis
+ok 175 - silence candidates do not postpone the three-second revisable analysis
+  ---
+  duration_ms: 82.5832
+  ...
+# Subtest: a short silence does not interrupt cadence; exact zero still advances active speech
+ok 176 - a short silence does not interrupt cadence; exact zero still advances active speech
+  ---
+  duration_ms: 98.7687
+  ...
+# Subtest: entirely zero proposed speech skips decoding; nonzero is never energy gated
+ok 177 - entirely zero proposed speech skips decoding; nonzero is never energy gated
+  ---
+  duration_ms: 2.1135
+  ...
+# Subtest: flush preserves sub-window residual and is idempotent
+ok 178 - flush preserves sub-window residual and is idempotent
+  ---
+  duration_ms: 0.8467
+  ...
+# Subtest: overlapping padded VAD ranges merge but cannot defeat the hard bound
+ok 179 - overlapping padded VAD ranges merge but cannot defeat the hard bound
+  ---
+  duration_ms: 86.9338
+  ...
+# Subtest: ownership intervals are contiguous across forced cuts on both channels
+ok 180 - ownership intervals are contiguous across forced cuts on both channels
+  ---
+  duration_ms: 790.3235
+  ...
+# Subtest: rejects future/out-of-order speech evidence and nonfinite PCM
+ok 181 - rejects future/out-of-order speech evidence and nonfinite PCM
+  ---
+  duration_ms: 0.3564
+  ...
+# Subtest: a preferred silence beyond the padded natural end leaves no backwards residual
+ok 182 - a preferred silence beyond the padded natural end leaves no backwards residual
+  ---
+  duration_ms: 82.3338
+  ...
+# Subtest: actual packet callback, not an invented earlier ready time, meets the handoff bound
+ok 183 - actual packet callback, not an invented earlier ready time, meets the handoff bound
+  ---
+  duration_ms: 802.6462
+  ...
+# Subtest: onset inside a packet preserves the sample ramp and oversized input requires reblocking
+ok 184 - onset inside a packet preserves the sample ramp and oversized input requires reblocking
+  ---
+  duration_ms: 0.4989
+  ...
+# Subtest: three-second advances grow the prefix then carry 16.5 seconds of context
+ok 185 - three-second advances grow the prefix then carry 16.5 seconds of context
+  ---
+  duration_ms: 394.654
+  ...
+# Subtest: context PCM remains an exact source slice after several advances
+ok 186 - context PCM remains an exact source slice after several advances
+  ---
+  duration_ms: 633.0504
+  ...
+# Subtest: a natural end just before a context cut cannot create a backwards remainder
+ok 187 - a natural end just before a context cut cannot create a backwards remainder
+  ---
+  duration_ms: 88.972
+  ...
+# Subtest: first live analysis arrives on the first frame at three seconds without forced lookahead
+ok 188 - first live analysis arrives on the first frame at three seconds without forced lookahead
+  ---
+  duration_ms: 4.0172
+  ...
+# Subtest: flush covers every tail sample after rapid full-context advances
+ok 189 - flush covers every tail sample after rapid full-context advances
+  ---
+  duration_ms: 408.9443
+  ...
+# Subtest: late natural completion closes at current ownership without a backwards final job
+ok 190 - late natural completion closes at current ownership without a backwards final job
+  ---
+  duration_ms: 19.6427
+  ...
+# Subtest: flush also clamps late native completion to current ownership
+ok 191 - flush also clamps late native completion to current ownership
+  ---
+  duration_ms: 13.5589
+  ...
+# Subtest: active and idle buffers retain exactly the last 25 seconds of source PCM
+ok 192 - active and idle buffers retain exactly the last 25 seconds of source PCM
+  ---
+  duration_ms: 560.0601
+  ...
+# Subtest: whisper-tiny selection reaches both STT provider sessions
+ok 193 - whisper-tiny selection reaches both STT provider sessions
+  ---
+  duration_ms: 8.9182
+  ...
+# Subtest: whisper-tiny selection survives scheduled session renewal
+ok 194 - whisper-tiny selection survives scheduled session renewal
+  ---
+  duration_ms: 3.9343
+  ...
+# Subtest: whisper-medium selection reaches both STT provider sessions
+ok 195 - whisper-medium selection reaches both STT provider sessions
+  ---
+  duration_ms: 2.0608
+  ...
+# Subtest: whisper-medium selection survives scheduled session renewal
+ok 196 - whisper-medium selection survives scheduled session renewal
+  ---
+  duration_ms: 2.8739
+  ...
+# Subtest: renewal reads an updated Tiny-to-Medium selection for both sessions
+ok 197 - renewal reads an updated Tiny-to-Medium selection for both sessions
+  ---
+  duration_ms: 1.8748
+  ...
+# Subtest: cloud provider options remain unchanged by Whisper model pass-through
+ok 198 - cloud provider options remain unchanged by Whisper model pass-through
+  ---
+  duration_ms: 1.6427
+  ...
+# Subtest: reset clears summary session identity
+ok 199 - reset clears summary session identity
+  ---
+  duration_ms: 4.5035
+  ...
+# Subtest: late summary completion after reset cannot save, render, or overwrite the new lifecycle
+ok 200 - late summary completion after reset cannot save, render, or overwrite the new lifecycle
+  ---
+  duration_ms: 1.8399
+  ...
+# Subtest: reset during a pending summary save prevents late rendering and analysis state changes
+ok 201 - reset during a pending summary save prevents late rendering and analysis state changes
+  ---
+  duration_ms: 3.4906
+  ...
+# Subtest: system-audio success waits for provider forwarding before the IPC reference event
+ok 202 - system-audio success waits for provider forwarding before the IPC reference event
+  ---
+  duration_ms: 7.8096
+  ...
+# Subtest: whisper system audio retains provider payload and emits exactly one AEC reference
+ok 203 - whisper system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 2.8326
+  ...
+# Subtest: gemini system audio retains provider payload and emits exactly one AEC reference
+ok 204 - gemini system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 5.2598
+  ...
+# Subtest: deepgram system audio retains provider payload and emits exactly one AEC reference
+ok 205 - deepgram system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 3.8457
+  ...
+# Subtest: provider rejection propagates without a success result or AEC reference
+ok 206 - provider rejection propagates without a success result or AEC reference
+  ---
+  duration_ms: 4.1287
+  ...
+# Subtest: inactive STT session rejects without emitting an AEC reference
+ok 207 - inactive STT session rejects without emitting an AEC reference
+  ---
+  duration_ms: 2.2942
+  ...
+# Subtest: missing model information rejects without forwarding or an AEC reference
+ok 208 - missing model information rejects without forwarding or an AEC reference
+  ---
+  duration_ms: 10.7975
+  ...
+# Subtest: Whisper help on stderr with exit zero verifies successfully
+ok 209 - Whisper help on stderr with exit zero verifies successfully
+  ---
+  duration_ms: 26.6348
+  ...
+# Subtest: nonzero help with stdout-only warning fails execution verification
+ok 210 - nonzero help with stdout-only warning fails execution verification
+  ---
+  duration_ms: 1.2742
+  ...
+# Subtest: even a zero-exit deprecation warning is not a transcription CLI
+ok 211 - even a zero-exit deprecation warning is not a transcription CLI
+  ---
+  duration_ms: 1.0868
+  ...
+# Subtest: existing executable is executed before reuse, without reinstalling
+ok 212 - existing executable is executed before reuse, without reinstalling
+  ---
+  duration_ms: 1.3179
+  ...
+# Subtest: failing existing executable triggers replacement and verifies the replacement
+ok 213 - failing existing executable triggers replacement and verifies the replacement
+  ---
+  duration_ms: 2.0066
+  ...
+# Subtest: replacement that still fails execution is rejected
+ok 214 - replacement that still fails execution is rejected
+  ---
+  duration_ms: 2.2582
+  ...
+# Subtest: finder selects modern CLI names and ignores legacy stubs and streaming tools
+ok 215 - finder selects modern CLI names and ignores legacy stubs and streaming tools
+  ---
+  duration_ms: 96.2467
+  ...
+# Subtest: Windows installer preserves the CLI companion DLLs and verifies execution
+ok 216 - Windows installer preserves the CLI companion DLLs and verifies execution
+  ---
+  duration_ms: 140.6781
+  ...
+# Subtest: Whisper boundary converts one second of 24 kHz PCM to 16 kHz PCM
+ok 217 - Whisper boundary converts one second of 24 kHz PCM to 16 kHz PCM
+  ---
+  duration_ms: 37.7539
+  ...
+# Subtest: 24-to-16 kHz conversion attenuates frequencies above the new Nyquist limit
+ok 218 - 24-to-16 kHz conversion attenuates frequencies above the new Nyquist limit
+  ---
+  duration_ms: 19.1339
+  ...
+# Subtest: 24-to-16 kHz resampler preserves silence independently of the decode gate
+ok 219 - 24-to-16 kHz resampler preserves silence independently of the decode gate
+  ---
+  duration_ms: 13.6444
+  ...
+# Subtest: stdout-only nonzero exit reports code and both streams to logs and callbacks
+ok 220 - stdout-only nonzero exit reports code and both streams to logs and callbacks
+  ---
+  duration_ms: 7.0351
+  ...
+# Subtest: spawn errors surface once and cleanup still happens on close
+ok 221 - spawn errors surface once and cleanup still happens on close
+  ---
+  duration_ms: 4.4012
+  ...
+# Subtest: successful CLI stdout becomes transcription
+ok 222 - successful CLI stdout becomes transcription
+  ---
+  duration_ms: 4.7337
+  ...
+# Subtest: intentional shutdown does not emit an unhandled process failure
+ok 223 - intentional shutdown does not emit an unhandled process failure
+  ---
+  duration_ms: 3.425
+  ...
+# Subtest: managed CLI installation status requires successful execution even without PATH
+ok 224 - managed CLI installation status requires successful execution even without PATH
+  ---
+  duration_ms: 1.2469
+  ...
+# Subtest: broken managed CLI is not reported installed
+ok 225 - broken managed CLI is not reported installed
+  ---
+  duration_ms: 0.9368
+  ...
+# Subtest: concurrent initialization shares one installation attempt
+ok 226 - concurrent initialization shares one installation attempt
+  ---
+  duration_ms: 5.1573
+  ...
+# Subtest: my exact-zero chunk skips WAV creation and CLI spawn, then accepts nonzero audio
+ok 227 - my exact-zero chunk skips WAV creation and CLI spawn, then accepts nonzero audio
+  ---
+  duration_ms: 33.595
+  ...
+# Subtest: their exact-zero chunk skips WAV creation and CLI spawn, then accepts nonzero audio
+ok 228 - their exact-zero chunk skips WAV creation and CLI spawn, then accepts nonzero audio
+  ---
+  duration_ms: 30.448
+  ...
+# Subtest: PCM16 RMS uses signed samples and full-scale 32768 without gating near-zero values
+ok 229 - PCM16 RMS uses signed samples and full-scale 32768 without gating near-zero values
+  ---
+  duration_ms: 2.0221
+  ...
+# Subtest: chunk debug record distinguishes decoded text from duplicate suppression without logging text
+ok 230 - chunk debug record distinguishes decoded text from duplicate suppression without logging text
+  ---
+  duration_ms: 51.4664
+  ...
+# Subtest: one debug record for failed spawn plus close, with no successful transcription
+ok 231 - one debug record for failed spawn plus close, with no successful transcription
+  ---
+  duration_ms: 3.5689
+  ...
+# Subtest: debug disabled still skips zero audio and decodes nonzero audio
+ok 232 - debug disabled still skips zero audio and decodes nonzero audio
+  ---
+  duration_ms: 4.6413
+  ...
+# Subtest: immediate layout cancels the older animation (original VM drift reproduction)
+ok 233 - immediate layout cancels the older animation (original VM drift reproduction)
+  ---
+  duration_ms: 20.1395
+  ...
+# Subtest: native header movement follows continuously before the final moved event
+ok 234 - native header movement follows continuously before the final moved event
+  ---
+  duration_ms: 11.2435
+  ...
+# Subtest: explicit drag synchronizes children even without native move events
+ok 235 - explicit drag synchronizes children even without native move events
+  ---
+  duration_ms: 9.3683
+  ...
+# Subtest: drag during transcript growth preserves requested height and restores resize state
+ok 236 - drag during transcript growth preserves requested height and restores resize state
+  ---
+  duration_ms: 7.6873
+  ...
+# Subtest: final moved event reconciles position while a child animation is active
+ok 237 - final moved event reconciles position while a child animation is active
+  ---
+  duration_ms: 5.1105
+  ...
+# Subtest: Ask and Listen remain side by side through left and right edge drags
+ok 238 - Ask and Listen remain side by side through left and right edge drags
+  ---
+  duration_ms: 12.9198
+  ...
+# Subtest: screen-edge transitions place Listen above then below without stale jumps
+ok 239 - screen-edge transitions place Listen above then below without stale jumps
+  ---
+  duration_ms: 9.8414
+  ...
+# Subtest: attachment uses the destination monitor origin
+ok 240 - attachment uses the destination monitor origin
+  ---
+  duration_ms: 7.2923
+  ...
+# Subtest: keyboard movement keeps attachment through animation and at completion
+ok 241 - keyboard movement keeps attachment through animation and at completion
+  ---
+  duration_ms: 8.9483
+  ...
+# Subtest: manual drag supersedes a running header animation
+ok 242 - manual drag supersedes a running header animation
+  ---
+  duration_ms: 7.9807
+  ...
+# Subtest: 175% DPI rounding does not accumulate size over repeated Listen drags
+ok 243 - 175% DPI rounding does not accumulate size over repeated Listen drags
+  ---
+  duration_ms: 21.5912
+  ...
+# Subtest: rounded Ask + Listen bounds stay bounded during drag and transcript growth
+ok 244 - rounded Ask + Listen bounds stay bounded during drag and transcript growth
+  ---
+  duration_ms: 24.529
+  ...
+# Subtest: DPI rounding across below/above transitions does not change requested dimensions
+ok 245 - DPI rounding across below/above transitions does not change requested dimensions
+  ---
+  duration_ms: 9.7427
+  ...
+# Subtest: meeting container attaches to the 445x47 source-control header
+ok 246 - meeting container attaches to the 445x47 source-control header
+  ---
+  duration_ms: 27.9143
+  ...
+# Subtest: meeting stream/status updates with equal measurements do not restart resizing
+ok 247 - meeting stream/status updates with equal measurements do not restart resizing
+  ---
+  duration_ms: 54.5726
+  ...
+# Subtest: meeting measurement rounds upward and caps status/error chrome at 700px
+ok 248 - meeting measurement rounds upward and caps status/error chrome at 700px
+  ---
+  duration_ms: 12.4102
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+ok 249 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+  ---
+  duration_ms: 19.4422
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+ok 250 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+  ---
+  duration_ms: 19.4262
+  ...
+# Subtest: meeting and Ask keep independent heights side by side across monitors and edges
+ok 251 - meeting and Ask keep independent heights side by side across monitors and edges
+  ---
+  duration_ms: 9.6064
+  ...
+# Subtest: Stop retains meeting geometry and switching to local resizes from local content
+ok 252 - Stop retains meeting geometry and switching to local resizes from local content
+  ---
+  duration_ms: 11.7761
+  ...
+# Subtest: native-style locked min/max cannot replace intended limits
+ok 253 - native-style locked min/max cannot replace intended limits
+  ---
+  duration_ms: 10.7947
+  ...
+# Subtest: drag during resize settles applied acknowledgement and restores the resize lock
+ok 254 - drag during resize settles applied acknowledgement and restores the resize lock
+  ---
+  duration_ms: 12.1805
+  ...
+# Subtest: a superseded resize settles false and the latest request owns the lock
+ok 255 - a superseded resize settles false and the latest request owns the lock
+  ---
+  duration_ms: 5.9609
+  ...
+# Subtest: native rejection is reported using actual bounds, not requested-size bookkeeping
+ok 256 - native rejection is reported using actual bounds, not requested-size bookkeeping
+  ---
+  duration_ms: 5.9097
+  ...
+# Subtest: native setter failure settles the IPC response and restores the lock
+ok 257 - native setter failure settles the IPC response and restores the lock
+  ---
+  duration_ms: 5.5142
+  ...
+# Subtest: missing windows and invalid sizes return a failed acknowledgement
+ok 258 - missing windows and invalid sizes return a failed acknowledgement
+  ---
+  duration_ms: 6.9477
+  ...
+# Subtest: header resize during another window animation must not disappear
+ok 259 - header resize during another window animation must not disappear
+  ---
+  duration_ms: 8.6086
+  ...
+# Subtest: normal Settings window is reachable without local providers and survives source-independent show/hide
+ok 260 - normal Settings window is reachable without local providers and survives source-independent show/hide
+  ---
+  duration_ms: 6.5379
+  ...
+1..260
+# tests 291
+# suites 0
+# pass 291
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7597.7705

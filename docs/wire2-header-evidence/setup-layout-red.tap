@@ -1,0 +1,165 @@
+TAP version 13
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: added Setup controls must not hide the original Welcome options or permission title
+    not ok 1 - added Setup controls must not hide the original Welcome options or permission title
+      ---
+      duration_ms: 2.029
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        Welcome resize must include the added return button
+        + actual - expected
+        
+        + 'Welcome resize must include the added return button'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Welcome resize must include the added return button'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    ok 2 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 0.1426
+      type: 'test'
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    ok 3 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.1135
+      type: 'test'
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    ok 4 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.0987
+      type: 'test'
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 5 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.105
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 6 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.0781
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 7 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0803
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 8 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.096
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 9 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.1313
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 10 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1253
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 11 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.1139
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 12 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.0575
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 13 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.051
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 14 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.0513
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 15 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0569
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 16 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.0934
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 17 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0429
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 18 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.088
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    ok 19 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0742
+      type: 'test'
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 20 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.071
+      type: 'test'
+      ...
+    1..20
+not ok 1 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1819.9543
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 21
+# suites 0
+# pass 19
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1890.3969

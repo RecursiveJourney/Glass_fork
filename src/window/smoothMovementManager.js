@@ -112,11 +112,14 @@ class SmoothMovementManager {
         this.isAnimating = this.animationTargets.size > 0;
         if (finishSize && animation && win && !win.isDestroyed()) {
             const current = getWindowBounds(win);
-            setWindowBounds(win, { ...current,
-                width: animation.targetBounds.width ?? current.width,
-                height: animation.targetBounds.height ?? current.height });
-            // Restore temporary resize state before the caller calculates the new layout.
-            if (animation.onComplete) animation.onComplete();
+            try {
+                setWindowBounds(win, { ...current,
+                    width: animation.targetBounds.width ?? current.width,
+                    height: animation.targetBounds.height ?? current.height });
+                if (animation.onComplete) animation.onComplete();
+            } catch { animation.onCancel?.(); }
+        } else {
+            animation?.onCancel?.();
         }
     }
 
@@ -128,7 +131,7 @@ class SmoothMovementManager {
             return;
         }
 
-        const animation = { targetBounds, onComplete: options.onComplete };
+        const animation = { targetBounds, onComplete: options.onComplete, onCancel: options.onCancel };
         this.animationTargets.set(win, animation);
         this.isAnimating = true;
 
@@ -152,7 +155,8 @@ class SmoothMovementManager {
                 width: Math.round(startBounds.width + ((targetBounds.width ?? startBounds.width) - startBounds.width) * eased),
                 height: Math.round(startBounds.height + ((targetBounds.height ?? startBounds.height) - startBounds.height) * eased),
             };
-            setWindowBounds(win, newBounds);
+            try { setWindowBounds(win, newBounds); }
+            catch { this.cancelWindowAnimation(win); return; }
             // Native move/resize handlers may have canceled this animation synchronously.
             if (this.animationTargets.get(win) !== animation) return;
     
@@ -160,7 +164,8 @@ class SmoothMovementManager {
                 const timerId = setTimeout(step, 8);
                 this.animationTimers.set(win, timerId);
             } else {
-                setWindowBounds(win, targetBounds);
+                try { setWindowBounds(win, targetBounds); }
+                catch { this.cancelWindowAnimation(win); return; }
                 this.animationTimers.delete(win);
                 this.animationTargets.delete(win);
                 

@@ -1,0 +1,77 @@
+TAP version 13
+# Subtest: shipped header controls in the native Electron renderer
+    # Subtest: local configured=true keeps every header control inside native viewport
+    ok 1 - local configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.711
+      type: 'test'
+      ...
+    # Subtest: local configured=false keeps every header control inside native viewport
+    ok 2 - local configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1023
+      type: 'test'
+      ...
+    # Subtest: meeting configured=true keeps every header control inside native viewport
+    ok 3 - meeting configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1226
+      type: 'test'
+      ...
+    # Subtest: meeting configured=false keeps every header control inside native viewport
+    ok 4 - meeting configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.0989
+      type: 'test'
+      ...
+    # Subtest: all shipped controls remain visible and functional in active and stopped Local/Meeting states
+    ok 5 - all shipped controls remain visible and functional in active and stopped Local/Meeting states
+      ---
+      duration_ms: 0.0859
+      type: 'test'
+      ...
+    # Subtest: stopped header retains Done alongside restart in both sources
+    ok 6 - stopped header retains Done alongside restart in both sources
+      ---
+      duration_ms: 0.0829
+      type: 'test'
+      ...
+    # Subtest: settings supports click and accessible naming in meeting-only mode
+    ok 7 - settings supports click and accessible naming in meeting-only mode
+      ---
+      duration_ms: 0.1223
+      type: 'test'
+      ...
+    # Subtest: configured shortcuts and stopped additions trigger fresh measured header sizing
+    ok 8 - configured shortcuts and stopped additions trigger fresh measured header sizing
+      ---
+      duration_ms: 0.1625
+      type: 'test'
+      ...
+    # Subtest: opening Setup cannot be resized back to the old MainHeader by a late viewport event
+    ok 9 - opening Setup cannot be resized back to the old MainHeader by a late viewport event
+      ---
+      duration_ms: 0.1231
+      type: 'test'
+      ...
+    # Subtest: normal Settings renderer remains browsable without providers in Meeting
+    ok 10 - normal Settings renderer remains browsable without providers in Meeting
+      ---
+      duration_ms: 0.1168
+      type: 'test'
+      ...
+    1..10
+ok 1 - shipped header controls in the native Electron renderer
+  ---
+  duration_ms: 4870.3186
+  type: 'test'
+  ...
+1..1
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4939.1178

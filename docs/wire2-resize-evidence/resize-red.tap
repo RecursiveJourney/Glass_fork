@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: resize cache waits for applied acknowledgement and tolerates fractional DPI
+not ok 1 - resize cache waits for applied acknowledgement and tolerates fractional DPI
+  ---
+  duration_ms: 3.5813
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\listen-resize-ack.test.js:13:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    request is not evidence of an applied size
+    
+    614 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 614
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\listen-resize-ack.test.js:17:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: OS-rejected height is never cached and a subsequent update can retry
+not ok 2 - OS-rejected height is never cached and a subsequent update can retry
+  ---
+  duration_ms: 1.5598
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\listen-resize-ack.test.js:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    614 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 614
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\listen-resize-ack.test.js:26:41)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: IPC rejection is contained and never acknowledges a size
+not ok 3 - IPC rejection is contained and never acknowledges a size
+  ---
+  duration_ms: 0.965
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\listen-resize-ack.test.js:29:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    614 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 614
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\listen-resize-ack.test.js:31:41)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: only the latest changed measurement follows an in-flight resize
+not ok 4 - only the latest changed measurement follows an in-flight resize
+  ---
+  duration_ms: 2.8706
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\listen-resize-ack.test.js:33:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        614,
+    +   580,
+        600
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 614
+    1: 600
+  actual:
+    0: 614
+    1: 580
+    2: 600
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\listen-resize-ack.test.js:39:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Error: Test "IPC rejection is contained and never acknowledges a size" at ..\\..\\..\\..\\digital_twin\\glass\\tests\\listen-resize-ack.test.js:29:1 generated asynchronous activity after the test ended. This activity created the error "Error: synthetic rejection" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Subtest: native locked window grows from 224px to Meeting while preserving configured limits
+not ok 5 - native locked window grows from 224px to Meeting while preserving configured limits
+  ---
+  duration_ms: 1955.7474
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\native-resize.test.js:3:1'
+  failureType: 'testCodeFailure'
+  error: '614px requested but OS remained at 225px; {"locked":{"height":224,"min":[402,224],"max":[402,224],"resizable":false},"grown":{"height":225,"resizable":false},"capped":{"height":226,"resizable":false}}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\native-resize.test.js:13:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 0
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2034.6458

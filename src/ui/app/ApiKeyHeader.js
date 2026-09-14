@@ -3,6 +3,7 @@ import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
 export class ApiKeyHeader extends LitElement {
     //////// after_modelStateService ////////
     static properties = {
+        returnCallback: { type: Function },
         llmApiKey: { type: String },
         sttApiKey: { type: String },
         llmProvider: { type: String },
@@ -61,6 +62,7 @@ export class ApiKeyHeader extends LitElement {
             align-items: center;
             margin-bottom: 8px;
         }
+        .meeting-back { -webkit-app-region: no-drag; color: white; background: #444; border: none; border-radius: 5px; padding: 5px; cursor: pointer; align-self: flex-start; }
         .close-button {
             -webkit-app-region: no-drag;
             position: absolute;
@@ -1946,6 +1948,7 @@ export class ApiKeyHeader extends LitElement {
                     <div class="title">Use Personal API keys</div>
                 </div>
 
+                ${this.returnCallback ? html`<button class="meeting-back" @click=${this.returnCallback}>Back to source selection</button>` : ""}
                 <!-- LLM Section -->
                 <div class="section">
                     <div class="row">

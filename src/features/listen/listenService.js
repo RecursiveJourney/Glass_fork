@@ -41,6 +41,7 @@ class ListenService {
     publish(changes = {}) {
         this.state = { ...this.state, ...changes, version: this.state.version + 1 };
         const state = this.getListenState();
+        if (changes.source) internalBridge.emit('listen:source-changed', { source: state.source });
         const { windowPool } = require('../../window/windowManager');
         for (const name of ['header', 'listen']) {
             const win = windowPool?.get(name);

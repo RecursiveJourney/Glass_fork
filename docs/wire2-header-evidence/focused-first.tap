@@ -1,0 +1,476 @@
+TAP version 13
+# Subtest: shipped header controls in the native Electron renderer
+    # Subtest: local configured=true keeps every header control inside native viewport
+    not ok 1 - local configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 1.198
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Ask and Show/Hide actions remain functional
+        + actual - expected
+        
+        + 'Ask and Show/Hide actions remain functional'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Ask and Show/Hide actions remain functional'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: local configured=false keeps every header control inside native viewport
+    not ok 2 - local configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.2309
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Ask and Show/Hide actions remain functional
+        + actual - expected
+        
+        + 'Ask and Show/Hide actions remain functional'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Ask and Show/Hide actions remain functional'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting configured=true keeps every header control inside native viewport
+    not ok 3 - meeting configured=true keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1816
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Ask and Show/Hide actions remain functional
+        + actual - expected
+        
+        + 'Ask and Show/Hide actions remain functional'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Ask and Show/Hide actions remain functional'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: meeting configured=false keeps every header control inside native viewport
+    not ok 4 - meeting configured=false keeps every header control inside native viewport
+      ---
+      duration_ms: 0.1514
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:8:77'
+      failureType: 'testCodeFailure'
+      error: |-
+        Ask and Show/Hide actions remain functional
+        + actual - expected
+        
+        + 'Ask and Show/Hide actions remain functional'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'Ask and Show/Hide actions remain functional'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:105)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\header-controls.test.js:8:77)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: stopped header retains Done alongside restart in both sources
+    ok 5 - stopped header retains Done alongside restart in both sources
+      ---
+      duration_ms: 0.2059
+      type: 'test'
+      ...
+    # Subtest: settings supports click and accessible naming in meeting-only mode
+    ok 6 - settings supports click and accessible naming in meeting-only mode
+      ---
+      duration_ms: 0.0904
+      type: 'test'
+      ...
+    # Subtest: configured shortcuts and stopped additions trigger fresh measured header sizing
+    ok 7 - configured shortcuts and stopped additions trigger fresh measured header sizing
+      ---
+      duration_ms: 0.092
+      type: 'test'
+      ...
+    1..7
+not ok 1 - shipped header controls in the native Electron renderer
+  ---
+  duration_ms: 1682.942
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\header-controls.test.js:2:1'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: meeting overlay in the actual Electron renderer
+    # Subtest: meeting-only users can reach every Welcome option and return without losing Quit
+    ok 1 - meeting-only users can reach every Welcome option and return without losing Quit
+      ---
+      duration_ms: 0.6346
+      type: 'test'
+      ...
+    # Subtest: meeting preserves upstream pane navigation, elapsed label and copy feedback
+    ok 2 - meeting preserves upstream pane navigation, elapsed label and copy feedback
+      ---
+      duration_ms: 0.0994
+      type: 'test'
+      ...
+    # Subtest: permission setup retains Quit alongside the added Back control
+    ok 3 - permission setup retains Quit alongside the added Back control
+      ---
+      duration_ms: 0.122
+      type: 'test'
+      ...
+    # Subtest: pending authoritative hydration never mounts the local summary pipeline
+    ok 4 - pending authoritative hydration never mounts the local summary pipeline
+      ---
+      duration_ms: 0.0905
+      type: 'test'
+      ...
+    # Subtest: source selection remains a native interactive control
+    ok 5 - source selection remains a native interactive control
+      ---
+      duration_ms: 0.0971
+      type: 'test'
+      ...
+    # Subtest: stopped session can restart from the header
+    ok 6 - stopped session can restart from the header
+      ---
+      duration_ms: 0.0775
+      type: 'test'
+      ...
+    # Subtest: failed local cleanup offers Stop retry before source switching or another Start
+    ok 7 - failed local cleanup offers Stop retry before source switching or another Start
+      ---
+      duration_ms: 0.0846
+      type: 'test'
+      ...
+    # Subtest: meeting height is intrinsic inside the app full-height host
+    ok 8 - meeting height is intrinsic inside the app full-height host
+      ---
+      duration_ms: 0.1022
+      type: 'test'
+      ...
+    # Subtest: atomic meeting hydration renders transcript and suggestions together as literal text
+    ok 9 - atomic meeting hydration renders transcript and suggestions together as literal text
+      ---
+      duration_ms: 0.1189
+      type: 'test'
+      ...
+    # Subtest: correction reorder eviction and instance restart replace keyed rows
+    ok 10 - correction reorder eviction and instance restart replace keyed rows
+      ---
+      duration_ms: 0.1215
+      type: 'test'
+      ...
+    # Subtest: obsolete hydration cannot overwrite a newer push or remounted lifecycle
+    ok 11 - obsolete hydration cannot overwrite a newer push or remounted lifecycle
+      ---
+      duration_ms: 0.1194
+      type: 'test'
+      ...
+    # Subtest: bounded layout retains scroll and skips equal dimension resize requests
+    ok 12 - bounded layout retains scroll and skips equal dimension resize requests
+      ---
+      duration_ms: 0.0597
+      type: 'test'
+      ...
+    # Subtest: corrections preserve the visible row anchor and bottom readers follow new rows
+    ok 13 - corrections preserve the visible row anchor and bottom readers follow new rows
+      ---
+      duration_ms: 0.0518
+      type: 'test'
+      ...
+    # Subtest: no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+    ok 14 - no-suggestion outcomes stay hidden and terminal stopped state retains the last view
+      ---
+      duration_ms: 0.0851
+      type: 'test'
+      ...
+    # Subtest: source selector is locked active and Ask remains enabled in meeting
+    ok 15 - source selector is locked active and Ask remains enabled in meeting
+      ---
+      duration_ms: 0.065
+      type: 'test'
+      ...
+    # Subtest: MainHeader follows authoritative phase without optimistic cycling
+    ok 16 - MainHeader follows authoritative phase without optimistic cycling
+      ---
+      duration_ms: 0.0732
+      type: 'test'
+      ...
+    # Subtest: meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+    ok 17 - meeting-only HeaderController bypasses provider and capture setup including forced reevaluation
+      ---
+      duration_ms: 0.0694
+      type: 'test'
+      ...
+    # Subtest: Local credential setup can be cancelled back to Meeting
+    not ok 18 - Local credential setup can be cancelled back to Meeting
+      ---
+      duration_ms: 1.3633
+      type: 'test'
+      location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:20:43'
+      failureType: 'testCodeFailure'
+      error: |-
+        credential Back returns to source selection
+        + actual - expected
+        
+        + 'credential Back returns to source selection'
+        - null
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: ~
+      actual: 'credential Back returns to source selection'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:74)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1103:25)
+        Test.start (node:internal/test_runner/test:1000:17)
+        TestContext.test (node:internal/test_runner/test:367:20)
+        TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-renderer.test.js:20:43)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1110:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+      ...
+    # Subtest: Local permission setup can be cancelled back to Meeting
+    ok 19 - Local permission setup can be cancelled back to Meeting
+      ---
+      duration_ms: 0.0709
+      type: 'test'
+      ...
+    1..19
+not ok 2 - meeting overlay in the actual Electron renderer
+  ---
+  duration_ms: 1856.5844
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-renderer.test.js:6:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: immediate layout cancels the older animation (original VM drift reproduction)
+ok 3 - immediate layout cancels the older animation (original VM drift reproduction)
+  ---
+  duration_ms: 8.0268
+  type: 'test'
+  ...
+# Subtest: native header movement follows continuously before the final moved event
+ok 4 - native header movement follows continuously before the final moved event
+  ---
+  duration_ms: 5.0992
+  type: 'test'
+  ...
+# Subtest: explicit drag synchronizes children even without native move events
+ok 5 - explicit drag synchronizes children even without native move events
+  ---
+  duration_ms: 3.3041
+  type: 'test'
+  ...
+# Subtest: drag during transcript growth preserves requested height and restores resize state
+ok 6 - drag during transcript growth preserves requested height and restores resize state
+  ---
+  duration_ms: 5.0001
+  type: 'test'
+  ...
+# Subtest: final moved event reconciles position while a child animation is active
+ok 7 - final moved event reconciles position while a child animation is active
+  ---
+  duration_ms: 3.5106
+  type: 'test'
+  ...
+# Subtest: Ask and Listen remain side by side through left and right edge drags
+ok 8 - Ask and Listen remain side by side through left and right edge drags
+  ---
+  duration_ms: 3.6689
+  type: 'test'
+  ...
+# Subtest: screen-edge transitions place Listen above then below without stale jumps
+ok 9 - screen-edge transitions place Listen above then below without stale jumps
+  ---
+  duration_ms: 4.2079
+  type: 'test'
+  ...
+# Subtest: attachment uses the destination monitor origin
+ok 10 - attachment uses the destination monitor origin
+  ---
+  duration_ms: 3.2229
+  type: 'test'
+  ...
+# Subtest: keyboard movement keeps attachment through animation and at completion
+ok 11 - keyboard movement keeps attachment through animation and at completion
+  ---
+  duration_ms: 3.8927
+  type: 'test'
+  ...
+# Subtest: manual drag supersedes a running header animation
+ok 12 - manual drag supersedes a running header animation
+  ---
+  duration_ms: 3.4955
+  type: 'test'
+  ...
+# Subtest: 175% DPI rounding does not accumulate size over repeated Listen drags
+ok 13 - 175% DPI rounding does not accumulate size over repeated Listen drags
+  ---
+  duration_ms: 7.0655
+  type: 'test'
+  ...
+# Subtest: rounded Ask + Listen bounds stay bounded during drag and transcript growth
+ok 14 - rounded Ask + Listen bounds stay bounded during drag and transcript growth
+  ---
+  duration_ms: 5.8028
+  type: 'test'
+  ...
+# Subtest: DPI rounding across below/above transitions does not change requested dimensions
+ok 15 - DPI rounding across below/above transitions does not change requested dimensions
+  ---
+  duration_ms: 4.2217
+  type: 'test'
+  ...
+# Subtest: meeting container attaches to the 445x47 source-control header
+ok 16 - meeting container attaches to the 445x47 source-control header
+  ---
+  duration_ms: 5.3548
+  type: 'test'
+  ...
+# Subtest: meeting stream/status updates with equal measurements do not restart resizing
+ok 17 - meeting stream/status updates with equal measurements do not restart resizing
+  ---
+  duration_ms: 14.0244
+  type: 'test'
+  ...
+# Subtest: meeting measurement rounds upward and caps status/error chrome at 700px
+ok 18 - meeting measurement rounds upward and caps status/error chrome at 700px
+  ---
+  duration_ms: 8.6567
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+ok 19 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 0 DIP)
+  ---
+  duration_ms: 8.6182
+  type: 'test'
+  ...
+# Subtest: meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+ok 20 - meeting drag and below/above destination-monitor transitions stay bounded (rounding 2 DIP)
+  ---
+  duration_ms: 7.6534
+  type: 'test'
+  ...
+# Subtest: meeting and Ask keep independent heights side by side across monitors and edges
+ok 21 - meeting and Ask keep independent heights side by side across monitors and edges
+  ---
+  duration_ms: 5.0268
+  type: 'test'
+  ...
+# Subtest: Stop retains meeting geometry and switching to local resizes from local content
+ok 22 - Stop retains meeting geometry and switching to local resizes from local content
+  ---
+  duration_ms: 6.3304
+  type: 'test'
+  ...
+# Subtest: native-style locked min/max cannot replace intended limits
+ok 23 - native-style locked min/max cannot replace intended limits
+  ---
+  duration_ms: 4.7073
+  type: 'test'
+  ...
+# Subtest: drag during resize settles applied acknowledgement and restores the resize lock
+ok 24 - drag during resize settles applied acknowledgement and restores the resize lock
+  ---
+  duration_ms: 3.6936
+  type: 'test'
+  ...
+# Subtest: a superseded resize settles false and the latest request owns the lock
+ok 25 - a superseded resize settles false and the latest request owns the lock
+  ---
+  duration_ms: 4.4529
+  type: 'test'
+  ...
+# Subtest: native rejection is reported using actual bounds, not requested-size bookkeeping
+ok 26 - native rejection is reported using actual bounds, not requested-size bookkeeping
+  ---
+  duration_ms: 4.9051
+  type: 'test'
+  ...
+# Subtest: native setter failure settles the IPC response and restores the lock
+ok 27 - native setter failure settles the IPC response and restores the lock
+  ---
+  duration_ms: 5.0508
+  type: 'test'
+  ...
+# Subtest: missing windows and invalid sizes return a failed acknowledgement
+ok 28 - missing windows and invalid sizes return a failed acknowledgement
+  ---
+  duration_ms: 3.03
+  type: 'test'
+  ...
+# Subtest: header resize during another window animation must not disappear
+ok 29 - header resize during another window animation must not disappear
+  ---
+  duration_ms: 4.1963
+  type: 'test'
+  ...
+# Subtest: normal Settings window is reachable without local providers and survives source-independent show/hide
+ok 30 - normal Settings window is reachable without local providers and survives source-independent show/hide
+  ---
+  duration_ms: 4.5396
+  type: 'test'
+  ...
+1..30
+# tests 56
+# suites 0
+# pass 49
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1937.0872

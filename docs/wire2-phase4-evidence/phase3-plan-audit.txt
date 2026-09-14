@@ -1,0 +1,2 @@
+Node 20: top-level plan 1..239 (239 results); renderer subplan 1..16 (16 results); total 255. PASS: every result is within its plan.
+Node 24: top-level plan 1..239 (239 results); renderer subplan 1..16 (16 results); total 255. PASS: every result is within its plan.

@@ -7,6 +7,72 @@ app.setPath('userData', fs.mkdtempSync(path.join(os.tmpdir(), 'glass-meeting-tes
 app.disableHardwareAcceleration();
 const root = path.resolve(__dirname, '../..');
 const cases = [
+ ['source selector stays readable when host text defaults to black',async()=>{
+   document.body.style.color='black';
+   for(const source of ['local','meeting'])for(const phase of ['idle','active']){
+     emit({...current,source,phase,version:current.version+1});await tick();
+     const select=header.shadowRoot.querySelector('.source-select');
+     check(getComputedStyle(select).color==='rgb(255, 255, 255)','selector must use explicit white header text');
+   }
+ }],
+
+ ['departing MainHeader cannot compete with a pending Setup resize',async()=>{
+   document.querySelector('#header-container').replaceChildren();await import('/src/ui/app/HeaderController.js');
+   window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
+   const main=document.querySelector('main-header'),requests=[];
+   let resolve;api.headerController.resizeHeaderWindow=dimensions=>{requests.push(dimensions);return new Promise(r=>resolve=r)};
+   main.shadowRoot.querySelector('.setup-button').click();await tick();
+   main.resizeToContent();await tick();
+   check(requests.length===1,'old header must not overwrite in-flight setup dimensions');
+   resolve();await tick();
+ }],
+
+ ['added Setup controls must not hide the original Welcome options or permission title',async()=>{
+   document.querySelector('#header-container').replaceChildren();await import('/src/ui/app/HeaderController.js');
+   const sizes=[];api.headerController.resizeHeaderWindow=async dimensions=>sizes.push(dimensions);
+   window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
+   document.querySelector('main-header').shadowRoot.querySelector('.setup-button').click();await tick();
+   const welcome=document.querySelector('welcome-header'),height=welcome.shadowRoot.querySelector('.container').getBoundingClientRect().height;
+   check(sizes.at(-1).height>=Math.floor(height),'Welcome resize must include the added return button');
+   const prototype=customElements.get('permission-setup').prototype;
+   prototype.connectedCallback=function(){Object.getPrototypeOf(prototype).connectedCallback.call(this)};
+   const permission=document.createElement('permission-setup');permission.backCallback=()=>{};
+   document.querySelector('#content').append(permission);await tick();
+   const back=permission.shadowRoot.querySelector('.meeting-back').getBoundingClientRect();
+   const title=permission.shadowRoot.querySelector('.title').getBoundingClientRect();
+   check(back.bottom<=title.top || back.right<=title.left,'Back must not overlap permission title');
+ }],
+
+ ['meeting-only users can reach every Welcome option and return without losing Quit',async()=>{
+   document.querySelector('#header-container').replaceChildren();await import('/src/ui/app/HeaderController.js');
+   window.dispatchEvent(new Event('DOMContentLoaded'));await tick();let logins=0;api.common.startFirebaseAuth=async()=>logins++;
+   const main=document.querySelector('main-header'),setup=main.shadowRoot.querySelector('.setup-button');
+   check(setup,'added Setup route exposes upstream Welcome choices');setup.click();await tick();
+   const welcome=document.querySelector('welcome-header');check(welcome,'normal Welcome screen reachable');
+   await welcome.loginCallback();check(logins===1,'normal browser login action retained');
+   check(welcome.shadowRoot.querySelector('.close-button'),'Quit retained');
+   const back=welcome.shadowRoot.querySelector('.meeting-back');check(back,'return to Meeting is additive');back.click();await tick();
+   check(document.querySelector('main-header'),'return to source selection');
+ }],
+
+ ['meeting preserves upstream pane navigation, elapsed label and copy feedback',async()=>{
+   emit(active(snapshot({chunks:[row('a')],suggestions:[outcome('a')]})));await tick();
+   const root=view.shadowRoot,toggle=root.querySelector('.toggle-button');
+   check(toggle,'Show Transcript/Insights control remains available');
+   toggle.click();await tick();check(root.querySelector('stt-view')&&root.querySelector('suggestions-view'),'navigation keeps both meeting panes');
+   check(root.querySelector('.copy-icon')&&root.querySelector('.check-icon'),'normal Copy and completion icons retained');
+   check(root.querySelector('.meeting-elapsed'),'elapsed status retained');
+ }],
+ ['permission setup retains Quit alongside the added Back control',async()=>{
+   await import('/src/ui/app/PermissionHeader.js');const p=customElements.get('permission-setup').prototype;
+   p.connectedCallback=function(){Object.getPrototypeOf(p).connectedCallback.call(this)};
+   let quits=0,backs=0;api.common.quitApplication=()=>quits++;
+   const permission=document.createElement('permission-setup');permission.backCallback=()=>backs++;
+   document.querySelector('#content').append(permission);await tick();
+   permission.shadowRoot.querySelector('.close-button').click();await tick();check(quits===1,'upstream Close still quits');
+   const back=permission.shadowRoot.querySelector('.meeting-back');check(back,'added Back is separate');back.click();await tick();check(backs===1,'Back returns without quitting');
+ }],
+
  ['pending authoritative hydration never mounts the local summary pipeline', async()=>{
    view.remove();let resolve;api.listen.getState=()=>new Promise(r=>resolve=r);
    const v=document.createElement('listen-view');document.querySelector('#content').append(v);await tick();
@@ -123,7 +189,7 @@ const cases = [
    window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
    window.dispatchEvent(new CustomEvent('listen-setup-requested'));await tick();
    const keys=document.querySelector('apikey-header');check(keys,'explicit Local setup opens credentials');
-   await keys.backCallback();await tick();check(document.querySelector('main-header'),'credential Back returns to source selection');
+   keys.shadowRoot.querySelector('.meeting-back').click();await tick();check(document.querySelector('main-header'),'added return preserves source selection');
    check(quits===0,'cancel setup does not quit the meeting-capable app');
  }],
  ['Local permission setup can be cancelled back to Meeting', async()=>{
@@ -135,7 +201,7 @@ const cases = [
    window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
    window.dispatchEvent(new CustomEvent('listen-setup-requested'));await tick();
    const permission=document.querySelector('permission-setup');check(permission,'explicit Local setup opens permissions');
-   await permission.handleClose();await tick();check(document.querySelector('main-header'),'permission Back returns to source selection');
+   permission.shadowRoot.querySelector(".meeting-back").click();await tick();check(document.querySelector('main-header'),'permission Back returns to source selection');
    check(quits===0,'cancel setup does not quit the meeting-capable app');
  }],
 ];

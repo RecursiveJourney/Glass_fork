@@ -453,6 +453,8 @@ export class ListenView extends LitElement {
         this.listenState = null;
         this._hydration = 0;
         this._lastHeight = null;
+        this._resizePending = null;
+        this._resizeQueued = null;
 
         this.adjustWindowHeight = this.adjustWindowHeight.bind(this);
     }
@@ -498,6 +500,9 @@ export class ListenView extends LitElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         ++this._hydration;
+        this._resizePending = null;
+        this._resizeQueued = null;
+        this._lastHeight = null;
         this._offListen?.(); this._offListen = null;
         this.stopTimer();
 
@@ -569,9 +574,32 @@ export class ListenView extends LitElement {
     }
 
     resizeIfChanged(height) {
-        if (height === this._lastHeight) return;
-        this._lastHeight = height;
-        window.api.listenView.adjustWindowHeight('listen', height);
+        if (!Number.isFinite(height) || height <= 0) return;
+        if (this._resizePending) {
+            this._resizeQueued = height === this._resizePending.height ? null : height;
+            return this._resizePending.promise;
+        }
+        if (this._lastHeight !== null && Math.abs(height - this._lastHeight) <= 2) return;
+        const pending = { height };
+        this._resizePending = pending;
+        pending.promise = (async () => {
+            try {
+                const result = await window.api.listenView.adjustWindowHeight('listen', height);
+                if (this._resizePending !== pending || !this.isConnected) return;
+                this._lastHeight = result?.applied === true && Number.isFinite(result.height)
+                    && Math.abs(result.height - height) <= 2 ? result.height : null;
+            } catch {
+                if (this._resizePending === pending) this._lastHeight = null;
+            } finally {
+                if (this._resizePending === pending) {
+                    this._resizePending = null;
+                    const queued = this._resizeQueued;
+                    this._resizeQueued = null;
+                    if (this.isConnected && queued !== null) this.resizeIfChanged(queued);
+                }
+            }
+        })();
+        return pending.promise;
     }
 
     applyListenState(state) {
@@ -608,18 +636,54 @@ export class ListenView extends LitElement {
     renderMeeting() {
         const snapshot = this.listenState.feed?.snapshot || null;
         return html`<div class="assistant-container meeting-layout">
-            <div class="top-bar"><div class="bar-left-text">Meeting · ${this.meetingStatus()}</div>
-                <button class="copy-button" aria-label="Copy meeting transcript and suggestions" @click=${this.handleCopy}>Copy</button></div>
+            <div class="top-bar"><div class="bar-left-text">${this.isHovering ? "Copy Transcript and Insights" : "Meeting · " + this.meetingStatus()} <span class="meeting-elapsed">${this.elapsedTime}</span></div>
+                    <div class="bar-controls">
+                        <button class="toggle-button" @click=${this.toggleViewMode}>
+                            ${this.viewMode === 'insights'
+                                ? html`
+                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                          <circle cx="12" cy="12" r="3" />
+                                      </svg>
+                                      <span>Show Transcript</span>
+                                  `
+                                : html`
+                                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <path d="M9 11l3 3L22 4" />
+                                          <path d="M22 12v7a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                                      </svg>
+                                      <span>Show Insights</span>
+                                  `}
+                        </button>
+                        <button
+                            class="copy-button ${this.copyState === 'copied' ? 'copied' : ''}"
+                            @click=${this.handleCopy}
+                            @mouseenter=${() => this.handleCopyHover(true)}
+                            @mouseleave=${() => this.handleCopyHover(false)}
+                        >
+                            <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                            </svg>
+                            <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </button>
+                    </div>
+            </div>
             ${this.listenState.error ? html`<div class="meeting-note" role="status">${this.listenState.error}</div>` : ''}
-            <section aria-label="Transcript"><h2 class="meeting-section-title">Transcript</h2>
+            <section aria-label="Transcript" tabindex="-1"><h2 class="meeting-section-title">Transcript</h2>
                 <stt-view .meeting=${true} .snapshot=${snapshot}></stt-view></section>
-            <section aria-label="Suggestions"><h2 class="meeting-section-title">Suggestions ${snapshot?.generation?.state === 'running' ? '· Preparing…' : ''}</h2>
+            <section aria-label="Suggestions" tabindex="-1"><h2 class="meeting-section-title">Suggestions ${snapshot?.generation?.state === 'running' ? '· Preparing…' : ''}</h2>
                 <suggestions-view .snapshot=${snapshot}></suggestions-view></section>
         </div>`;
     }
 
     toggleViewMode() {
         this.viewMode = this.viewMode === 'insights' ? 'transcript' : 'insights';
+        if (this.listenState?.source === 'meeting') {
+            this.shadowRoot.querySelector(this.viewMode === 'transcript' ? '[aria-label="Transcript"]' : '[aria-label="Suggestions"]')?.focus({ preventScroll: true });
+        }
         this.requestUpdate();
     }
 
