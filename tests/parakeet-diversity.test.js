@@ -1,0 +1,15 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {planDiversity}=require('../src/features/common/ai/parakeet/contextDiversity');
+const {TranscriptStitcher}=require('../src/features/common/ai/parakeet/transcriptStitcher');
+const SR=16000, job={start:0,end:15.744*SR,coreEnd:15*SR,ready:15.744*SR,final:false};
+const word=(text,t)=>({text,start:t*SR,end:(t+.2)*SR});
+const result=(id,start,end,coreEnd,words,extra={})=>({id,start:start*SR,end:end*SR,coreEnd:coreEnd*SR,words,...extra});
+test('agreement-independent diversity shifts a full window three seconds later',()=>{const x=planDiversity(job,1);assert.deepEqual(x,{start:3*SR,end:22.5*SR,ready:22.5*SR,requestedAt:job.ready});});
+test('diversity samples every other continuing analysis, not completed short utterances',()=>{assert.equal(planDiversity(job,2),null);assert.equal(planDiversity({...job,final:true},1),null);assert.ok(planDiversity(job,3));});
+test('EOF clamps a requested diverse window without extending the source',()=>{const x=planDiversity(job,1,{endOfAudio:20*SR});assert.equal(x.end,20*SR);assert.equal(x.ready,20*SR);assert.equal(planDiversity(job,1,{endOfAudio:2*SR}),null);});
+test('diversity bounds obey input and additional-handoff ceilings at all offsets',()=>{for(let n=0;n<80;n++){const offset=n*17003,j={...job,start:offset,end:offset+19.496*SR,ready:offset+19.496*SR};const x=planDiversity(j,1);assert.ok(x.end-x.start<=19.5*SR);assert.ok(x.ready-j.ready<=18.75*SR);assert.ok(x.ready>=x.end);}});
+test('invalid ordinals and source coordinates are rejected',()=>{assert.throws(()=>planDiversity(job,0),/Invalid/);assert.throws(()=>planDiversity({...job,start:-1},1),/Invalid/);assert.throws(()=>planDiversity(job,1,{endOfAudio:NaN}),/Invalid/);});
+test('diverse observations contribute deeper evidence without advancing the regular cursor',()=>{const s=new TranscriptStitcher();s.accept(result('a',0,15.75,15,[word('parties',14)]));const x=s.accept(result('diverse',5,24.5,24.5,[word('parts',14)],{observation:true}));assert.ok(x.commits.some(c=>c.provisional));assert.doesNotThrow(()=>s.accept(result('b',2.25,21.75,21,[word('parties',14)])));const out=s.flush();assert.ok(out.commits.some(w=>w.text==='parts'));});
+test('diversity can recover a previously absent interior word',()=>{const s=new TranscriptStitcher();s.accept(result('a',0,15.75,15,[word('the',12),word('slip',13)]));const x=s.accept(result('d',3,22.5,22.5,[word('the',12),word('packing',12.5),word('slip',13)],{observation:true}));assert.ok(x.commits.some(w=>w.text==='packing'));});
+test('observation IDs are idempotent and cannot claim simultaneous confirmation status',()=>{const s=new TranscriptStitcher(),r=result('d',0,10,10,[word('hello',2)],{observation:true});s.accept(r);assert.equal(s.accept(r).duplicate,true);assert.throws(()=>s.accept({...r,id:'e',confirmationFor:['x']}),/kind/);});
