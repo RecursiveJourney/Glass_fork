@@ -12,6 +12,8 @@ class ListenService {
         this.summaryService = new SummaryService();
         this.currentSessionId = null;
         this.isInitializingSession = false;
+        this.meetingFeed = null;
+        this.meetingFeedUnsubscribe = null;
 
         this.setupServiceCallbacks();
         console.log('[ListenService] Service instance created.');
@@ -46,6 +48,43 @@ class ListenService {
         if (listenWindow && !listenWindow.isDestroyed()) {
             listenWindow.webContents.send(channel, data);
         }
+    }
+
+    // Phase 2 surface only: existing Listen controls do not call these methods.
+    startMeetingFeed() {
+        try {
+            if (!this.meetingFeed) {
+                const MeetingFeedService = require('./meeting/meetingFeedService');
+                this.meetingFeed = new MeetingFeedService();
+            }
+            if (!this.meetingFeedUnsubscribe) {
+                this.meetingFeedUnsubscribe = this.meetingFeed.subscribe(state => {
+                    this.sendToRenderer('meeting-feed:state', state);
+                });
+            }
+            return { success: true, state: this.meetingFeed.start() };
+        } catch {
+            this.stopMeetingFeed();
+            return { success: false, error: 'meeting_feed_unavailable' };
+        }
+    }
+
+    stopMeetingFeed() {
+        try {
+            const state = this.meetingFeed ? this.meetingFeed.stop()
+                : { connectionStatus: 'stopped', snapshot: null, error: null, nextRetryAt: null };
+            return { success: true, state };
+        } catch {
+            return { success: false, error: 'meeting_feed_unavailable' };
+        } finally {
+            this.meetingFeedUnsubscribe?.();
+            this.meetingFeedUnsubscribe = null;
+        }
+    }
+
+    getMeetingFeedState() {
+        return this.meetingFeed?.getState()
+            ?? { connectionStatus: 'idle', snapshot: null, error: null, nextRetryAt: null };
     }
 
     initialize() {
@@ -230,6 +269,7 @@ class ListenService {
 
     async closeSession() {
         try {
+            this.stopMeetingFeed();
             this.sendToRenderer('change-listen-capture-state', { status: "stop" });
             // Close STT sessions
             await this.sttService.closeSessions();

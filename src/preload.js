@@ -180,6 +180,18 @@ contextBridge.exposeInMainWorld('api', {
     removeOnSessionStateChanged: (callback) => ipcRenderer.removeListener('session-state-changed', callback)
   },
 
+  // Unused by the renderer until the meeting UI phase. No endpoint/token configuration crosses IPC.
+  meetingFeed: {
+    start: () => ipcRenderer.invoke('meeting-feed:start'),
+    stop: () => ipcRenderer.invoke('meeting-feed:stop'),
+    getState: () => ipcRenderer.invoke('meeting-feed:get-state'),
+    onState: (callback) => {
+      const listener = (_event, state) => callback(state);
+      ipcRenderer.on('meeting-feed:state', listener);
+      return () => { ipcRenderer.removeListener('meeting-feed:state', listener); };
+    }
+  },
+
   // src/ui/listen/stt/SttView.js
   sttView: {
     // Listeners

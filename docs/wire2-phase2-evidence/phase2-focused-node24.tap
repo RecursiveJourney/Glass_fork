@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: Glass subscribers consume the committed live session over both authenticated loopbacks without owning work
+ok 1 - Glass subscribers consume the committed live session over both authenticated loopbacks without owning work
+  ---
+  duration_ms: 108.8492
+  type: 'test'
+  ...
+# Subtest: Listen service exposes an idle meeting state without constructing or starting a subscriber
+ok 2 - Listen service exposes an idle meeting state without constructing or starting a subscriber
+  ---
+  duration_ms: 2.1609
+  type: 'test'
+  ...
+# Subtest: meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+ok 3 - meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+  ---
+  duration_ms: 1.7208
+  type: 'test'
+  ...
+# Subtest: existing app cleanup closes the meeting subscription through closeSession
+ok 4 - existing app cleanup closes the meeting subscription through closeSession
+  ---
+  duration_ms: 0.985
+  type: 'test'
+  ...
+# Subtest: actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+ok 5 - actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+  ---
+  duration_ms: 1.5481
+  type: 'test'
+  ...
+# Subtest: preload exposes no config setter or Electron event and returns per-listener cleanup
+ok 6 - preload exposes no config setter or Electron event and returns per-listener cleanup
+  ---
+  duration_ms: 1.5773
+  type: 'test'
+  ...
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+ok 7 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 3.7822
+  type: 'test'
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+ok 8 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 2.8594
+  type: 'test'
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+ok 9 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 0.92
+  type: 'test'
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+ok 10 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 2.2593
+  type: 'test'
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+ok 11 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 1.0669
+  type: 'test'
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+ok 12 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 0.7653
+  type: 'test'
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+ok 13 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6511
+  type: 'test'
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+ok 14 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.8422
+  type: 'test'
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 15 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5401
+  type: 'test'
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 16 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6537
+  type: 'test'
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+ok 17 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6038
+  type: 'test'
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+ok 18 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 0.7558
+  type: 'test'
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+ok 19 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 1.0725
+  type: 'test'
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+ok 20 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 0.5617
+  type: 'test'
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+ok 21 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 0.919
+  type: 'test'
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+ok 22 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.4092
+  type: 'test'
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+ok 23 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 1.1606
+  type: 'test'
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+ok 24 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 1.0512
+  type: 'test'
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+ok 25 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 0.7534
+  type: 'test'
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+ok 26 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 2.9466
+  type: 'test'
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+ok 27 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 13.6966
+  type: 'test'
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+ok 28 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 29.0453
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 171.6143

@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+ok 1 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 3.739
+  type: 'test'
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+ok 2 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 2.7324
+  type: 'test'
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+ok 3 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 0.869
+  type: 'test'
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+ok 4 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 2.1517
+  type: 'test'
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+ok 5 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 1.1257
+  type: 'test'
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+ok 6 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 0.8443
+  type: 'test'
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+ok 7 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.7706
+  type: 'test'
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+ok 8 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6542
+  type: 'test'
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 9 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5405
+  type: 'test'
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 10 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.7119
+  type: 'test'
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+ok 11 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5859
+  type: 'test'
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+ok 12 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 0.7163
+  type: 'test'
+  ...
+# Subtest: request EOF before response retries immediately, and late request close is isolated
+ok 13 - request EOF before response retries immediately, and late request close is isolated
+  ---
+  duration_ms: 0.5703
+  type: 'test'
+  ...
+# Subtest: owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+ok 14 - owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+  ---
+  duration_ms: 1.2357
+  type: 'test'
+  ...
+# Subtest: snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+ok 15 - snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+  ---
+  duration_ms: 0.8153
+  type: 'test'
+  ...
+# Subtest: malformed delta does not partially apply sequence or transcript changes
+ok 16 - malformed delta does not partially apply sequence or transcript changes
+  ---
+  duration_ms: 0.8855
+  type: 'test'
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+ok 17 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 1.0469
+  type: 'test'
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+ok 18 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 0.8076
+  type: 'test'
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+ok 19 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 1.5061
+  type: 'test'
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+ok 20 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.5915
+  type: 'test'
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+ok 21 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 1.182
+  type: 'test'
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+ok 22 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 1.1933
+  type: 'test'
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+ok 23 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 0.9282
+  type: 'test'
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+ok 24 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 3.2195
+  type: 'test'
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+ok 25 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 13.3451
+  type: 'test'
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+ok 26 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 28.2117
+  type: 'test'
+  ...
+# Subtest: native request response callback is detached when Stop occurs before headers
+ok 27 - native request response callback is detached when Stop occurs before headers
+  ---
+  duration_ms: 3.0206
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 139.8822

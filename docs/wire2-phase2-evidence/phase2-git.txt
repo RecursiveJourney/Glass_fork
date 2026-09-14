@@ -1,0 +1,13 @@
+1182c176495b9556ef6a3cb01b8168a41eb4c94f
+ M glass
+703b775ebcb77fe9130ba20d0a73b39342973774
+ M src/bridge/featureBridge.js
+ M src/features/listen/listenService.js
+ M src/preload.js
+?? docs/meeting-feed-subscriber.md
+?? docs/wire2-phase2-checkpoint.md
+?? docs/wire2-phase2-evidence/
+?? src/features/listen/meeting/
+?? tests/meeting-feed-integration.test.js
+?? tests/meeting-feed-ipc.test.js
+?? tests/meeting-feed-service.test.js

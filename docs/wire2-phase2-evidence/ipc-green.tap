@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: Listen service exposes an idle meeting state without constructing or starting a subscriber
+ok 1 - Listen service exposes an idle meeting state without constructing or starting a subscriber
+  ---
+  duration_ms: 2.0924
+  type: 'test'
+  ...
+# Subtest: meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+ok 2 - meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+  ---
+  duration_ms: 1.724
+  type: 'test'
+  ...
+# Subtest: existing app cleanup closes the meeting subscription through closeSession
+ok 3 - existing app cleanup closes the meeting subscription through closeSession
+  ---
+  duration_ms: 0.9543
+  type: 'test'
+  ...
+# Subtest: actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+ok 4 - actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+  ---
+  duration_ms: 1.3887
+  type: 'test'
+  ...
+# Subtest: preload exposes no config setter or Electron event and returns per-listener cleanup
+ok 5 - preload exposes no config setter or Electron event and returns per-listener cleanup
+  ---
+  duration_ms: 1.4477
+  type: 'test'
+  ...
+# Subtest: system-audio success waits for provider forwarding before the IPC reference event
+ok 6 - system-audio success waits for provider forwarding before the IPC reference event
+  ---
+  duration_ms: 3.5305
+  type: 'test'
+  ...
+# Subtest: whisper system audio retains provider payload and emits exactly one AEC reference
+ok 7 - whisper system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 1.481
+  type: 'test'
+  ...
+# Subtest: gemini system audio retains provider payload and emits exactly one AEC reference
+ok 8 - gemini system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 1.2919
+  type: 'test'
+  ...
+# Subtest: deepgram system audio retains provider payload and emits exactly one AEC reference
+ok 9 - deepgram system audio retains provider payload and emits exactly one AEC reference
+  ---
+  duration_ms: 2.2597
+  type: 'test'
+  ...
+# Subtest: provider rejection propagates without a success result or AEC reference
+ok 10 - provider rejection propagates without a success result or AEC reference
+  ---
+  duration_ms: 2.0287
+  type: 'test'
+  ...
+# Subtest: inactive STT session rejects without emitting an AEC reference
+ok 11 - inactive STT session rejects without emitting an AEC reference
+  ---
+  duration_ms: 1.4009
+  type: 'test'
+  ...
+# Subtest: missing model information rejects without forwarding or an AEC reference
+ok 12 - missing model information rejects without forwarding or an AEC reference
+  ---
+  duration_ms: 1.3615
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86.3578

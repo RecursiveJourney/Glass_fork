@@ -1,0 +1,38 @@
+git rev-parse HEAD
+1182c176495b9556ef6a3cb01b8168a41eb4c94f
+
+git show --stat --oneline HEAD
+1182c17 [ADD] Wire 2 phase 1: live meeting feed — SSE /v1/live/events, typed subscriptions, bounded delivery (184 tests green Node 20+24)
+ realtime_listener/README.md                        |    4 +
+ realtime_listener/docs/design.md                   |    2 +
+ realtime_listener/docs/live-feed-contract.md       |   90 ++
+ realtime_listener/docs/wire2-phase1-checkpoint.md  |   81 ++
+ .../docs/wire2-phase1-evidence/cli-red.tap         |   33 +
+ .../docs/wire2-phase1-evidence/domain-green.txt    |   47 +
+ .../docs/wire2-phase1-evidence/domain-red.txt      |  306 ++++++
+ .../wire2-phase1-evidence/drain-probe-initial.tap  |   83 ++
+ .../docs/wire2-phase1-evidence/glass-node20.tap    |  830 ++++++++++++++
+ .../docs/wire2-phase1-evidence/glass-node24.tap    |  994 +++++++++++++++++
+ .../docs/wire2-phase1-evidence/http-green.tap      |   70 ++
+ .../docs/wire2-phase1-evidence/http-red.txt        |  148 +++
+ .../wire2-phase1-evidence/integration-green.tap    |   94 ++
+ .../wire2-phase1-evidence/integration-initial.tap  |   16 +
+ .../docs/wire2-phase1-evidence/listener-node20.tap |  930 ++++++++++++++++
+ .../listener-node24-first.tap                      | 1139 ++++++++++++++++++++
+ .../docs/wire2-phase1-evidence/listener-node24.tap | 1114 +++++++++++++++++++
+ .../node20-sandbox-failure.tap                     |  604 +++++++++++
+ .../terminal-snapshot-green.tap                    |   16 +
+ .../terminal-snapshot-red.tap                      |   34 +
+ realtime_listener/lib/http-server.js               |   82 +-
+ realtime_listener/lib/live-feed.js                 |   85 ++
+ realtime_listener/lib/live-session.js              |   47 +-
+ realtime_listener/lib/suggestion-loop.js           |   25 +-
+ realtime_listener/listener.js                      |    3 +-
+ realtime_listener/test/live-events-http.test.js    |  221 ++++
+ realtime_listener/test/live-feed.test.js           |  161 +++
+ realtime_listener/test/serve-cli.test.js           |   27 +
+ 28 files changed, 7262 insertions(+), 24 deletions(-)
+
+git status --short
+ M glass
+

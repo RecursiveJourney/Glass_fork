@@ -1,0 +1,585 @@
+TAP version 13
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+not ok 1 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 1.3073
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:59:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:60:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+not ok 2 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 0.2132
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:76:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:77:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+not ok 3 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 0.203
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:87:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:88:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+not ok 4 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 0.2048
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:98:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:99:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+not ok 5 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 0.2352
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:108:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:109:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+not ok 6 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 0.2204
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:119:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:120:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+not ok 7 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.2033
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:130:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+not ok 8 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.1396
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:130:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+not ok 9 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.1699
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:130:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+not ok 10 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.2358
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:130:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+not ok 11 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.1561
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:130:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+not ok 12 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 0.2085
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:140:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:141:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+not ok 13 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 0.1888
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:150:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:152:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+not ok 14 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 0.1755
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:159:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:160:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+not ok 15 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 0.2159
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:167:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:168:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+not ok 16 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.1827
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:181:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:182:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+not ok 17 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 0.1915
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:186:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:188:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+not ok 18 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 0.223
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:196:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:198:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+not ok 19 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 0.1997
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:207:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:208:52)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+not ok 20 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 0.5804
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:217:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /^Error: invalid-feed-config$/. Input:
+    
+    'AssertionError [ERR_ASSERTION]: MeetingFeedService must implement the approved subscriber contract'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:220:29
+    getActual (node:assert:611:5)
+    strict.throws (node:assert:759:24)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:220:16)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:220:16)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+not ok 21 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 0.3517
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:228:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    harness (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:51:21)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:238:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+not ok 22 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 0.2748
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:243:1'
+  failureType: 'testCodeFailure'
+  error: 'MeetingFeedService must implement the approved subscriber contract'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    load (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:11:12)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:244:21)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 0
+# fail 22
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.4896
+TAP version 13
+# Subtest: request EOF before response retries immediately, and late request close is isolated
+not ok 1 - request EOF before response retries immediately, and late request close is isolated
+  ---
+  duration_ms: 2.7725
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:150:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'connecting'
+    - 'reconnecting'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'reconnecting'
+  actual: 'connecting'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:153:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.2377

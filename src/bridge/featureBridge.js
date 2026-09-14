@@ -85,6 +85,10 @@ module.exports = {
     ipcMain.handle('ask:closeAskWindow',  async () => await askService.closeAskWindow());
     
     // Listen
+    // Main-process configuration only; renderer arguments are intentionally ignored.
+    ipcMain.handle('meeting-feed:start', () => listenService.startMeetingFeed());
+    ipcMain.handle('meeting-feed:stop', () => listenService.stopMeetingFeed());
+    ipcMain.handle('meeting-feed:get-state', () => listenService.getMeetingFeedState());
     ipcMain.handle('listen:sendMicAudio', async (event, { data, mimeType }) => await listenService.handleSendMicAudioContent(data, mimeType));
     ipcMain.handle('listen:sendSystemAudio', async (event, { data, mimeType }) => {
         const result = await listenService.sttService.sendSystemAudioContent(data, mimeType);
