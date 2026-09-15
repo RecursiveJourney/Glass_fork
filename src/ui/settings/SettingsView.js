@@ -1,5 +1,6 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
 import './TwinConnectionSettings.js';
+import './TwinInsightsSettings.js';
 // import { getOllamaProgressTracker } from '../../features/common/services/localProgressTracker.js'; // 제거됨
 
 export class SettingsView extends LitElement {
@@ -1373,6 +1374,7 @@ export class SettingsView extends LitElement {
                 </div>
 
                 ${apiKeyManagementHTML}
+                <twin-insights-settings></twin-insights-settings>
                 ${modelSelectionHTML}
                 <twin-connection-settings></twin-connection-settings>
 

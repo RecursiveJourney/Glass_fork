@@ -89,7 +89,7 @@ class HeaderTransitionManager {
             else this.handleApiKeyOption();
         });
 
-        window.addEventListener('glass-setup-requested', () => {
+        window.api?.headerController.onSetupRequested?.(() => {
             this.localSetup = true;
             this.transitionToWelcomeHeader();
         });

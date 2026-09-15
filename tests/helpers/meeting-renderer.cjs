@@ -21,7 +21,7 @@ const cases = [
    window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
    const main=document.querySelector('main-header'),requests=[];
    let resolve;api.headerController.resizeHeaderWindow=dimensions=>{requests.push(dimensions);return new Promise(r=>resolve=r)};
-   main.shadowRoot.querySelector('.setup-button').click();await tick();
+   window.requestSetup();await tick();
    main.resizeToContent();await tick();
    check(requests.length===1,'old header must not overwrite in-flight setup dimensions');
    resolve();await tick();
@@ -31,7 +31,7 @@ const cases = [
    document.querySelector('#header-container').replaceChildren();await import('/src/ui/app/HeaderController.js');
    const sizes=[];api.headerController.resizeHeaderWindow=async dimensions=>sizes.push(dimensions);
    window.dispatchEvent(new Event('DOMContentLoaded'));await tick();
-   document.querySelector('main-header').shadowRoot.querySelector('.setup-button').click();await tick();
+   window.requestSetup();await tick();
    const welcome=document.querySelector('welcome-header'),height=welcome.shadowRoot.querySelector('.container').getBoundingClientRect().height;
    check(sizes.at(-1).height>=Math.floor(height),'Welcome resize must include the added return button');
    const prototype=customElements.get('permission-setup').prototype;
@@ -46,8 +46,8 @@ const cases = [
  ['meeting-only users can reach every Welcome option and return without losing Quit',async()=>{
    document.querySelector('#header-container').replaceChildren();await import('/src/ui/app/HeaderController.js');
    window.dispatchEvent(new Event('DOMContentLoaded'));await tick();let logins=0;api.common.startFirebaseAuth=async()=>logins++;
-   const main=document.querySelector('main-header'),setup=main.shadowRoot.querySelector('.setup-button');
-   check(setup,'added Setup route exposes upstream Welcome choices');setup.click();await tick();
+   const main=document.querySelector('main-header');
+   check(typeof window.requestSetup==='function','Settings IPC route exposes upstream Welcome choices');window.requestSetup();await tick();
    const welcome=document.querySelector('welcome-header');check(welcome,'normal Welcome screen reachable');
    await welcome.loginCallback();check(logins===1,'normal browser login action retained');
    check(welcome.shadowRoot.querySelector('.close-button'),'Quit retained');

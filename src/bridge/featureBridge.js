@@ -146,6 +146,25 @@ module.exports = {
     ipcMain.handle('model:get-credential-status', credentialHandler(() => modelStateService.getCredentialStatus()));
     const twin = () => require('../features/settings/twinSettingsService').getTwinSettingsService();
     ipcMain.handle('twin:settings', credentialHandler(() => ({ success: true, data: twin().getState() })));
+    ipcMain.handle('twin:insights', credentialHandler(async data => {
+      if (data !== undefined) return { success: false, error: 'invalid_payload' };
+      return { success: true, data: await require('../features/settings/settingsInsightsService').getSettingsInsightsService().read() };
+    }));
+    ipcMain.handle('settings:open-setup', async (event, data) => {
+      if (!trustedSettingsSender(event)) return { success: false, error: 'untrusted_sender' };
+      if (data !== undefined) return { success: false, error: 'invalid_payload' };
+      try {
+        const manager = require('../window/windowManager');
+        if (manager.windowPool?.get('settings')?.webContents !== event.sender) return { success: false, error: 'untrusted_sender' };
+        if (!['idle', 'stopped'].includes(listenService.getListenState().phase)) return { success: false, error: 'listen_active' };
+        const header = manager.windowPool.get('header');
+        if (!header || header.isDestroyed()) return { success: false, error: 'setup_unavailable' };
+        require('./internalBridge').emit('window:requestVisibility', { name: 'header', visible: true });
+        header.webContents.send('header:setup-requested');
+        manager.hideSettingsWindow();
+        return { success: true };
+      } catch { return { success: false, error: 'setup_unavailable' }; }
+    });
     ipcMain.handle('twin:save', credentialHandler(async data => ({ success: true, data: await twin().save(data) })));
     ipcMain.handle('twin:retry-join', credentialHandler(async data => ({ success: true, data: await twin().retryJoin(data) })));
     ipcMain.handle('model:set-api-key', credentialHandler(({ provider, key }) => modelStateService.setApiKey(provider, key), true));

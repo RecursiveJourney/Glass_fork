@@ -38,6 +38,11 @@ class ListenService {
         return this.state.source === 'local' && this.state.lifecycleId === identity && ['starting', 'active'].includes(this.state.phase);
     }
     getListenState() { return { ...this.state, feed: this.state.source === 'meeting' ? this.getMeetingFeedState() : null }; }
+    getTranscriptionStatus() {
+        const info = this.sttService.modelInfo;
+        const loaded = this.state.source === 'local' && ['starting', 'active'].includes(this.state.phase) && info && (this.sttService.mySttSession || this.sttService.theirSttSession);
+        return { source: this.state.source, phase: this.state.phase, state: loaded ? 'loaded' : 'idle', provider: loaded ? info.provider : null, model: loaded ? info.model : null };
+    }
     publish(changes = {}) {
         this.state = { ...this.state, ...changes, version: this.state.version + 1 };
         const state = this.getListenState();

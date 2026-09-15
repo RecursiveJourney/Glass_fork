@@ -80,6 +80,11 @@ contextBridge.exposeInMainWorld('api', {
 
   // src/ui/app/HeaderController.js
   headerController: {
+    onSetupRequested: callback => {
+      const listener = () => callback();
+      ipcRenderer.on('header:setup-requested', listener);
+      return () => ipcRenderer.removeListener('header:setup-requested', listener);
+    },
     // State Management
     sendHeaderStateChanged: (state) => ipcRenderer.send('header-state-changed', state),
     reInitializeModelState: () => ipcRenderer.invoke('model:re-initialize-state'),
@@ -235,6 +240,8 @@ contextBridge.exposeInMainWorld('api', {
     getProviderConfig: () => ipcRenderer.invoke('model:get-provider-config'),
     getCredentialStatus: () => ipcRenderer.invoke('model:get-credential-status'),
     getTwinSettings: () => ipcRenderer.invoke('twin:settings'),
+    getTwinInsights: () => ipcRenderer.invoke('twin:insights'),
+    openSetup: () => ipcRenderer.invoke('settings:open-setup'),
     saveTwinSettings: data => ipcRenderer.invoke('twin:save', data),
     retryTwinJoin: data => ipcRenderer.invoke('twin:retry-join', data),
     onTwinSettingsUpdated: callback => {

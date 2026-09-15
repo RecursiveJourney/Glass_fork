@@ -24,6 +24,10 @@ class TwinRuntimeClient {
                     if (res.statusCode !== 200) return reject(fail(res.statusCode === 401 ? 'runtime_unauthorized' : res.statusCode === 409 ? 'runtime_conflict' : 'runtime_unavailable'));
                     try {
                         const value = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                        if (path === '/v1/knowledge' || path === '/v1/status') {
+                            const project = require('./twinInsightsDtos')[path === '/v1/knowledge' ? 'knowledge' : 'status'];
+                            resolve(redact(project(value))); return;
+                        }
                         if (value.component !== 'digital-twin' || value.protocolVersion !== 1 || typeof value.instanceId !== 'string' || !/^[\w-]{1,128}$/.test(value.instanceId) || !Number.isSafeInteger(value.appliedRevision) || value.appliedRevision < 0) throw fail('runtime_invalid_response');
                         const allowed = ['component', 'protocolVersion', 'instanceId', 'appliedRevision', 'desiredRevision', 'operationId', 'enabled', 'hasKey', 'meetingLink', 'meetingIntentId', 'operationState', 'errorCode'];
                         if (Object.keys(value).some(key => !allowed.includes(key))) throw fail('runtime_invalid_response');
@@ -44,6 +48,8 @@ class TwinRuntimeClient {
         });
     }
     getState() { return this.#request('GET', '/v1/runtime-config'); }
+    getKnowledge() { return this.#request('GET', '/v1/knowledge'); }
+    getStatus() { return this.#request('GET', '/v1/status'); }
     apply(payload, { retry = false } = {}) { return this.#request(retry ? 'POST' : 'PATCH', '/v1/runtime-config' + (retry ? '/retry-join' : ''), payload); }
 }
 module.exports = { TwinRuntimeClient };

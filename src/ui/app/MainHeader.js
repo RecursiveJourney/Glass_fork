@@ -733,8 +733,6 @@ export class MainHeader extends LitElement {
 
                 ${this.listenState?.phase === "stopped" && this.listenState.error !== "local_cleanup_failed"
                     ? html`<button class="header-actions done-button" @click=${this.finishListen}>Done</button>` : ""}
-                <button class="header-actions setup-button" title="Connection and permission setup"
-                    @click=${() => window.dispatchEvent(new CustomEvent("glass-setup-requested"))}>Setup</button>
                 <div class="header-actions ask-action" @click=${() => this._handleAskClick()}>
                     <div class="action-text">
                         <div class="action-text-content">Ask</div>

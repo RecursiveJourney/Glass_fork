@@ -11,7 +11,7 @@ window.api = {
  sttView:{onSttUpdate(){},removeOnSttUpdate(){}},summaryView:{onSummaryUpdate(){},removeAllSummaryUpdateListeners(){}},
  mainHeader:{onListenChangeSessionResult(){},removeOnListenChangeSessionResult(){},onShortcutsUpdated(){},removeOnShortcutsUpdated(){},
    sendListenButtonClick:async action=>{commands.push(action);return {success:true,state:current}},sendAskButtonClick:async()=>{asks++},sendHeaderAnimationFinished(){}},
- headerController:{onUserStateChanged(){},onAuthFailed(){},onForceShowApiKeyHeader:cb=>window.forceApi=cb,
+ headerController:{onSetupRequested:cb=>{window.requestSetup=cb;return()=>{delete window.requestSetup}},onUserStateChanged(){},onAuthFailed(){},onForceShowApiKeyHeader:cb=>window.forceApi=cb,
    sendHeaderStateChanged(){},resizeHeaderWindow:async()=>{},checkSystemPermissions:async()=>{throw Error('capture permission lookup prohibited in meeting entry')}},
  apiKeyHeader:{areProvidersConfigured:async()=>false},common:{getCurrentUser:async()=>({mode:'local'})}
 };

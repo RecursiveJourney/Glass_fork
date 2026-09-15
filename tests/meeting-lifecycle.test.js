@@ -5,6 +5,17 @@ const vm = require('node:vm');
 const path = require('node:path');
 const { EventEmitter } = require('node:events');
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
+
+test('transcription status reports actual loaded provider and excludes its credential', () => {
+    const { service } = harness();
+    service.state = { ...service.state, source: 'local', phase: 'active' };
+    service.sttService.modelInfo = { provider: 'whisper', model: 'whisper-base', apiKey: 'synthetic-private' };
+    service.sttService.mySttSession = {};
+    assert.equal(typeof service.getTranscriptionStatus, 'function');
+    assert.deepEqual({ ...service.getTranscriptionStatus() }, { source: 'local', phase: 'active', state: 'loaded', provider: 'whisper', model: 'whisper-base' });
+    service.sttService.modelInfo = null;
+    assert.equal(service.getTranscriptionStatus().state, 'idle');
+});
 function harness(options = {}) {
     const calls = [], layoutEvents = [], sent = [], subscribers = new Set(), captureTimers = new Map();
     let nextTimer = 0;

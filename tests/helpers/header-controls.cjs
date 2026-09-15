@@ -52,7 +52,7 @@ app.whenReady().then(async()=>{
  await run('opening Setup cannot be resized back to the old MainHeader by a late viewport event',async()=>{
  await win.webContents.executeJavaScript('(async()=>{header.remove();await import("/src/ui/app/HeaderController.js");window.dispatchEvent(new Event("DOMContentLoaded"));await tick()})()');
  await new Promise(r=>setTimeout(r,250));
- await win.webContents.executeJavaScript('document.querySelector("main-header").shadowRoot.querySelector(".setup-button").click()');
+ await win.webContents.executeJavaScript('window.requestSetup()');
  await new Promise(r=>setTimeout(r,350));await win.capturePage();
  const metrics=await win.webContents.executeJavaScript('({viewport:innerHeight,height:document.querySelector("welcome-header")?.shadowRoot.querySelector(".container").getBoundingClientRect().height})');
  check(metrics.height>100&&metrics.height<=metrics.viewport+1,'Setup window clipped after transition: '+JSON.stringify(metrics));
