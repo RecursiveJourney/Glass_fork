@@ -1,0 +1,72 @@
+TAP version 13
+# Subtest: real SQLite credential fixture: legacy-store
+not ok 1 - real SQLite credential fixture: legacy-store
+  ---
+  duration_ms: 791.371
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    legacy-store: ERR_ASSERTION
+    + actual - expected
+    
+      {
+    +   failure: 'ERR_ASSERTION',
+    +   passed: false
+    -   passed: true
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    passed: true
+  actual:
+    passed: false
+    failure: 'ERR_ASSERTION'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\settings-migration.test.js:7:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: real SQLite credential fixture: legacy-cleanup-failure
+not ok 2 - real SQLite credential fixture: legacy-cleanup-failure
+  ---
+  duration_ms: 790.086
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    legacy-cleanup-failure: ERR_ASSERTION
+    + actual - expected
+    
+      {
+    +   failure: 'ERR_ASSERTION',
+    +   passed: false
+    -   passed: true
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    passed: true
+  actual:
+    passed: false
+    failure: 'ERR_ASSERTION'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\settings-migration.test.js:7:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1648.2852

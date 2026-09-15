@@ -1,0 +1,388 @@
+TAP version 13
+# Subtest: Listen service exposes an idle meeting state without constructing or starting a subscriber
+ok 1 - Listen service exposes an idle meeting state without constructing or starting a subscriber
+  ---
+  duration_ms: 2.2475
+  type: 'test'
+  ...
+# Subtest: meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+ok 2 - meeting start/stop/restart forwards state and cleans listeners without local STT, database or generation
+  ---
+  duration_ms: 1.8297
+  type: 'test'
+  ...
+# Subtest: existing app cleanup closes the meeting subscription through closeSession
+ok 3 - existing app cleanup closes the meeting subscription through closeSession
+  ---
+  duration_ms: 1.0222
+  type: 'test'
+  ...
+# Subtest: actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+ok 4 - actual registered meeting IPC handlers ignore renderer config and stay separate from local Listen
+  ---
+  duration_ms: 1.5014
+  type: 'test'
+  ...
+# Subtest: authoritative Listen IPC preserves result, capture sender and Ask independence
+ok 5 - authoritative Listen IPC preserves result, capture sender and Ask independence
+  ---
+  duration_ms: 1.0744
+  type: 'test'
+  ...
+# Subtest: preload exposes no config setter or Electron event and returns per-listener cleanup
+ok 6 - preload exposes no config setter or Electron event and returns per-listener cleanup
+  ---
+  duration_ms: 2.0889
+  type: 'test'
+  ...
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+ok 7 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 3.7166
+  type: 'test'
+  ...
+# Subtest: runtime waiting clears old meeting material and accepts the replacement snapshot on the same stream
+ok 8 - runtime waiting clears old meeting material and accepts the replacement snapshot on the same stream
+  ---
+  duration_ms: 1.2962
+  type: 'test'
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+ok 9 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 2.8779
+  type: 'test'
+  ...
+# Subtest: CR-only terminal snapshot applies immediately before EOF and never schedules retry
+ok 10 - CR-only terminal snapshot applies immediately before EOF and never schedules retry
+  ---
+  duration_ms: 0.6182
+  type: 'test'
+  ...
+# Subtest: CRLF split across chunks accepts CR immediately and swallows the later LF
+ok 11 - CRLF split across chunks accepts CR immediately and swallows the later LF
+  ---
+  duration_ms: 1.3693
+  type: 'test'
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+ok 12 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 0.8624
+  type: 'test'
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+ok 13 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 2.9559
+  type: 'test'
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+ok 14 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 1.6886
+  type: 'test'
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+ok 15 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 1.4824
+  type: 'test'
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+ok 16 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.8401
+  type: 'test'
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+ok 17 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5843
+  type: 'test'
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 18 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.4349
+  type: 'test'
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 19 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.656
+  type: 'test'
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+ok 20 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5981
+  type: 'test'
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+ok 21 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 0.9208
+  type: 'test'
+  ...
+# Subtest: request EOF before response retries immediately, and late request close is isolated
+ok 22 - request EOF before response retries immediately, and late request close is isolated
+  ---
+  duration_ms: 0.5607
+  type: 'test'
+  ...
+# Subtest: owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+ok 23 - owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+  ---
+  duration_ms: 1.1608
+  type: 'test'
+  ...
+# Subtest: snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+ok 24 - snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+  ---
+  duration_ms: 0.7778
+  type: 'test'
+  ...
+# Subtest: malformed delta does not partially apply sequence or transcript changes
+ok 25 - malformed delta does not partially apply sequence or transcript changes
+  ---
+  duration_ms: 0.5972
+  type: 'test'
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+ok 26 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 0.924
+  type: 'test'
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+ok 27 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 0.543
+  type: 'test'
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+ok 28 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 0.9804
+  type: 'test'
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+ok 29 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.4219
+  type: 'test'
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+ok 30 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 0.9789
+  type: 'test'
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+ok 31 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 1.0556
+  type: 'test'
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+ok 32 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 0.7675
+  type: 'test'
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+ok 33 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 3.4409
+  type: 'test'
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+ok 34 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 15.2332
+  type: 'test'
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+ok 35 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 28.2705
+  type: 'test'
+  ...
+# Subtest: native request response callback is detached when Stop occurs before headers
+ok 36 - native request response callback is detached when Stop occurs before headers
+  ---
+  duration_ms: 3.054
+  type: 'test'
+  ...
+# Subtest: failed database initialization never starts capture
+ok 37 - failed database initialization never starts capture
+  ---
+  duration_ms: 3.2812
+  type: 'test'
+  ...
+# Subtest: Stop while local initialization is pending prevents late capture start
+ok 38 - Stop while local initialization is pending prevents late capture start
+  ---
+  duration_ms: 7.0713
+  type: 'test'
+  ...
+# Subtest: Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+ok 39 - Meeting lifecycle never calls local capture, database or summary; reconnect remains active
+  ---
+  duration_ms: 1.4478
+  type: 'test'
+  ...
+# Subtest: Local stop performs all cleanup even when STT close fails
+ok 40 - Local stop performs all cleanup even when STT close fails
+  ---
+  duration_ms: 1.2366
+  type: 'test'
+  ...
+# Subtest: transcription pending database touch cannot persist or summarize after Stop
+ok 41 - transcription pending database touch cannot persist or summarize after Stop
+  ---
+  duration_ms: 1.2301
+  type: 'test'
+  ...
+# Subtest: default source initializes once from provider configuration and state publishes to both windows
+ok 42 - default source initializes once from provider configuration and state publishes to both windows
+  ---
+  duration_ms: 0.8522
+  type: 'test'
+  ...
+# Subtest: Local remains unavailable when existing permissions still require keychain setup
+ok 43 - Local remains unavailable when existing permissions still require keychain setup
+  ---
+  duration_ms: 0.8388
+  type: 'test'
+  ...
+# Subtest: failed database end is retried and cannot falsely unlock Meeting
+ok 44 - failed database end is retried and cannot falsely unlock Meeting
+  ---
+  duration_ms: 1.5227
+  type: 'test'
+  ...
+# Subtest: a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+ok 45 - a terminal Meeting feed stops the lifecycle and can restart without retaining the old terminal state
+  ---
+  duration_ms: 1.3638
+  type: 'test'
+  ...
+# Subtest: source locks and Stop cancels Listen while initial capability read is pending
+ok 46 - source locks and Stop cancels Listen while initial capability read is pending
+  ---
+  duration_ms: 1.2839
+  type: 'test'
+  ...
+# Subtest: unconfigured Local request cannot create a session or start STT
+ok 47 - unconfigured Local request cannot create a session or start STT
+  ---
+  duration_ms: 0.845
+  type: 'test'
+  ...
+# Subtest: capture readiness is local STT readiness during starting and stays false for Meeting
+ok 48 - capture readiness is local STT readiness during starting and stays false for Meeting
+  ---
+  duration_ms: 3.6949
+  type: 'test'
+  ...
+# Subtest: system audio result arriving after Stop is rejected before the bridge can render AEC
+ok 49 - system audio result arriving after Stop is rejected before the bridge can render AEC
+  ---
+  duration_ms: 1.1119
+  type: 'test'
+  ...
+# Subtest: stopMacOSAudioCapture waits until the capture process has stopped
+ok 50 - stopMacOSAudioCapture waits until the capture process has stopped
+  ---
+  duration_ms: 1.1188
+  type: 'test'
+  ...
+# Subtest: summary reset failure cannot block capture stop, STT cleanup or session end
+ok 51 - summary reset failure cannot block capture stop, STT cleanup or session end
+  ---
+  duration_ms: 0.8939
+  type: 'test'
+  ...
+# Subtest: capture acknowledgement requires matching actual sender and lifecycle
+ok 52 - capture acknowledgement requires matching actual sender and lifecycle
+  ---
+  duration_ms: 1.413
+  type: 'test'
+  ...
+# Subtest: missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+ok 53 - missing capture acknowledgements time out and prevent Meeting after uncertain cleanup
+  ---
+  duration_ms: 1.2006
+  type: 'test'
+  ...
+# Subtest: old STT provider callbacks cannot render into a restarted local lifecycle
+ok 54 - old STT provider callbacks cannot render into a restarted local lifecycle
+  ---
+  duration_ms: 2.0548
+  type: 'test'
+  ...
+# Subtest: STT initialization resolving after close disposes sessions without timers or renderer output
+ok 55 - STT initialization resolving after close disposes sessions without timers or renderer output
+  ---
+  duration_ms: 1.8815
+  type: 'test'
+  ...
+# Subtest: STT cleanup resets identity and closes each socket even if the first close throws
+ok 56 - STT cleanup resets identity and closes each socket even if the first close throws
+  ---
+  duration_ms: 1.4185
+  type: 'test'
+  ...
+# Subtest: failed STT socket cleanup remains failed on retry while the socket still refuses close
+ok 57 - failed STT socket cleanup remains failed on retry while the socket still refuses close
+  ---
+  duration_ms: 1.1213
+  type: 'test'
+  ...
+# Subtest: Stop closes old overlap sockets immediately after STT renewal
+ok 58 - Stop closes old overlap sockets immediately after STT renewal
+  ---
+  duration_ms: 0.9249
+  type: 'test'
+  ...
+# Subtest: cancelled STT initialization preserves failed socket cleanup for retry
+ok 59 - cancelled STT initialization preserves failed socket cleanup for retry
+  ---
+  duration_ms: 1.3354
+  type: 'test'
+  ...
+# Subtest: failed renewal preserves current provider callbacks
+ok 60 - failed renewal preserves current provider callbacks
+  ---
+  duration_ms: 0.9936
+  type: 'test'
+  ...
+# Subtest: macOS capture stop waits for process close instead of treating a signal as completion
+ok 61 - macOS capture stop waits for process close instead of treating a signal as completion
+  ---
+  duration_ms: 1.113
+  type: 'test'
+  ...
+# Subtest: source changes publish only source identity to window layout
+ok 62 - source changes publish only source identity to window layout
+  ---
+  duration_ms: 1.1496
+  type: 'test'
+  ...
+# Subtest: replacement input is cleared after success and failure; renderer receives presence only
+ok 63 - replacement input is cleared after success and failure; renderer receives presence only
+  ---
+  duration_ms: 2.7597
+  type: 'test'
+  ...
+1..63
+# tests 63
+# suites 0
+# pass 63
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.3821

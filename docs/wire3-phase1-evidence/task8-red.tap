@@ -1,0 +1,273 @@
+TAP version 13
+# Subtest: public API isolates observers, cloned state, and private transport configuration
+ok 1 - public API isolates observers, cloned state, and private transport configuration
+  ---
+  duration_ms: 3.7167
+  type: 'test'
+  ...
+# Subtest: runtime waiting clears old meeting material and accepts the replacement snapshot on the same stream
+not ok 2 - runtime waiting clears old meeting material and accepts the replacement snapshot on the same stream
+  ---
+  duration_ms: 1.7382
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\meeting-feed-service.test.js:75:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   ageMs: 0,
+    +   availability: 'available',
+    +   chunks: [
+    +     {
+    +       chunk_id: 'a',
+    +       end_time: 2,
+    +       speaker_name: 'Client',
+    +       start_time: 1,
+    +       text: 'Hello 🌎'
+    +     }
+    +   ],
+    +   connectionState: 'connected',
+    +   generation: {
+    +     state: 'idle'
+    +   },
+    +   instanceId: 'instance-a',
+    +   revision: 1,
+    +   sequence: 0,
+    +   suggestionHistoryLimit: 20,
+    +   suggestions: [],
+    +   transcriptId: 'meeting'
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    instanceId: 'instance-a'
+    sequence: 0
+    transcriptId: 'meeting'
+    revision: 1
+    chunks:
+      0:
+        chunk_id: 'a'
+        speaker_name: 'Client'
+        text: 'Hello 🌎'
+        start_time: 1
+        end_time: 2
+    suggestions:
+    suggestionHistoryLimit: 20
+    connectionState: 'connected'
+    availability: 'available'
+    ageMs: 0
+    generation:
+      state: 'idle'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\meeting-feed-service.test.js:78:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+ok 3 - SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically
+  ---
+  duration_ms: 2.4885
+  type: 'test'
+  ...
+# Subtest: CR-only terminal snapshot applies immediately before EOF and never schedules retry
+ok 4 - CR-only terminal snapshot applies immediately before EOF and never schedules retry
+  ---
+  duration_ms: 0.6214
+  type: 'test'
+  ...
+# Subtest: CRLF split across chunks accepts CR immediately and swallows the later LF
+ok 5 - CRLF split across chunks accepts CR immediately and swallows the later LF
+  ---
+  duration_ms: 1.3244
+  type: 'test'
+  ...
+# Subtest: transcript windows replace atomically; duplicate and older sequence values are ignored
+ok 6 - transcript windows replace atomically; duplicate and older sequence values are ignored
+  ---
+  duration_ms: 0.9376
+  type: 'test'
+  ...
+# Subtest: attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+ok 7 - attempt identity upserts, retains no-suggestion, and bounds all outcomes to 20
+  ---
+  duration_ms: 2.1569
+  type: 'test'
+  ...
+# Subtest: reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+ok 8 - reconnect replaces retained history and reconciles pending attempt without duplicate outcomes
+  ---
+  duration_ms: 1.0228
+  type: 'test'
+  ...
+# Subtest: new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+ok 9 - new instance snapshot resets transcript, sequence, history and pending state even for same meeting
+  ---
+  duration_ms: 0.8858
+  type: 'test'
+  ...
+# Subtest: gap invalidates the connection and requires a fresh authoritative snapshot
+ok 10 - gap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.7846
+  type: 'test'
+  ...
+# Subtest: wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+ok 11 - wrong-instance invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6024
+  type: 'test'
+  ...
+# Subtest: before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 12 - before-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.4473
+  type: 'test'
+  ...
+# Subtest: duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+ok 13 - duplicate-bootstrap invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.5284
+  type: 'test'
+  ...
+# Subtest: wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+ok 14 - wrong-meeting invalidates the connection and requires a fresh authoritative snapshot
+  ---
+  duration_ms: 0.6077
+  type: 'test'
+  ...
+# Subtest: stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+ok 15 - stop during connection/backoff and all late old callbacks cannot mutate a later subscription
+  ---
+  duration_ms: 1.0525
+  type: 'test'
+  ...
+# Subtest: request EOF before response retries immediately, and late request close is isolated
+ok 16 - request EOF before response retries immediately, and late request close is isolated
+  ---
+  duration_ms: 0.5523
+  type: 'test'
+  ...
+# Subtest: owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+ok 17 - owned transport listeners detach on Stop and retry while external listeners and safe error sinks survive
+  ---
+  duration_ms: 1.185
+  type: 'test'
+  ...
+# Subtest: snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+ok 18 - snapshot pending attempt settles on error and a new attempt at the same revision completes independently
+  ---
+  duration_ms: 0.8013
+  type: 'test'
+  ...
+# Subtest: malformed delta does not partially apply sequence or transcript changes
+ok 19 - malformed delta does not partially apply sequence or transcript changes
+  ---
+  duration_ms: 0.5864
+  type: 'test'
+  ...
+# Subtest: liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+ok 20 - liveness deadline includes hung request and response bootstrap, and partial bytes do not extend it
+  ---
+  duration_ms: 0.9073
+  type: 'test'
+  ...
+# Subtest: complete heartbeats sustain liveness without pretending bootstrap is connected
+ok 21 - complete heartbeats sustain liveness without pretending bootstrap is connected
+  ---
+  duration_ms: 0.5463
+  type: 'test'
+  ...
+# Subtest: bounded exponential jitter resets only after 30 seconds following a valid snapshot
+ok 22 - bounded exponential jitter resets only after 30 seconds following a valid snapshot
+  ---
+  duration_ms: 0.9634
+  type: 'test'
+  ...
+# Subtest: jitter uses midpoint of uniform half-cap to cap interval
+ok 23 - jitter uses midpoint of uniform half-cap to cap interval
+  ---
+  duration_ms: 0.4183
+  type: 'test'
+  ...
+# Subtest: 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+ok 24 - 401 is terminal; 503 and redirected responses close and retry without credential forwarding
+  ---
+  duration_ms: 0.9771
+  type: 'test'
+  ...
+# Subtest: terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+ok 25 - terminal bootstrap/status apply final state, cancel every timer, and allow only explicit restart
+  ---
+  duration_ms: 1.0814
+  type: 'test'
+  ...
+# Subtest: private bearer is sent only in headers and reflected secret/extra payload fields never escape
+ok 26 - private bearer is sent only in headers and reflected secret/extra payload fields never escape
+  ---
+  duration_ms: 0.7786
+  type: 'test'
+  ...
+# Subtest: configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+ok 27 - configuration rejects nonloopback, credentials, query strings and invalid bearer without making requests
+  ---
+  duration_ms: 3.1955
+  type: 'test'
+  ...
+# Subtest: invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+ok 28 - invalid payloads, unbounded frames, and incomplete multiline floods trigger bounded recovery
+  ---
+  duration_ms: 13.4178
+  type: 'test'
+  ...
+# Subtest: real native HTTP subscription reads authorized feed with no provider or capture imports
+ok 29 - real native HTTP subscription reads authorized feed with no provider or capture imports
+  ---
+  duration_ms: 26.2397
+  type: 'test'
+  ...
+# Subtest: native request response callback is detached when Stop occurs before headers
+ok 30 - native request response callback is detached when Stop occurs before headers
+  ---
+  duration_ms: 2.6892
+  type: 'test'
+  ...
+# Subtest: replacement input is cleared after success and failure; renderer receives presence only
+not ok 31 - replacement input is cleared after success and failure; renderer receives presence only
+  ---
+  duration_ms: 1.0562
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\twin-settings-renderer.test.js:12:1'
+  failureType: 'testCodeFailure'
+  error: 'runtime settings component exists'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    component (C:\Users\User\digital_twin\glass\tests\twin-settings-renderer.test.js:5:12)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\twin-settings-renderer.test.js:13:27)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 29
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 138.1781

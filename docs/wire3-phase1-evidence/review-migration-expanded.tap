@@ -1,0 +1,155 @@
+TAP version 13
+# Subtest: real SQLite credential fixture: fresh
+ok 1 - real SQLite credential fixture: fresh
+  ---
+  duration_ms: 791.1197
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: plaintext
+ok 2 - real SQLite credential fixture: plaintext
+  ---
+  duration_ms: 806.47
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: owners
+ok 3 - real SQLite credential fixture: owners
+  ---
+  duration_ms: 798.2655
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: ambiguous
+ok 4 - real SQLite credential fixture: ambiguous
+  ---
+  duration_ms: 811.0705
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: missing-provider
+ok 5 - real SQLite credential fixture: missing-provider
+  ---
+  duration_ms: 833.0507
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: stale-old
+ok 6 - real SQLite credential fixture: stale-old
+  ---
+  duration_ms: 863.4147
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: locked
+ok 7 - real SQLite credential fixture: locked
+  ---
+  duration_ms: 855.3877
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: rollback
+ok 8 - real SQLite credential fixture: rollback
+  ---
+  duration_ms: 898.8968
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: restart
+ok 9 - real SQLite credential fixture: restart
+  ---
+  duration_ms: 862.9966
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: selection
+ok 10 - real SQLite credential fixture: selection
+  ---
+  duration_ms: 824.4598
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: repository
+ok 11 - real SQLite credential fixture: repository
+  ---
+  duration_ms: 901.3608
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: vault-unavailable
+ok 12 - real SQLite credential fixture: vault-unavailable
+  ---
+  duration_ms: 809.4504
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-store
+ok 13 - real SQLite credential fixture: legacy-store
+  ---
+  duration_ms: 892.8491
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-cleanup-failure
+ok 14 - real SQLite credential fixture: legacy-cleanup-failure
+  ---
+  duration_ms: 836.3303
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: twin
+ok 15 - real SQLite credential fixture: twin
+  ---
+  duration_ms: 846.1537
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: twin-http
+ok 16 - real SQLite credential fixture: twin-http
+  ---
+  duration_ms: 888.464
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: mixed-local
+ok 17 - real SQLite credential fixture: mixed-local
+  ---
+  duration_ms: 841.103
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-aes
+not ok 18 - real SQLite credential fixture: legacy-aes
+  ---
+  duration_ms: 877.1029
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    legacy-aes: The database connection is not open
+    + actual - expected
+    
+      {
+    +   failure: 'The database connection is not open',
+    +   passed: false
+    -   passed: true
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    passed: true
+  actual:
+    passed: false
+    failure: 'The database connection is not open'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\settings-migration.test.js:7:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: real SQLite credential fixture: schema-failure
+ok 19 - real SQLite credential fixture: schema-failure
+  ---
+  duration_ms: 836.7165
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: source-race
+ok 20 - real SQLite credential fixture: source-race
+  ---
+  duration_ms: 842.6908
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 19
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16983.3321

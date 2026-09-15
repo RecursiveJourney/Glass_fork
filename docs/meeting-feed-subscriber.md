@@ -1,5 +1,13 @@
 # Meeting feed subscriber — Wire 2
 
+## Wire 3 Phase 1 extension
+
+`runtime.status` clears the old snapshot without closing the SSE connection. The next real session snapshot establishes a new feed instance; no synthetic transcript identity is created. Meeting Listen checks the current durable settings revision before starting; Stop can cancel that wait. Local capture/source ownership remains unchanged.
+
+The additive Digital Twin settings form saves Fireflies/Meet configuration through metadata-only IPC. Existing provider inputs are replacement-only and retain their Save/Clear controls. Locked or ambiguous migrated credentials show recovery status. Personalize and Setup are unchanged in Phase 1.
+
+See the [implementation checkpoint](../../docs/wire3-phase1-checkpoint.md) and [live acceptance checklist](wire3-phase1-manual-checklist.md).
+
 This main-process service consumes the [final feed contract](../../realtime_listener/docs/live-feed-contract.md). It does not capture audio, open Fireflies connections, invoke generation, use the Ollama request queue, or create a database session. The Phase 3 Listen lifecycle now owns it and exposes authoritative state to the header and overlay. Ask remains enabled and independently owns its existing request/session behavior.
 
 ## Configuration and ownership

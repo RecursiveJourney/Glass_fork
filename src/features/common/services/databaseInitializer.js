@@ -14,6 +14,7 @@ class DatabaseInitializer {
         //   macOS: ~/Library/Application Support/Glass/pickleglass.db
         //   Windows: %APPDATA%\Glass\pickleglass.db
         this.dbPath = path.join(userDataPath, 'pickleglass.db');
+        this.existedAtStartup = fs.existsSync(this.dbPath);
         this.dataDir = userDataPath;
 
         // The original DB path (read-only location in the package)
@@ -38,7 +39,7 @@ class DatabaseInitializer {
                     console.log(`[DB] Bundled database copied to ${this.dbPath}`);
                 } catch (error) {
                     console.error(`[DB] Failed to copy bundled database:`, error);
-                    // 복사 실패 시에도 새 DB를 생성할 수 있도록 계속 진행
+                    throw Object.assign(new Error('database_copy_failed'), { code: 'database_copy_failed' });
                 }
             } else {
                 console.log('[DB] No bundled DB found – a fresh database will be created.');
@@ -222,4 +223,4 @@ class DatabaseInitializer {
 
 const databaseInitializer = new DatabaseInitializer();
 
-module.exports = databaseInitializer; 
+module.exports = databaseInitializer;

@@ -26,18 +26,18 @@ const NOTIFICATION_CONFIG = {
 // New facade functions for model state management
 async function getModelSettings() {
     try {
-        const [config, storedKeys, selectedModels, availableLlm, availableStt] = await Promise.all([
+        const [config, providers, selectedModels, availableLlm, availableStt] = await Promise.all([
             modelStateService.getProviderConfig(),
-            modelStateService.getAllApiKeys(),
+            modelStateService.getCredentialStatus(),
             modelStateService.getSelectedModels(),
             modelStateService.getAvailableModels('llm'),
             modelStateService.getAvailableModels('stt')
         ]);
         
-        return { success: true, data: { config, storedKeys, availableLlm, availableStt, selectedModels } };
+        return { success: true, data: { config, providers, availableLlm, availableStt, selectedModels } };
     } catch (error) {
         console.error('[SettingsService] Error getting model settings:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: 'settings_read_failed' };
     }
 }
 
@@ -230,7 +230,7 @@ async function getSettings() {
         return currentSettings;
     } catch (error) {
         console.error('[SettingsService] Error getting settings from store:', error);
-        return getDefaultSettings();
+        throw Object.assign(new Error('settings_read_failed'), { code: 'settings_read_failed' });
     }
 }
 
@@ -251,7 +251,7 @@ async function saveSettings(settings) {
         return { success: true };
     } catch (error) {
         console.error('[SettingsService] Error saving settings to store:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: 'settings_write_failed' };
     }
 }
 

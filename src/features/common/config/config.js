@@ -80,13 +80,12 @@ class Config {
     loadUserConfig() {
         try {
             const userConfigPath = this.getUserConfigPath();
-            if (fs.existsSync(userConfigPath)) {
-                const userConfig = JSON.parse(fs.readFileSync(userConfigPath, 'utf-8'));
-                this.config = { ...this.config, ...userConfig };
-                console.log('[Config] User config loaded from:', userConfigPath);
-            }
+            const userConfig = JSON.parse(fs.readFileSync(userConfigPath, 'utf-8'));
+            if (!userConfig || typeof userConfig !== 'object' || Array.isArray(userConfig)) throw new Error('invalid_config');
+            this.config = { ...this.config, ...userConfig };
+            this.loadError = null;
         } catch (error) {
-            console.warn('[Config] Failed to load user config:', error.message);
+            this.loadError = error.code === 'ENOENT' ? null : 'config_read_failed';
         }
     }
     
@@ -111,6 +110,8 @@ class Config {
     }
     
     saveUserConfig() {
+        if (this.loadError) throw Object.assign(new Error(this.loadError), { code: this.loadError });
+        let temporary;
         try {
             const userConfigPath = this.getUserConfigPath();
             const userConfig = { ...this.config };
@@ -121,10 +122,16 @@ class Config {
                 }
             });
             
-            fs.writeFileSync(userConfigPath, JSON.stringify(userConfig, null, 2));
+            temporary = userConfigPath + '.' + process.pid + '.tmp';
+            const fd = fs.openSync(temporary, 'w', 0o600);
+            try { fs.writeFileSync(fd, JSON.stringify(userConfig, null, 2)); fs.fsyncSync(fd); }
+            finally { fs.closeSync(fd); }
+            fs.renameSync(temporary, userConfigPath);
             console.log('[Config] User config saved to:', userConfigPath);
         } catch (error) {
-            console.error('[Config] Failed to save user config:', error);
+            throw Object.assign(new Error('config_write_failed'), { code: 'config_write_failed' });
+        } finally {
+            if (temporary) { try { fs.unlinkSync(temporary); } catch {} }
         }
     }
     

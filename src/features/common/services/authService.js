@@ -21,12 +21,12 @@ async function getVirtualKeyByEmail(email, idToken) {
         },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
         redirect: 'follow',
+        timeout: 10000,
     });
 
     const json = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-        console.error('[VK] API request failed:', json.message || 'Unknown error');
-        throw new Error(json.message || `HTTP ${resp.status}: Virtual key request failed`);
+        throw new Error('virtual_key_request_failed');
     }
 
     const vKey = json?.data?.virtualKey || json?.data?.virtual_key || json?.data?.newVKey?.slug;
@@ -49,82 +49,44 @@ class AuthService {
     }
 
     initialize() {
-        if (this.isInitialized) return this.initializationPromise;
-
-        this.initializationPromise = new Promise((resolve) => {
-            const auth = getFirebaseAuth();
-            onAuthStateChanged(auth, async (user) => {
-                const previousUser = this.currentUser;
-
-                if (user) {
-                    // User signed IN
-                    console.log(`[AuthService] Firebase user signed in:`, user.uid);
-                    this.currentUser = user;
-                    this.currentUserId = user.uid;
-                    this.currentUserMode = 'firebase';
-
-                    // Clean up any zombie sessions from a previous run for this user.
-                    await sessionRepository.endAllActiveSessions();
-
-                    // ** Initialize encryption key for the logged-in user if permissions are already granted **
-                    if (process.platform === 'darwin' && !(await permissionService.checkKeychainCompleted(this.currentUserId))) {
-                        console.warn('[AuthService] Keychain permission not yet completed for this user. Deferring key initialization.');
-                    } else {
-                        await encryptionService.initializeKey(user.uid);
-                    }
-
-                    // ** Check for and run data migration for the user **
-                    // No 'await' here, so it runs in the background without blocking startup.
-                    migrationService.checkAndRunMigration(user);
-
-                    // ***** CRITICAL: Wait for the virtual key and model state update to complete *****
-                    try {
-                        const idToken = await user.getIdToken(true);
-                        const virtualKey = await getVirtualKeyByEmail(user.email, idToken);
-
-                        if (global.modelStateService) {
-                            // The model state service now writes directly to the DB, no in-memory state.
-                            await global.modelStateService.setFirebaseVirtualKey(virtualKey);
-                        }
-                        console.log(`[AuthService] Virtual key for ${user.email} has been processed and state updated.`);
-
-                    } catch (error) {
-                        console.error('[AuthService] Failed to fetch or save virtual key:', error);
-                        // This is not critical enough to halt the login, but we should log it.
-                    }
-
-                } else {
-                    // User signed OUT
-                    console.log(`[AuthService] No Firebase user.`);
-                    if (previousUser) {
-                        console.log(`[AuthService] Clearing API key for logged-out user: ${previousUser.uid}`);
-                        if (global.modelStateService) {
-                            // The model state service now writes directly to the DB.
-                            await global.modelStateService.setFirebaseVirtualKey(null);
-                        }
-                    }
-                    this.currentUser = null;
-                    this.currentUserId = 'default_user';
-                    this.currentUserMode = 'local';
-
-                    // End active sessions for the local/default user as well.
-                    await sessionRepository.endAllActiveSessions();
-
-                    encryptionService.resetSessionKey();
-                }
+        if (this.initializationPromise) return this.initializationPromise;
+        this.initializationPromise = new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(Object.assign(new Error('identity_unavailable'), { code: 'identity_unavailable' })), 10000);
+            onAuthStateChanged(getFirebaseAuth(), user => {
+                this.currentUser = user || null;
+                this.currentUserId = user?.uid || 'default_user';
+                this.currentUserMode = user ? 'firebase' : 'local';
                 this.broadcastUserState();
-                
-                if (!this.isInitialized) {
-                    this.isInitialized = true;
-                    console.log('[AuthService] Initialized and resolved initialization promise.');
-                    resolve();
-                }
-            });
+                if (!this.isInitialized) { this.isInitialized = true; clearTimeout(timer); resolve(); }
+                if (this.credentialsReady) this.completeCredentialInitialization();
+            }, () => { clearTimeout(timer); reject(Object.assign(new Error('identity_unavailable'), { code: 'identity_unavailable' })); });
         });
-
         return this.initializationPromise;
     }
 
+    completeCredentialInitialization() {
+        this.credentialsReady = true;
+        const user = this.currentUser;
+        const run = async () => {
+            if (this.currentUser !== user) return;
+            await sessionRepository.endAllActiveSessions();
+            if (!user) {
+                encryptionService.resetSessionKey();
+                if (global.modelStateService) await global.modelStateService.setFirebaseVirtualKey(null);
+                return;
+            }
+            // Provider legacy reads have completed before this may create a Personalize key.
+            if (process.platform !== 'darwin' || await permissionService.checkKeychainCompleted(user.uid)) await encryptionService.initializeKey(user.uid);
+            Promise.resolve(migrationService.checkAndRunMigration(user)).catch(() => console.warn('[Auth] account_migration_failed'));
+            const idToken = await user.getIdToken(true);
+            require('./secretRedactor').registerSecrets([idToken]);
+            const virtualKey = await getVirtualKeyByEmail(user.email, idToken);
+            require('./secretRedactor').registerSecrets([virtualKey]);
+            if (this.currentUser === user && global.modelStateService) await global.modelStateService.setFirebaseVirtualKey(virtualKey);
+        };
+        this.credentialWork = (this.credentialWork || Promise.resolve()).then(run).catch(() => console.warn('[Auth] credential_refresh_failed'));
+        return this.credentialWork;
+    }
     async startFirebaseAuthFlow() {
         try {
             const webUrl = process.env.pickleglass_WEB_URL || 'http://localhost:3000';
@@ -139,6 +101,7 @@ class AuthService {
     }
 
     async signInWithCustomToken(token) {
+        require('./secretRedactor').registerSecrets([token]);
         const auth = getFirebaseAuth();
         try {
             const userCredential = await signInWithCustomToken(auth, token);
@@ -208,4 +171,4 @@ class AuthService {
 }
 
 const authService = new AuthService();
-module.exports = authService; 
+module.exports = authService;

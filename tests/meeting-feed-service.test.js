@@ -72,6 +72,15 @@ test('public API isolates observers, cloned state, and private transport configu
     unsubscribe(); const count = seen.length; h.service.stop(); assert.equal(seen.length, count);
     assert.equal(h.timers.size, 0); assert.ok(h.requests[0].destroyed && res.destroyed);
 });
+test('runtime waiting clears old meeting material and accepts the replacement snapshot on the same stream', () => {
+    const h = harness(), res = h.connect();
+    h.send(res, 'runtime.status', { instanceId: 'runtime', sequence: 1, appliedRevision: 2, operationState: 'waiting', errorCode: null });
+    assert.equal(h.service.getState().snapshot, null); assert.equal(h.service.getState().connectionStatus, 'connected');
+    assert.equal(h.service.getState().runtime.operationState, 'waiting');
+    h.send(res, 'snapshot', snapshot(0, { instanceId: 'replacement', transcriptId: 'new-meeting' }));
+    assert.equal(h.service.getState().snapshot.transcriptId, 'new-meeting'); assert.equal(h.requests.length, 1);
+    h.service.stop();
+});
 
 test('SSE handles split UTF-8, CRLF, comments, ignored fields and multiline data atomically', () => {
     const h = harness(); h.service.start(); const res = h.requests[0].respond();

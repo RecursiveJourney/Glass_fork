@@ -1,0 +1,197 @@
+TAP version 13
+# [FeatureBridge] Initialized with all feature handlers.
+# Subtest: public model state is metadata only while main inference can resolve its credential
+ok 1 - public model state is metadata only while main inference can resolve its credential
+  ---
+  duration_ms: 2.07
+  type: 'test'
+  ...
+# Subtest: provider validation registers before use and never returns upstream error text
+ok 2 - provider validation registers before use and never returns upstream error text
+  ---
+  duration_ms: 0.4888
+  type: 'test'
+  ...
+# Subtest: offline startup and local service loss preserve selected model identity
+ok 3 - offline startup and local service loss preserve selected model identity
+  ---
+  duration_ms: 1.0949
+  type: 'test'
+  ...
+# Subtest: raw stored-key IPC and preload APIs are absent
+ok 4 - raw stored-key IPC and preload APIs are absent
+  ---
+  duration_ms: 0.7055
+  type: 'test'
+  ...
+# Subtest: credential IPC rejects foreign frames and malformed payloads with fixed errors
+ok 5 - credential IPC rejects foreign frames and malformed payloads with fixed errors
+  ---
+  duration_ms: 1.9251
+  type: 'test'
+  ...
+# Subtest: win32: healthy endpoint is usable without a local installation
+ok 6 - win32: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 7.1912
+  type: 'test'
+  ...
+# Subtest: linux: healthy endpoint is usable without a local installation
+ok 7 - linux: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 0.6988
+  type: 'test'
+  ...
+# Subtest: darwin: healthy endpoint is usable without a local installation
+ok 8 - darwin: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 0.6461
+  type: 'test'
+  ...
+# Subtest: missing binary and unhealthy endpoint remain uninstalled
+ok 9 - missing binary and unhealthy endpoint remain uninstalled
+  ---
+  duration_ms: 0.558
+  type: 'test'
+  ...
+# Subtest: connection failure remains uninstalled without throwing
+ok 10 - connection failure remains uninstalled without throwing
+  ---
+  duration_ms: 0.6365
+  type: 'test'
+  ...
+# Subtest: local binary preserves installed-but-stopped status
+ok 11 - local binary preserves installed-but-stopped status
+  ---
+  duration_ms: 1.5191
+  type: 'test'
+  ...
+# Subtest: macOS application detection still succeeds without a health probe
+ok 12 - macOS application detection still succeeds without a health probe
+  ---
+  duration_ms: 0.4769
+  type: 'test'
+  ...
+# Subtest: both status entry points expose endpoint-only models
+ok 13 - both status entry points expose endpoint-only models
+  ---
+  duration_ms: 1.3237
+  type: 'test'
+  ...
+# Subtest: discovery inserts a missing model with fallback size and remains idempotent
+ok 14 - discovery inserts a missing model with fallback size and remains idempotent
+  ---
+  duration_ms: 0.9242
+  type: 'test'
+  ...
+# Subtest: discovery refreshes an existing model and preserves a zero size
+ok 15 - discovery refreshes an existing model and preserves a zero size
+  ---
+  duration_ms: 0.6935
+  type: 'test'
+  ...
+# Subtest: readiness waits for asynchronous synchronization before returning
+ok 16 - readiness waits for asynchronous synchronization before returning
+  ---
+  duration_ms: 5.2602
+  type: 'test'
+  ...
+# Subtest: installed but stopped service is started before readiness synchronization
+ok 17 - installed but stopped service is started before readiness synchronization
+  ---
+  duration_ms: 0.5275
+  type: 'test'
+  ...
+# Subtest: first welcome submission registers, selects and warms a discovered model before a timer tick
+ok 18 - first welcome submission registers, selects and warms a discovered model before a timer tick
+  ---
+  duration_ms: 3.628
+  type: 'test'
+  ...
+# Subtest: discovery without Ollama registration is not configured
+ok 19 - discovery without Ollama registration is not configured
+  ---
+  duration_ms: 0.3162
+  type: 'test'
+  ...
+# Subtest: empty Ollama registration key is not configured
+ok 20 - empty Ollama registration key is not configured
+  ---
+  duration_ms: 0.2936
+  type: 'test'
+  ...
+# Subtest: Ollama registration without installed models is not configured
+ok 21 - Ollama registration without installed models is not configured
+  ---
+  duration_ms: 0.2834
+  type: 'test'
+  ...
+# Subtest: Ollama without an STT provider is not configured
+ok 22 - Ollama without an STT provider is not configured
+  ---
+  duration_ms: 0.2116
+  type: 'test'
+  ...
+# Subtest: cloud provider with LLM and STT remains configured without Ollama models
+ok 23 - cloud provider with LLM and STT remains configured without Ollama models
+  ---
+  duration_ms: 0.5174
+  type: 'test'
+  ...
+# Subtest: cloud provider without a key remains unconfigured
+ok 24 - cloud provider without a key remains unconfigured
+  ---
+  duration_ms: 0.2528
+  type: 'test'
+  ...
+# Subtest: Whisper alone still cannot satisfy the LLM requirement
+ok 25 - Whisper alone still cannot satisfy the LLM requirement
+  ---
+  duration_ms: 0.2285
+  type: 'test'
+  ...
+# Subtest: Firebase login still bypasses local provider configuration
+ok 26 - Firebase login still bypasses local provider configuration
+  ---
+  duration_ms: 0.2293
+  type: 'test'
+  ...
+# Subtest: malformed preference file surfaces failure and cannot overwrite the original
+ok 27 - malformed preference file surfaces failure and cannot overwrite the original
+  ---
+  duration_ms: 4.8955
+  type: 'test'
+  ...
+# Subtest: atomic preference save surfaces rename failure and preserves last readable file
+ok 28 - atomic preference save surfaces rename failure and preserves last readable file
+  ---
+  duration_ms: 8.5422
+  type: 'test'
+  ...
+# Subtest: legacy decryption only reads an existing owner key and never creates one
+ok 29 - legacy decryption only reads an existing owner key and never creates one
+  ---
+  duration_ms: 3.3989
+  type: 'test'
+  ...
+# Subtest: startup diagnostics keep only allowlisted metadata and redact console errors
+ok 30 - startup diagnostics keep only allowlisted metadata and redact console errors
+  ---
+  duration_ms: 2.6546
+  type: 'test'
+  ...
+# Subtest: auth resolves identity before any legacy-key generation or virtual-key write
+ok 31 - auth resolves identity before any legacy-key generation or virtual-key write
+  ---
+  duration_ms: 0.846
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.5016

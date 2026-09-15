@@ -535,7 +535,6 @@ export class ApiKeyHeader extends LitElement {
     handleInput(e) {
         this.apiKey = e.target.value;
         this.clearMessages();
-        console.log('Input changed:', this.apiKey?.length || 0, 'chars');
 
         this.requestUpdate();
         this.updateComplete.then(() => {
@@ -1614,8 +1613,11 @@ export class ApiKeyHeader extends LitElement {
             }
         } catch (error) {
             console.error('[ApiKeyHeader] handleSubmit: Error:', error);
-            this.llmError = `*${error.message}`;
+            this.llmError = '*Credential operation failed. Please try again.';
             this.messageTimestamp = Date.now();
+        } finally {
+            this.llmApiKey = '';
+            this.sttApiKey = '';
         }
 
         this.isLoading = false;

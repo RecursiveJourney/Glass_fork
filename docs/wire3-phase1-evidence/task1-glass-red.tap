@@ -1,0 +1,132 @@
+✖ sealed credentials survive a new reader with the same OS codec and binding (1.3538ms)
+✖ swapped references, scope, ciphertext and envelope versions fail closed (0.2426ms)
+✖ unavailable, not-ready and insecure Linux backends cannot seal or open (0.2477ms)
+✖ registration precedes codec use and failures contain only stable codes (0.1907ms)
+✖ main redactor retains late rotated secrets, handles Errors and fails closed at capacity (0.2035ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77.9043
+
+✖ failing tests:
+
+test at tests\secret-store.test.js:29:1
+✖ sealed credentials survive a new reader with the same OS codec and binding (1.3538ms)
+  AssertionError [ERR_ASSERTION]: OS-envelope store is implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at store (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:25:12)
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:30:38)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.start (node:internal/test_runner/test:1000:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\secret-store.test.js:37:1
+✖ swapped references, scope, ciphertext and envelope versions fail closed (0.2426ms)
+  AssertionError [ERR_ASSERTION]: OS-envelope store is implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at store (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:25:12)
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:38:34)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\secret-store.test.js:49:1
+✖ unavailable, not-ready and insecure Linux backends cannot seal or open (0.2477ms)
+  AssertionError [ERR_ASSERTION]: OS-envelope store is implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at store (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:25:12)
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:55:19)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\secret-store.test.js:60:1
+✖ registration precedes codec use and failures contain only stable codes (0.1907ms)
+  AssertionError [ERR_ASSERTION]: OS-envelope store is implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at store (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:25:12)
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:63:15)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\secret-store.test.js:67:1
+✖ main redactor retains late rotated secrets, handles Errors and fails closed at capacity (0.2035ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\secret-store.test.js:68:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

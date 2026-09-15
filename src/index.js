@@ -6,6 +6,10 @@
 // }
 
 require('dotenv').config();
+const secretRedactor = require('./features/common/services/secretRedactor');
+secretRedactor.registerSecrets(['FIREFLIES_API_KEY', 'GEMINI_API_KEY', 'WRAPPER_TOKEN', 'TWIN_CONTROL_TOKEN'].map(name => process.env[name]).filter(Boolean));
+const { createStartupDiagnostics, installConsoleRedaction } = require('./features/common/services/startupDiagnostics');
+installConsoleRedaction();
 
 if (require('electron-squirrel-startup')) {
     process.exit(0);
@@ -64,7 +68,7 @@ function setupProtocolHandling() {
 
     // Handle protocol URLs on Windows/Linux
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        console.log('[Protocol] Second instance command line:', commandLine);
+
         
         focusMainWindow();
         
@@ -91,21 +95,21 @@ function setupProtocolHandling() {
         }
         
         if (protocolUrl) {
-            console.log('[Protocol] Valid URL found from second instance:', protocolUrl);
+
             handleCustomUrl(protocolUrl);
         } else {
             console.log('[Protocol] No valid protocol URL found in command line arguments');
-            console.log('[Protocol] Command line args:', commandLine);
+
         }
     });
 
     // Handle protocol URLs on macOS
     app.on('open-url', (event, url) => {
         event.preventDefault();
-        console.log('[Protocol] Received URL via open-url:', url);
+
         
         if (!url || !url.startsWith('pickleglass://')) {
-            console.warn('[Protocol] Invalid URL format:', url);
+
             return;
         }
 
@@ -150,14 +154,13 @@ if (process.platform === 'win32') {
             const cleanUrl = arg.replace(/[\\₩]/g, '');
             
             if (!cleanUrl.includes(':') || cleanUrl.indexOf('://') === cleanUrl.lastIndexOf(':')) {
-                console.log('[Protocol] Found protocol URL in initial arguments:', cleanUrl);
+
                 pendingDeepLinkUrl = cleanUrl;
                 break;
             }
         }
     }
-    
-    console.log('[Protocol] Initial process.argv:', process.argv);
+
 }
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -186,6 +189,7 @@ app.whenReady().then(async () => {
     initializeFirebase();
     
     try {
+        if (require('./features/common/config/config').loadError) throw new Error('config_read_failed');
         await databaseInitializer.initialize();
         console.log('>>> [index.js] Database initialized successfully');
         
@@ -195,7 +199,26 @@ app.whenReady().then(async () => {
         await authService.initialize();
 
         //////// after_modelStateService ////////
-        await modelStateService.initialize();
+        const { migrateSettings, importLegacyStore, compactCredentialStorage } = require('./features/common/services/settingsMigrationService');
+        const sqliteClient = require('./features/common/services/sqliteClient');
+        const encryptionService = require('./features/common/services/encryptionService');
+        const diagnostics = createStartupDiagnostics({ file: path.join(app.getPath('userData'), 'logs', 'settings-startup.jsonl') });
+        diagnostics.record('database', { bootId: require('crypto').randomUUID(), existed: databaseInitializer.existedAtStartup, dataPathAlias: require('crypto').createHash('sha256').update(path.resolve(databaseInitializer.dbPath).toLowerCase()).digest('hex').slice(0, 16) });
+        const migration = await migrateSettings({ db: sqliteClient.getDb(), owner: authService.getCurrentUserId(), readLegacy: encryptionService.readExistingLegacy, getProviderForModel: (model, type) => modelStateService.getProviderForModel(model, type) });
+        const LegacyStore = require('electron-store');
+        const legacyImport = await importLegacyStore({ db: sqliteClient.getDb(), scope: migration.scope, owner: authService.getCurrentUserId(), legacyStore: new LegacyStore({ name: 'pickle-glass-model-state' }), readLegacy: encryptionService.readExistingLegacy, getProviderForModel: (model, type) => modelStateService.getProviderForModel(model, type) });
+        diagnostics.record('legacy_import', { status: legacyImport.status });
+        if (migration.converted) diagnostics.record('compaction', compactCredentialStorage(sqliteClient.getDb()));
+        diagnostics.record('migration', { status: migration.status, installationId: migration.installationId, providerCount: sqliteClient.getDb().prepare('SELECT COUNT(*) AS n FROM provider_settings').get().n });
+        modelStateService.diagnostics = diagnostics;
+        await modelStateService.initialize(migration);
+        authService.completeCredentialInitialization();
+        const twinSettings = require('./features/settings/twinSettingsService').getTwinSettingsService();
+        listenService.setRuntimeSettingsService(twinSettings);
+        twinSettings.on('updated', state => {
+            for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('twin:settings-updated', state);
+        });
+        twinSettings.start();
         //////// after_modelStateService ////////
 
         featureBridge.initialize();  // 추가: featureBridge 초기화
@@ -235,7 +258,7 @@ app.whenReady().then(async () => {
 
     // Process any pending deep link after everything is initialized
     if (pendingDeepLinkUrl) {
-        console.log('[Protocol] Processing pending URL:', pendingDeepLinkUrl);
+
         handleCustomUrl(pendingDeepLinkUrl);
         pendingDeepLinkUrl = null;
     }
@@ -258,6 +281,7 @@ app.on('before-quit', async (event) => {
     
     try {
         // 1. Stop audio capture first (immediate)
+        require('./features/settings/twinSettingsService').getTwinSettingsService().stop();
         await listenService.closeSession();
         console.log('[Shutdown] Audio capture stopped');
         
@@ -372,6 +396,7 @@ function setupWebDataHandlers() {
                 case 'save-api-key':
                     // Use ModelStateService as the single source of truth for API key management
                     result = await modelStateService.setApiKey(payload.provider, payload.apiKey);
+                    if (!result.success) throw new Error('credential_validation_failed');
                     break;
                 case 'check-api-key-status':
                     // Use ModelStateService to check API key status
@@ -437,7 +462,7 @@ function setupWebDataHandlers() {
             eventBridge.emit(responseChannel, { success: true, data: result });
         } catch (error) {
             console.error(`Error handling web data request for ${channel}:`, error);
-            eventBridge.emit(responseChannel, { success: false, error: error.message });
+            eventBridge.emit(responseChannel, { success: false, error: channel === 'save-api-key' ? 'credential_operation_failed' : error.message });
         }
     };
     
@@ -446,11 +471,11 @@ function setupWebDataHandlers() {
 
 async function handleCustomUrl(url) {
     try {
-        console.log('[Custom URL] Processing URL:', url);
+
         
         // Validate and clean URL
         if (!url || typeof url !== 'string' || !url.startsWith('pickleglass://')) {
-            console.error('[Custom URL] Invalid URL format:', url);
+
             return;
         }
         
@@ -459,7 +484,7 @@ async function handleCustomUrl(url) {
         
         // Additional validation
         if (cleanUrl !== url) {
-            console.log('[Custom URL] Cleaned URL from:', url, 'to:', cleanUrl);
+
             url = cleanUrl;
         }
         
@@ -505,7 +530,8 @@ async function handleFirebaseAuthCallback(params) {
         return;
     }
 
-    console.log('[Auth] Received ID token from deep link, exchanging for custom token...');
+    secretRedactor.registerSecrets([idToken]);
+    console.log('[Auth] Exchanging authentication token');
 
     try {
         const functionUrl = 'https://us-west1-pickle-3651a.cloudfunctions.net/pickleGlassAuthCallback';
@@ -556,7 +582,7 @@ async function handleFirebaseAuthCallback(params) {
         const { windowPool } = require('./window/windowManager.js');
         const header = windowPool.get('header');
         if (header) {
-            header.webContents.send('auth-failed', { message: error.message });
+            header.webContents.send('auth-failed', { message: 'authentication_failed' });
         }
     }
 }

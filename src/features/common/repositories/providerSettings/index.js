@@ -41,10 +41,8 @@ const providerSettingsRepositoryAdapter = {
         return await repo.removeAll();
     },
 
-    async getRawApiKeys() {
-        // This function should always target the local sqlite DB,
-        // as it's part of the local-first boot sequence.
-        return await sqliteRepository.getRawApiKeys();
+    async resolveCredential(provider) {
+        return sqliteRepository.resolveCredential(provider);
     },
     
     async getActiveProvider(type) {
@@ -65,4 +63,4 @@ const providerSettingsRepositoryAdapter = {
 
 module.exports = {
     ...providerSettingsRepositoryAdapter
-}; 
+};

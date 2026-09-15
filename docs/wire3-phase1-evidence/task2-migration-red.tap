@@ -1,0 +1,382 @@
+TAP version 13
+# Subtest: real SQLite credential fixture: fresh
+not ok 1 - real SQLite credential fixture: fresh
+  ---
+  duration_ms: 731.8939
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: plaintext
+not ok 2 - real SQLite credential fixture: plaintext
+  ---
+  duration_ms: 732.6368
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: owners
+not ok 3 - real SQLite credential fixture: owners
+  ---
+  duration_ms: 743.5007
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: ambiguous
+not ok 4 - real SQLite credential fixture: ambiguous
+  ---
+  duration_ms: 727.98
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: missing-provider
+not ok 5 - real SQLite credential fixture: missing-provider
+  ---
+  duration_ms: 728.0334
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: stale-old
+not ok 6 - real SQLite credential fixture: stale-old
+  ---
+  duration_ms: 729.739
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: locked
+not ok 7 - real SQLite credential fixture: locked
+  ---
+  duration_ms: 730.1531
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: rollback
+not ok 8 - real SQLite credential fixture: rollback
+  ---
+  duration_ms: 724.531
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: restart
+not ok 9 - real SQLite credential fixture: restart
+  ---
+  duration_ms: 732.0331
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: selection
+not ok 10 - real SQLite credential fixture: selection
+  ---
+  duration_ms: 729.3979
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: repository
+not ok 11 - real SQLite credential fixture: repository
+  ---
+  duration_ms: 738.3524
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+# Subtest: real SQLite credential fixture: vault-unavailable
+not ok 12 - real SQLite credential fixture: vault-unavailable
+  ---
+  duration_ms: 729.8253
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-migration.test.js:5:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    fixture_process_failed:1:node:fs:2729
+          const stats = binding.lstat(baseLong, true, undefined, true /* throwIfNoEntry */);
+                                ^
+    
+    Error: EPERM: operation not permitted, lstat 'C:\Users\User'
+        at Object.realpathSync (node:fs:2729:29)
+        at Object.realpathSync (node:electron/js2c/node_init:2:5352)
+        at toRealPath (node:internal/modules/helpers:58:13)
+        at Module._findPath (node:internal/modules/cjs/loader:705:22)
+        at resolveMainPath (node:internal/modules/run_main:43:23)
+      
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.realpathSync (node:fs:2729:29)
+    Object.realpathSync (node:electron/js2c/node_init:2:5352)
+    toRealPath (node:internal/modules/helpers:58:13)
+    Module._findPath (node:internal/modules/cjs/loader:705:22)
+    resolveMainPath (node:internal/modules/run_main:43:23)
+    ChildProcess.<anonymous> (C:\Users\User\digital_twin\glass\tests\helpers\credential-harness.cjs:16:38)
+    ChildProcess.emit (node:events:508:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:305:5)
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 0
+# fail 12
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8841.0512

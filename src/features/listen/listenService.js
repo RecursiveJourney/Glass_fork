@@ -113,6 +113,7 @@ class ListenService {
     }
     getMeetingFeedState() { return this.meetingFeed?.getState() ?? { connectionStatus: 'idle', snapshot: null, error: null, nextRetryAt: null }; }
     initialize() { this.setupIpcHandlers?.(); }
+    setRuntimeSettingsService(service) { this.runtimeSettingsService = service; }
 
     async handleListenRequest(action) {
         let result;
@@ -132,6 +133,11 @@ class ListenService {
             if (this.state.source === 'meeting') {
                 const id = this.state.lifecycleId + 1;
                 this.publish({ lifecycleId: id, phase: 'starting', error: null });
+                if (this.runtimeSettingsService) {
+                    const applied = await this.runtimeSettingsService.ensureApplied();
+                    if (this.state.lifecycleId !== id || this.state.phase !== 'starting') return this.result(false, 'listen_cancelled');
+                    if (!applied.success) { this.publish({ phase: 'stopped', error: 'runtime_settings_pending' }); return this.result(false, 'runtime_settings_pending'); }
+                }
                 const feed = this.startMeetingFeed();
                 if (this.state.lifecycleId === id && this.state.phase === 'starting')
                     this.publish({ phase: feed.success ? 'active' : 'stopped', error: feed.error || null });

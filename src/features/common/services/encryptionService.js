@@ -166,10 +166,27 @@ function looksEncrypted(str) {
     }
 }
 
+async function readExistingLegacy(encryptedText, owner) {
+    const fail = () => Object.assign(new Error('credential_locked'), { code: 'credential_locked' });
+    if (!keytar || !owner || !looksEncrypted(encryptedText)) throw fail();
+    try {
+        const stored = await keytar.getPassword(SERVICE_NAME, owner);
+        if (typeof stored !== 'string' || !/^[a-f0-9]{64}$/i.test(stored)) throw fail();
+        const data = Buffer.from(encryptedText, 'base64');
+        const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(stored, 'hex'), data.subarray(0, IV_LENGTH));
+        decipher.setAuthTag(data.subarray(IV_LENGTH, IV_LENGTH + AUTH_TAG_LENGTH));
+        const result = Buffer.concat([decipher.update(data.subarray(IV_LENGTH + AUTH_TAG_LENGTH)), decipher.final()]).toString('utf8');
+        if (!result) throw fail();
+        require('./secretRedactor').registerSecrets([result]);
+        return result;
+    } catch { throw fail(); }
+}
+
 module.exports = {
+    readExistingLegacy,
     initializeKey,
     resetSessionKey,
     encrypt,
     decrypt,
     looksEncrypted,
-}; 
+};

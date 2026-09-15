@@ -1,0 +1,78 @@
+TAP version 13
+# Subtest: malformed preference file surfaces failure and cannot overwrite the original
+ok 1 - malformed preference file surfaces failure and cannot overwrite the original
+  ---
+  duration_ms: 4.544
+  type: 'test'
+  ...
+# Subtest: atomic preference save surfaces rename failure and preserves last readable file
+ok 2 - atomic preference save surfaces rename failure and preserves last readable file
+  ---
+  duration_ms: 7.98
+  type: 'test'
+  ...
+# Subtest: legacy decryption only reads an existing owner key and never creates one
+not ok 3 - legacy decryption only reads an existing owner key and never creates one
+  ---
+  duration_ms: 4.0441
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-startup.test.js:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\settings-startup.test.js:38:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+# Subtest: startup diagnostics keep only allowlisted metadata and redact console errors
+not ok 4 - startup diagnostics keep only allowlisted metadata and redact console errors
+  ---
+  duration_ms: 0.6694
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\settings-startup.test.js:43:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\settings-startup.test.js:46:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.2507

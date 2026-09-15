@@ -1,0 +1,63 @@
+const { app, BrowserWindow, ipcMain } = require('electron');
+const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
+const { pathToFileURL } = require('node:url'), { EventEmitter } = require('node:events');
+const directory = process.argv[2], coordinator = process.argv[3], root = path.resolve(__dirname, '../..');
+app.setPath('userData', path.join(directory, 'profile')); app.disableHardwareAcceleration(); app.on('window-all-closed', () => {});
+let db, server, win;
+app.whenReady().then(async () => {
+    const Database = require('better-sqlite3'); db = new Database(path.join(directory, 'synthetic.db')); db.pragma('journal_mode=WAL');
+    const { migrateSettings } = require('../../src/features/common/services/settingsMigrationService');
+    await migrateSettings({ db, owner: 'default_user' });
+    const { createTwinRepository } = require('../../src/features/settings/repositories/twin.sqlite.repository');
+    const { TwinSettingsService } = require('../../src/features/settings/twinSettingsService');
+    const { TwinRuntimeClient } = require('../../src/features/common/services/twinRuntimeClient');
+    const { startHttpServer } = await import('../../../realtime_listener/lib/http-server.js');
+    const { createRuntimeConfig } = await import('../../../realtime_listener/lib/runtime-config.js');
+    const token = 'synthetic-native-control-32-characters', changes = [], durableMs = [], httpMs = [];
+    const runtimeConfig = createRuntimeConfig({ onApply: change => changes.push({ mayInvite: change.mayInvite, intent: change.meetingIntentId }) });
+    server = await startHttpServer({ port: 0, runtimeConfig, controlToken: token, suggest: async () => { throw Error('unexpected_inference'); } });
+    const repository = createTwinRepository({ getDb: () => db }), client = new TwinRuntimeClient({ url: 'http://127.0.0.1:' + server.port, token });
+    const commit = repository.commit; repository.commit = value => { const at = performance.now(); const result = commit(value); durableMs.push(performance.now() - at); return result; };
+    const apply = client.apply.bind(client); client.apply = async (...args) => { const at = performance.now(); try { return await apply(...args); } finally { httpMs.push(performance.now() - at); } };
+    const service = new TwinSettingsService({ repository, client });
+    const bridgeFile = path.join(root, 'src/bridge/featureBridge.js'), source = fs.readFileSync(bridgeFile, 'utf8'), stubs = {};
+    for (const [, id] of source.matchAll(/require\('([^']+)'\)/g)) stubs[id] = new EventEmitter();
+    stubs.electron = { ipcMain, BrowserWindow, app: { getAppPath: () => directory } };
+    stubs['../features/common/services/localAIManager'].startPeriodicSync = () => {};
+    stubs['../features/settings/twinSettingsService'] = { getTwinSettingsService: () => service };
+    stubs['../features/common/services/secretRedactor'] = require('../../src/features/common/services/secretRedactor');
+    const module = { exports: {} };
+    vm.runInThisContext('(function(require,module,exports){' + source + '\n})', { filename: bridgeFile })(id => stubs[id], module, module.exports);
+    module.exports.initialize();
+    const page = path.join(directory, 'src/ui/fixture.html'); fs.mkdirSync(path.dirname(page), { recursive: true });
+    fs.writeFileSync(page, `<!doctype html><meta charset="utf-8"><style>body{margin:24px;background:#1b1c21;color:white}main{max-width:520px;margin:auto}</style><main><twin-connection-settings></twin-connection-settings></main><script type="module" src="${pathToFileURL(path.join(root, 'src/ui/settings/TwinConnectionSettings.js')).href}"></script>`);
+    win = new BrowserWindow({ show: false, width: 590, height: 600, webPreferences: { preload: path.join(root, 'src/preload.js'), contextIsolation: true, nodeIntegration: false, offscreen: true, backgroundThrottling: false } });
+    service.on('updated', state => win?.webContents.send('twin:settings-updated', state));
+    await win.loadFile(page);
+    const metrics = await win.webContents.executeJavaScript(`(async () => {
+      await customElements.whenDefined('twin-connection-settings');
+      const c = document.querySelector('twin-connection-settings'); await c.updateComplete;
+      await window.api.settingsView.getTwinSettings(); await new Promise(r => setTimeout(r, 30));
+      const wait = async revision => { const until = performance.now() + 3000; while (c.saving || c.state.savedRevision !== revision || c.state.state !== 'applied') { if (performance.now() > until) throw Error('save_timeout'); await new Promise(r => setTimeout(r, 5)); } await c.updateComplete; await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); };
+      const set = (type, value) => { const input = c.shadowRoot.querySelector('input[type=' + type + ']'); input.value = value; input.dispatchEvent(new Event('input', { bubbles: true })); };
+      c.shadowRoot.querySelector('input[type=checkbox]').click(); set('password', 'synthetic-native-input'); set('url', 'https://meet.google.com/abc-defg-hij');
+      c.shadowRoot.querySelector('button[type=submit]').click(); c.shadowRoot.querySelector('button[type=submit]').click(); await wait(1);
+      if (c.replacementKey || c.shadowRoot.querySelector('input[type=password]').value) throw Error('input_not_cleared');
+      const durations = [];
+      for (let i = 0; i < 20; i++) {
+        set('url', i % 2 ? 'https://meet.google.com/abc-defg-hij' : 'https://meet.google.com/xyz-abcd-efg');
+        const at = performance.now(); c.shadowRoot.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        await wait(i + 2); durations.push(performance.now() - at);
+      }
+      if (durations.some(ms => ms >= 1000)) throw Error('save_latency_exceeded');
+      if (document.documentElement.scrollWidth > innerWidth) throw Error('horizontal_overflow');
+      return { durations, revision: c.state.savedRevision, hasKey: c.state.hasKey, inputEmpty: c.shadowRoot.querySelector('input[type=password]').value === '' };
+    })()`);
+    if (metrics.revision !== 21 || changes.length !== 21 || !metrics.hasKey || !metrics.inputEmpty) throw Error('native_contract_failed');
+    const evidence = path.resolve(root, '../docs/wire3-phase1-evidence'); fs.mkdirSync(evidence, { recursive: true });
+    fs.writeFileSync(path.join(evidence, `settings-native-${coordinator}.png`), (await win.webContents.capturePage()).toPNG());
+    const summarize = values => ({ count: values.length, maxMs: Math.max(...values), meanMs: values.reduce((a, b) => a + b, 0) / values.length });
+    process.stdout.write('TWIN_NATIVE:' + JSON.stringify({ passed: true, renderer: summarize(metrics.durations), durable: summarize(durableMs.slice(1)), http: summarize(httpMs.slice(1)), externalInvitations: 0 }) + '\n');
+}).catch(error => { process.stdout.write('TWIN_NATIVE:' + JSON.stringify({ passed: false, code: error.code || 'native_fixture_failed', stage: error.message?.match(/^[a-z_]+$/)?.[0] || 'assertion_failed' }) + '\n'); process.exitCode = 1; }).finally(async () => {
+    if (win && !win.isDestroyed()) win.destroy(); await server?.close(); db?.close(); app.exit(process.exitCode || 0);
+});

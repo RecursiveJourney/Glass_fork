@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: sealed credentials survive a new reader with the same OS codec and binding
+ok 1 - sealed credentials survive a new reader with the same OS codec and binding
+  ---
+  duration_ms: 3.0581
+  type: 'test'
+  ...
+# Subtest: swapped references, scope, ciphertext and envelope versions fail closed
+ok 2 - swapped references, scope, ciphertext and envelope versions fail closed
+  ---
+  duration_ms: 0.8852
+  type: 'test'
+  ...
+# Subtest: unavailable, not-ready and insecure Linux backends cannot seal or open
+ok 3 - unavailable, not-ready and insecure Linux backends cannot seal or open
+  ---
+  duration_ms: 0.5638
+  type: 'test'
+  ...
+# Subtest: registration precedes codec use and failures contain only stable codes
+ok 4 - registration precedes codec use and failures contain only stable codes
+  ---
+  duration_ms: 0.2504
+  type: 'test'
+  ...
+# Subtest: main redactor retains late rotated secrets, handles Errors and fails closed at capacity
+ok 5 - main redactor retains late rotated secrets, handles Errors and fails closed at capacity
+  ---
+  duration_ms: 0.457
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.8639

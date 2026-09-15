@@ -233,7 +233,15 @@ contextBridge.exposeInMainWorld('api', {
     // Model & Provider Management
     getModelSettings: () => ipcRenderer.invoke('settings:get-model-settings'), // Facade call
     getProviderConfig: () => ipcRenderer.invoke('model:get-provider-config'),
-    getAllKeys: () => ipcRenderer.invoke('model:get-all-keys'),
+    getCredentialStatus: () => ipcRenderer.invoke('model:get-credential-status'),
+    getTwinSettings: () => ipcRenderer.invoke('twin:settings'),
+    saveTwinSettings: data => ipcRenderer.invoke('twin:save', data),
+    retryTwinJoin: data => ipcRenderer.invoke('twin:retry-join', data),
+    onTwinSettingsUpdated: callback => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on('twin:settings-updated', listener);
+      return () => ipcRenderer.removeListener('twin:settings-updated', listener);
+    },
     getAvailableModels: (type) => ipcRenderer.invoke('model:get-available-models', type),
     getSelectedModels: () => ipcRenderer.invoke('model:get-selected-models'),
     validateKey: (data) => ipcRenderer.invoke('model:validate-key', data),

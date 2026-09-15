@@ -1,0 +1,55 @@
+TAP version 13
+# [FeatureBridge] Initialized with all feature handlers.
+# Subtest: public model state is metadata only while main inference can resolve its credential
+ok 1 - public model state is metadata only while main inference can resolve its credential
+  ---
+  duration_ms: 1.882
+  type: 'test'
+  ...
+# Subtest: provider validation registers before use and never returns upstream error text
+ok 2 - provider validation registers before use and never returns upstream error text
+  ---
+  duration_ms: 0.4756
+  type: 'test'
+  ...
+# Subtest: offline startup and local service loss preserve selected model identity
+ok 3 - offline startup and local service loss preserve selected model identity
+  ---
+  duration_ms: 1.0116
+  type: 'test'
+  ...
+# Subtest: raw stored-key IPC and preload APIs are absent
+ok 4 - raw stored-key IPC and preload APIs are absent
+  ---
+  duration_ms: 0.5758
+  type: 'test'
+  ...
+# Subtest: credential IPC rejects foreign frames and malformed payloads with fixed errors
+not ok 5 - credential IPC rejects foreign frames and malformed payloads with fixed errors
+  ---
+  duration_ms: 1.3735
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\credential-ipc.test.js:51:1'
+  failureType: 'testCodeFailure'
+  error: 'synthetic-secret'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    model.setApiKey (C:\Users\User\digital_twin\glass\tests\credential-ipc.test.js:61:43)
+    C:\Users\User\digital_twin\glass\src\bridge\featureBridge.js:123:97
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\credential-ipc.test.js:67:28)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70.8777

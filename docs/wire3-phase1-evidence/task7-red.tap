@@ -1,0 +1,121 @@
+TAP version 13
+# Subtest: main-only client authenticates to actual runtime HTTP and rejects credential-bearing response fields
+not ok 1 - main-only client authenticates to actual runtime HTTP and rejects credential-bearing response fields
+  ---
+  duration_ms: 1.4034
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\twin-runtime-integration.test.js:4:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\twin-runtime-integration.test.js:5:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: save commits and applies, duplicate clicks are a no-op and rotation preserves meeting intent
+not ok 2 - save commits and applies, duplicate clicks are a no-op and rotation preserves meeting intent
+  ---
+  duration_ms: 1.3041
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\twin-settings.test.js:21:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    fixture (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:5:12)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:22:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.start (node:internal/test_runner/test:1000:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: offline save stays durable pending, newest save supersedes it and clear never sends an old key
+not ok 3 - offline save stays durable pending, newest save supersedes it and clear never sends an old key
+  ---
+  duration_ms: 0.2387
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\twin-settings.test.js:32:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    fixture (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:5:12)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:33:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: stale edits fail without writing and lost acknowledgements reconcile by operation id
+not ok 4 - stale edits fail without writing and lost acknowledgements reconcile by operation id
+  ---
+  duration_ms: 0.2129
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\twin-settings.test.js:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    fixture (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:5:12)
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\twin-settings.test.js:41:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1103:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+    Test.postRun (node:internal/test_runner/test:1232:19)
+    Test.run (node:internal/test_runner/test:1160:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.3911

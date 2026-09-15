@@ -63,6 +63,15 @@ test('failed database initialization never starts capture', async () => {
     assert.equal(await h.service.initializeSession(), false);
     assert.equal(h.sent.some(e => e.channel === 'change-listen-capture-state' && e.data.status === 'start'), false);
 });
+test('next Meeting Listen waits for the latest runtime revision and Stop cancels that wait', async () => {
+    const gate = deferred(), h = harness();
+    await h.service.selectSource('meeting');
+    h.service.setRuntimeSettingsService({ ensureApplied: () => gate.promise });
+    const start = h.service.handleListenRequest('Listen');
+    assert.equal(h.calls.includes('feed.start'), false);
+    await h.service.handleListenRequest('Stop'); gate.resolve({ success: true });
+    assert.equal((await start).success, false); assert.equal(h.calls.includes('feed.start'), false);
+});
 test('Stop while local initialization is pending prevents late capture start', async () => {
     const gate = deferred(), h = harness({ sttGate: gate });
     const start = h.service.handleListenRequest('Listen');

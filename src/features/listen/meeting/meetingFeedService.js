@@ -248,6 +248,14 @@ class MeetingFeedService {
 
     #apply(generation, type, raw, bootstrapped) {
         let snapshot, error = null;
+        if (type === 'runtime.status') {
+            requireValid(object(raw) && identity(raw.instanceId) && integer(raw.sequence) && integer(raw.appliedRevision) &&
+                ['unconfigured', 'applying', 'joining', 'waiting', 'failed', 'rate_limited', 'auth_failed', 'uncertain', 'disabled', 'credential_missing', 'meeting_missing'].includes(raw.operationState) &&
+                (raw.errorCode === null || typeof raw.errorCode === 'string' && /^[a-z_]{1,64}$/.test(raw.errorCode)));
+            const runtime = { instanceId: raw.instanceId, sequence: raw.sequence, appliedRevision: raw.appliedRevision, operationState: raw.operationState, errorCode: raw.errorCode };
+            this.#update({ connectionStatus: 'connected', snapshot: null, runtime, error: null, nextRetryAt: null });
+            return false;
+        }
         if (type === 'snapshot') {
             requireValid(!bootstrapped);
             snapshot = this.#safe(bootstrap(raw));
@@ -290,7 +298,7 @@ class MeetingFeedService {
                 this.#healthyTimer = null; this.#failures = 0;
             }, 30000);
         }
-        this.#update({ connectionStatus: 'connected', snapshot, error, nextRetryAt: null });
+        this.#update({ connectionStatus: 'connected', snapshot, ...(this.#state.runtime ? { runtime: null } : {}), error, nextRetryAt: null });
         return true;
     }
 }

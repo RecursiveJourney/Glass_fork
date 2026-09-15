@@ -18,6 +18,7 @@ function loadService(name, stubs) {
     const module = { exports: {} };
     const load = id => {
         if (Object.hasOwn(stubs, id)) return stubs[id];
+        if (id === './secretRedactor') return require('../src/features/common/services/secretRedactor');
         if (isBuiltin(id)) return require(id);
         throw new Error('Unexpected dependency: ' + id);
     };
@@ -166,9 +167,19 @@ test('first welcome submission registers, selects and warms a discovered model b
         '../repositories/providerSettings': {
             getAll: async () => [...settings.values()],
             getByProvider: async provider => settings.get(provider),
-            upsert: async (provider, value) => settings.set(provider, { provider, ...value }),
+            upsert: async (provider, value) => {
+                const row = { ...settings.get(provider), provider, ...value };
+                if (Object.hasOwn(value, 'api_key')) {
+                    row.enabled = ['ollama', 'whisper'].includes(provider) && !!value.api_key;
+                    row.hasKey = !row.enabled && !!value.api_key;
+                    row.status = row.hasKey ? 'stored' : 'missing';
+                    delete row.api_key;
+                }
+                settings.set(provider, row);
+            },
             setActiveProvider: async (provider, type) => { active[type] = provider; },
-            getActiveSettings: async () => ({ llm: settings.get(active.llm), stt: settings.get(active.stt) })
+            getActiveSettings: async () => ({ llm: settings.get(active.llm), stt: settings.get(active.stt) }),
+            getActiveProvider: async type => settings.get(active[type])
         },
         './localAIManager': { warmUpModel: model => (warming = h.service.warmUpModel(model)) }
     });
@@ -179,7 +190,8 @@ test('first welcome submission registers, selects and warms a discovered model b
     assert.deepEqual(await state.handleValidateKey('ollama', 'local'), { success: true });
     assert.equal(await state.handleSetSelectedModel('llm', 'rj-twin'), true);
     await warming;
-    assert.equal(settings.get('ollama').api_key, 'local');
+    assert.equal(settings.get('ollama').enabled, true);
+    assert.equal(settings.get('ollama').api_key, undefined);
     assert.equal(settings.get('ollama').selected_llm_model, 'rj-twin');
     assert.equal(active.llm, 'ollama');
     assert.deepEqual(await state.getAvailableModels('llm'), [{ id: 'rj-twin', name: 'rj-twin' }]);
@@ -206,19 +218,19 @@ function readinessState(settings, models = [{ name: 'rj-twin', installed: 1 }], 
     });
 }
 
-const localOllama = { provider: 'ollama', api_key: 'local' };
-const localWhisper = { provider: 'whisper', api_key: 'local' };
+const localOllama = { provider: 'ollama', enabled: true, status: 'missing' };
+const localWhisper = { provider: 'whisper', enabled: true, status: 'missing' };
 for (const [name, settings, models, expected] of [
     ['discovery without Ollama registration is not configured', [localWhisper], undefined, false],
     ['empty Ollama registration key is not configured',
-        [{ provider: 'ollama', api_key: '' }, localWhisper], undefined, false],
+        [{ provider: 'ollama', enabled: false, status: 'missing' }, localWhisper], undefined, false],
     ['Ollama registration without installed models is not configured',
         [localOllama, localWhisper], [], false],
     ['Ollama without an STT provider is not configured', [localOllama], undefined, false],
     ['cloud provider with LLM and STT remains configured without Ollama models',
-        [{ provider: 'openai', api_key: 'fake-test-key' }], [], true],
+        [{ provider: 'openai', hasKey: true, status: 'stored' }], [], true],
     ['cloud provider without a key remains unconfigured',
-        [{ provider: 'openai', api_key: '' }, localWhisper], undefined, false],
+        [{ provider: 'openai', hasKey: false, status: 'missing' }, localWhisper], undefined, false],
     ['Whisper alone still cannot satisfy the LLM requirement', [localWhisper], [], false]
 ]) {
     test(name, async () => {

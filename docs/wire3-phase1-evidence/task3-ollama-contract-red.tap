@@ -1,0 +1,152 @@
+TAP version 13
+# Subtest: win32: healthy endpoint is usable without a local installation
+ok 1 - win32: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 6.4133
+  type: 'test'
+  ...
+# Subtest: linux: healthy endpoint is usable without a local installation
+ok 2 - linux: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 0.5855
+  type: 'test'
+  ...
+# Subtest: darwin: healthy endpoint is usable without a local installation
+ok 3 - darwin: healthy endpoint is usable without a local installation
+  ---
+  duration_ms: 0.5402
+  type: 'test'
+  ...
+# Subtest: missing binary and unhealthy endpoint remain uninstalled
+ok 4 - missing binary and unhealthy endpoint remain uninstalled
+  ---
+  duration_ms: 0.5702
+  type: 'test'
+  ...
+# Subtest: connection failure remains uninstalled without throwing
+ok 5 - connection failure remains uninstalled without throwing
+  ---
+  duration_ms: 0.59
+  type: 'test'
+  ...
+# Subtest: local binary preserves installed-but-stopped status
+ok 6 - local binary preserves installed-but-stopped status
+  ---
+  duration_ms: 1.3494
+  type: 'test'
+  ...
+# Subtest: macOS application detection still succeeds without a health probe
+ok 7 - macOS application detection still succeeds without a health probe
+  ---
+  duration_ms: 0.4555
+  type: 'test'
+  ...
+# Subtest: both status entry points expose endpoint-only models
+ok 8 - both status entry points expose endpoint-only models
+  ---
+  duration_ms: 1.2988
+  type: 'test'
+  ...
+# Subtest: discovery inserts a missing model with fallback size and remains idempotent
+ok 9 - discovery inserts a missing model with fallback size and remains idempotent
+  ---
+  duration_ms: 0.9161
+  type: 'test'
+  ...
+# Subtest: discovery refreshes an existing model and preserves a zero size
+ok 10 - discovery refreshes an existing model and preserves a zero size
+  ---
+  duration_ms: 0.6591
+  type: 'test'
+  ...
+# Subtest: readiness waits for asynchronous synchronization before returning
+ok 11 - readiness waits for asynchronous synchronization before returning
+  ---
+  duration_ms: 4.8055
+  type: 'test'
+  ...
+# Subtest: installed but stopped service is started before readiness synchronization
+ok 12 - installed but stopped service is started before readiness synchronization
+  ---
+  duration_ms: 0.4867
+  type: 'test'
+  ...
+# Subtest: first welcome submission registers, selects and warms a discovered model before a timer tick
+ok 13 - first welcome submission registers, selects and warms a discovered model before a timer tick
+  ---
+  duration_ms: 3.5923
+  type: 'test'
+  ...
+# Subtest: discovery without Ollama registration is not configured
+ok 14 - discovery without Ollama registration is not configured
+  ---
+  duration_ms: 0.3067
+  type: 'test'
+  ...
+# Subtest: empty Ollama registration key is not configured
+ok 15 - empty Ollama registration key is not configured
+  ---
+  duration_ms: 0.2202
+  type: 'test'
+  ...
+# Subtest: Ollama registration without installed models is not configured
+ok 16 - Ollama registration without installed models is not configured
+  ---
+  duration_ms: 0.2669
+  type: 'test'
+  ...
+# Subtest: Ollama without an STT provider is not configured
+ok 17 - Ollama without an STT provider is not configured
+  ---
+  duration_ms: 0.2109
+  type: 'test'
+  ...
+# Subtest: cloud provider with LLM and STT remains configured without Ollama models
+ok 18 - cloud provider with LLM and STT remains configured without Ollama models
+  ---
+  duration_ms: 0.4823
+  type: 'test'
+  ...
+# Subtest: cloud provider without a key remains unconfigured
+ok 19 - cloud provider without a key remains unconfigured
+  ---
+  duration_ms: 0.2279
+  type: 'test'
+  ...
+# Subtest: Whisper alone still cannot satisfy the LLM requirement
+ok 20 - Whisper alone still cannot satisfy the LLM requirement
+  ---
+  duration_ms: 0.2036
+  type: 'test'
+  ...
+# Subtest: Firebase login still bypasses local provider configuration
+not ok 21 - Firebase login still bypasses local provider configuration
+  ---
+  duration_ms: 0.7662
+  type: 'test'
+  location: 'C:\\Users\\User\\digital_twin\\glass\\tests\\ollama-endpoint.test.js:240:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\User\digital_twin\glass\tests\ollama-endpoint.test.js:241:12)
+    async Test.run (node:internal/test_runner/test:1110:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 20
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 92.7648

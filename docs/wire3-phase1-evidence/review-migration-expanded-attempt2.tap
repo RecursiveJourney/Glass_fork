@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: real SQLite credential fixture: fresh
+ok 1 - real SQLite credential fixture: fresh
+  ---
+  duration_ms: 782.0528
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: plaintext
+ok 2 - real SQLite credential fixture: plaintext
+  ---
+  duration_ms: 799.1925
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: owners
+ok 3 - real SQLite credential fixture: owners
+  ---
+  duration_ms: 781.353
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: ambiguous
+ok 4 - real SQLite credential fixture: ambiguous
+  ---
+  duration_ms: 785.9335
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: missing-provider
+ok 5 - real SQLite credential fixture: missing-provider
+  ---
+  duration_ms: 868.0065
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: stale-old
+ok 6 - real SQLite credential fixture: stale-old
+  ---
+  duration_ms: 849.103
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: locked
+ok 7 - real SQLite credential fixture: locked
+  ---
+  duration_ms: 847.0674
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: rollback
+ok 8 - real SQLite credential fixture: rollback
+  ---
+  duration_ms: 863.5875
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: restart
+ok 9 - real SQLite credential fixture: restart
+  ---
+  duration_ms: 842.5156
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: selection
+ok 10 - real SQLite credential fixture: selection
+  ---
+  duration_ms: 845.5484
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: repository
+ok 11 - real SQLite credential fixture: repository
+  ---
+  duration_ms: 839.2085
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: vault-unavailable
+ok 12 - real SQLite credential fixture: vault-unavailable
+  ---
+  duration_ms: 864.8975
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-store
+ok 13 - real SQLite credential fixture: legacy-store
+  ---
+  duration_ms: 885.8452
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-cleanup-failure
+ok 14 - real SQLite credential fixture: legacy-cleanup-failure
+  ---
+  duration_ms: 859.6942
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: twin
+ok 15 - real SQLite credential fixture: twin
+  ---
+  duration_ms: 827.0968
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: twin-http
+ok 16 - real SQLite credential fixture: twin-http
+  ---
+  duration_ms: 896.0057
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: mixed-local
+ok 17 - real SQLite credential fixture: mixed-local
+  ---
+  duration_ms: 853.2114
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: legacy-aes
+ok 18 - real SQLite credential fixture: legacy-aes
+  ---
+  duration_ms: 839.5326
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: schema-failure
+ok 19 - real SQLite credential fixture: schema-failure
+  ---
+  duration_ms: 841.2196
+  type: 'test'
+  ...
+# Subtest: real SQLite credential fixture: source-race
+ok 20 - real SQLite credential fixture: source-race
+  ---
+  duration_ms: 858.6436
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16893.238

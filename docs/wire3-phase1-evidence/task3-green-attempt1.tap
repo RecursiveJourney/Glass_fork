@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: public model state is metadata only while main inference can resolve its credential
+ok 1 - public model state is metadata only while main inference can resolve its credential
+  ---
+  duration_ms: 2.1256
+  type: 'test'
+  ...
+# Subtest: provider validation registers before use and never returns upstream error text
+ok 2 - provider validation registers before use and never returns upstream error text
+  ---
+  duration_ms: 0.5581
+  type: 'test'
+  ...
+# Subtest: offline startup and local service loss preserve selected model identity
+ok 3 - offline startup and local service loss preserve selected model identity
+  ---
+  duration_ms: 1.15
+  type: 'test'
+  ...
+# Subtest: raw stored-key IPC and preload APIs are absent
+ok 4 - raw stored-key IPC and preload APIs are absent
+  ---
+  duration_ms: 0.6563
+  type: 'test'
+  ...
+# Subtest: malformed preference file surfaces failure and cannot overwrite the original
+ok 5 - malformed preference file surfaces failure and cannot overwrite the original
+  ---
+  duration_ms: 4.9327
+  type: 'test'
+  ...
+# Subtest: atomic preference save surfaces rename failure and preserves last readable file
+ok 6 - atomic preference save surfaces rename failure and preserves last readable file
+  ---
+  duration_ms: 11.0663
+  type: 'test'
+  ...
+# Subtest: legacy decryption only reads an existing owner key and never creates one
+ok 7 - legacy decryption only reads an existing owner key and never creates one
+  ---
+  duration_ms: 3.0832
+  type: 'test'
+  ...
+# Subtest: startup diagnostics keep only allowlisted metadata and redact console errors
+ok 8 - startup diagnostics keep only allowlisted metadata and redact console errors
+  ---
+  duration_ms: 2.38
+  type: 'test'
+  ...
+# Subtest: auth resolves identity before any legacy-key generation or virtual-key write
+ok 9 - auth resolves identity before any legacy-key generation or virtual-key write
+  ---
+  duration_ms: 0.7439
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 105.1332

@@ -1,4 +1,5 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
+import './TwinConnectionSettings.js';
 // import { getOllamaProgressTracker } from '../../features/common/services/localProgressTracker.js'; // 제거됨
 
 export class SettingsView extends LitElement {
@@ -487,7 +488,7 @@ export class SettingsView extends LitElement {
         isContentProtectionOn: { type: Boolean, state: true },
         saving: { type: Boolean, state: true },
         providerConfig: { type: Object, state: true },
-        apiKeys: { type: Object, state: true },
+        providers: { type: Object, state: true },
         availableLlmModels: { type: Array, state: true },
         availableSttModels: { type: Array, state: true },
         selectedLlm: { type: String, state: true },
@@ -513,7 +514,7 @@ export class SettingsView extends LitElement {
         //////// after_modelStateService ////////
         this.shortcuts = {};
         this.firebaseUser = null;
-        this.apiKeys = { openai: '', gemini: '', anthropic: '', whisper: '' };
+        this.providers = {};
         this.providerConfig = {};
         this.isLoading = true;
         this.isContentProtectionOn = true;
@@ -585,7 +586,7 @@ export class SettingsView extends LitElement {
             }
             
             // Load Whisper models status only if Whisper is enabled
-            if (this.apiKeys?.whisper === 'local') {
+            if (this.providers?.whisper?.enabled) {
                 const whisperModelsResult = await window.api.settingsView.getWhisperInstalledModels();
                 if (whisperModelsResult?.success) {
                     const installedWhisperModels = whisperModelsResult.models;
@@ -624,9 +625,9 @@ export class SettingsView extends LitElement {
             if (userState && userState.isLoggedIn) this.firebaseUser = userState;
             
             if (modelSettings.success) {
-                const { config, storedKeys, availableLlm, availableStt, selectedModels } = modelSettings.data;
+                const { config, providers, availableLlm, availableStt, selectedModels } = modelSettings.data;
                 this.providerConfig = config;
-                this.apiKeys = storedKeys;
+                this.providers = providers;
                 this.availableLlmModels = availableLlm;
                 this.availableSttModels = availableStt;
                 this.selectedLlm = selectedModels.llm;
@@ -653,8 +654,8 @@ export class SettingsView extends LitElement {
 
     async handleSaveKey(provider) {
         const input = this.shadowRoot.querySelector(`#key-input-${provider}`);
-        if (!input) return;
-        const key = input.value;
+        if (!input && !['ollama', 'whisper'].includes(provider)) return;
+        const key = input?.value;
         
         // For Ollama, we need to ensure it's ready first
         if (provider === 'ollama') {
@@ -697,38 +698,39 @@ export class SettingsView extends LitElement {
         
         // For other providers, use the normal flow
         this.saving = true;
-        const result = await window.api.settingsView.validateKey({ provider, key });
-        
-        if (result.success) {
-            await this.refreshModelData();
-        } else {
-            alert(`Failed to save ${provider} key: ${result.error}`);
-            input.value = this.apiKeys[provider] || '';
+        try {
+            const result = await window.api.settingsView.validateKey({ provider, key });
+            if (result.success) await this.refreshModelData();
+            else alert('Failed to save provider key.');
+        } catch {
+            alert('Failed to save provider key.');
+        } finally {
+            input.value = '';
+            this.saving = false;
         }
-        this.saving = false;
     }
     
     async handleClearKey(provider) {
         console.log(`[SettingsView] handleClearKey: ${provider}`);
         this.saving = true;
         await window.api.settingsView.removeApiKey(provider);
-        this.apiKeys = { ...this.apiKeys, [provider]: '' };
+        this.providers = { ...this.providers, [provider]: '' };
         await this.refreshModelData();
         this.saving = false;
     }
 
     async refreshModelData() {
-        const [availableLlm, availableStt, selected, storedKeys] = await Promise.all([
+        const [availableLlm, availableStt, selected, providers] = await Promise.all([
             window.api.settingsView.getAvailableModels({ type: 'llm' }),
             window.api.settingsView.getAvailableModels({ type: 'stt' }),
             window.api.settingsView.getSelectedModels(),
-            window.api.settingsView.getAllKeys()
+            window.api.settingsView.getCredentialStatus()
         ]);
         this.availableLlmModels = availableLlm;
         this.availableSttModels = availableStt;
         this.selectedLlm = selected.llm;
         this.selectedStt = selected.stt;
-        this.apiKeys = storedKeys;
+        this.providers = providers;
         this.requestUpdate();
     }
     
@@ -1128,13 +1130,14 @@ export class SettingsView extends LitElement {
             const result = await window.api.settingsView.saveApiKey(newApiKey);
             if (result.success) {
                 console.log('API Key saved successfully via IPC.');
-                this.apiKey = newApiKey;
                 this.requestUpdate();
             } else {
-                 console.error('Failed to save API Key via IPC:', result.error);
+                 console.error('credential_save_failed');
             }
-        } catch(e) {
-            console.error('Error invoking save-api-key IPC:', e);
+        } catch {
+            console.error('credential_save_failed');
+        } finally {
+            input.value = '';
         }
     }
 
@@ -1232,7 +1235,7 @@ export class SettingsView extends LitElement {
                             return html`
                                 <div class="provider-key-group">
                                     <label>${config.name} (Local STT)</label>
-                                    ${this.apiKeys[id] === 'local' ? html`
+                                    ${this.providers[id]?.enabled ? html`
                                         <div style="padding: 8px; background: rgba(0,255,0,0.1); border-radius: 4px; font-size: 11px; color: rgba(0,255,0,0.8); margin-bottom: 8px;">
                                             ✓ Whisper is enabled
                                         </div>
@@ -1254,8 +1257,11 @@ export class SettingsView extends LitElement {
                             <label for="key-input-${id}">${config.name} API Key</label>
                             <input type="password" id="key-input-${id}"
                                 placeholder=${loggedIn ? "Using Pickle's Key" : `Enter ${config.name} API Key`} 
-                                .value=${this.apiKeys[id] || ''}
+                                .value=${''}
                             >
+                            <div role="status">${this.providers[id]?.status === 'locked' || this.providers[id]?.status === 'migration_required'
+                                ? 'Credential needs recovery. Enter a replacement or use Clear; the original is preserved.'
+                                : this.providers[id]?.hasKey ? 'Key stored · enter a replacement to change it' : 'No key stored'}</div>
                             <div class="key-buttons">
                                <button class="settings-button" @click=${() => this.handleSaveKey(id)} >Save</button>
                                <button class="settings-button danger" @click=${() => this.handleClearKey(id)} }>Clear</button>
@@ -1368,6 +1374,7 @@ export class SettingsView extends LitElement {
 
                 ${apiKeyManagementHTML}
                 ${modelSelectionHTML}
+                <twin-connection-settings></twin-connection-settings>
 
                 <div class="buttons-section" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 6px; margin-top: 6px;">
                     <button class="settings-button full-width" @click=${this.openShortcutEditor}>

@@ -13,6 +13,30 @@ const listenService = require('../features/listen/listenService');
 const permissionService = require('../features/common/services/permissionService');
 const encryptionService = require('../features/common/services/encryptionService');
 
+function trustedSettingsSender(event) {
+    try {
+        const win = BrowserWindow.fromWebContents(event.sender);
+        if (!win || win.isDestroyed() || event.senderFrame !== event.sender.mainFrame) return false;
+        const url = new URL(event.sender.getURL());
+        const pathname = decodeURIComponent(url.pathname).replace(/^\/([a-z]:)/i, '$1').replace(/\\/g, '/').toLowerCase();
+        const root = app.getAppPath().replace(/\\/g, '/').toLowerCase();
+        return url.protocol === 'file:' && pathname.startsWith(root + '/src/ui/');
+    } catch { return false; }
+}
+function credentialHandler(action, mutation = false) {
+    return async (event, payload) => {
+        if (!trustedSettingsSender(event)) return { success: false, error: 'untrusted_sender' };
+        try {
+            if (mutation) {
+                if (!payload || typeof payload !== 'object' || Array.isArray(payload) || Object.keys(payload).some(key => !['provider', 'key'].includes(key)) || typeof payload.provider !== 'string' || typeof payload.key !== 'string' || Buffer.byteLength(payload.key, 'utf8') > 8192) return { success: false, error: 'invalid_payload' };
+                require('../features/common/services/secretRedactor').registerSecrets([payload.key]);
+                if (!Object.hasOwn(modelStateService.getProviderConfig(), payload.provider) || payload.provider === 'openai-glass') return { success: false, error: 'invalid_provider' };
+            }
+            return await action(payload);
+        } catch (error) { return { success: false, error: ['revision_conflict', 'credential_locked', 'vault_unavailable', 'invalid_meeting_link', 'retry_not_available'].includes(error.code) ? error.code : 'credential_operation_failed' }; }
+    };
+}
+
 module.exports = {
   // Renderer로부터의 요청을 수신하고 서비스로 전달
   initialize() {
@@ -20,7 +44,7 @@ module.exports = {
     ipcMain.handle('settings:getPresets', async () => await settingsService.getPresets());
     ipcMain.handle('settings:get-auto-update', async () => await settingsService.getAutoUpdateSetting());
     ipcMain.handle('settings:set-auto-update', async (event, isEnabled) => await settingsService.setAutoUpdateSetting(isEnabled));  
-    ipcMain.handle('settings:get-model-settings', async () => await settingsService.getModelSettings());
+    ipcMain.handle('settings:get-model-settings', credentialHandler(() => settingsService.getModelSettings()));
     ipcMain.handle('settings:clear-api-key', async (e, { provider }) => await settingsService.clearApiKey(provider));
     ipcMain.handle('settings:set-selected-model', async (e, { type, modelId }) => await settingsService.setSelectedModel(type, modelId));    
 
@@ -118,10 +142,17 @@ module.exports = {
     });
 
     // ModelStateService
-    ipcMain.handle('model:validate-key', async (e, { provider, key }) => await modelStateService.handleValidateKey(provider, key));
-    ipcMain.handle('model:get-all-keys', async () => await modelStateService.getAllApiKeys());
-    ipcMain.handle('model:set-api-key', async (e, { provider, key }) => await modelStateService.setApiKey(provider, key));
-    ipcMain.handle('model:remove-api-key', async (e, provider) => await modelStateService.handleRemoveApiKey(provider));
+    ipcMain.handle('model:validate-key', credentialHandler(({ provider, key }) => modelStateService.handleValidateKey(provider, key), true));
+    ipcMain.handle('model:get-credential-status', credentialHandler(() => modelStateService.getCredentialStatus()));
+    const twin = () => require('../features/settings/twinSettingsService').getTwinSettingsService();
+    ipcMain.handle('twin:settings', credentialHandler(() => ({ success: true, data: twin().getState() })));
+    ipcMain.handle('twin:save', credentialHandler(async data => ({ success: true, data: await twin().save(data) })));
+    ipcMain.handle('twin:retry-join', credentialHandler(async data => ({ success: true, data: await twin().retryJoin(data) })));
+    ipcMain.handle('model:set-api-key', credentialHandler(({ provider, key }) => modelStateService.setApiKey(provider, key), true));
+    ipcMain.handle('model:remove-api-key', credentialHandler(provider => {
+        if (typeof provider !== 'string' || provider === 'openai-glass' || !Object.hasOwn(modelStateService.getProviderConfig(), provider)) return { success: false, error: 'invalid_provider' };
+        return modelStateService.handleRemoveApiKey(provider);
+    }));
     ipcMain.handle('model:get-selected-models', async () => await modelStateService.getSelectedModels());
     ipcMain.handle('model:set-selected-model', async (e, { type, modelId }) => await modelStateService.handleSetSelectedModel(type, modelId));
     ipcMain.handle('model:get-available-models', async (e, { type }) => await modelStateService.getAvailableModels(type));
