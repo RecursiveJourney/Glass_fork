@@ -161,7 +161,7 @@ module.exports = {
         if (!header || header.isDestroyed()) return { success: false, error: 'setup_unavailable' };
         require('./internalBridge').emit('window:requestVisibility', { name: 'header', visible: true });
         header.webContents.send('header:setup-requested');
-        manager.hideSettingsWindow();
+        manager.closeSettingsWindow();
         return { success: true };
       } catch { return { success: false, error: 'setup_unavailable' }; }
     });

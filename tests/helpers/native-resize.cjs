@@ -16,7 +16,7 @@ function NativeWindow(options){
 function load(name){
     if(cache.has(name))return cache.get(name);
     const file=path.join(root,'src/window',name+'.js'),mod={exports:{}};
-    const stubs={electron:{...electron,BrowserWindow:NativeWindow,app:{isPackaged:true}},
+    const stubs={electron:{...electron,BrowserWindow:NativeWindow,app:{isPackaged:true,getPath:name=>app.getPath(name)}},
         '../bridge/internalBridge':bridge,'../features/shortcuts/shortcutsService':{initialize(){},registerShortcuts(){}},
         '../features/common/repositories/permission':{}};
     vm.runInNewContext(fs.readFileSync(file,'utf8'),{module:mod,exports:mod.exports,__dirname:path.dirname(file),

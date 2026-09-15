@@ -24,7 +24,7 @@ app.whenReady().then(async () => {
     stubs['../features/common/services/localAIManager'].startPeriodicSync = () => {};
     stubs['../features/settings/settingsInsightsService'] = { getSettingsInsightsService: () => service };
     stubs['../features/listen/listenService'] = listen;
-    stubs['../window/windowManager'] = { windowPool: new Map([['settings', settings], ['header', header]]), hideSettingsWindow: () => hidden++ };
+    stubs['../window/windowManager'] = { windowPool: new Map([['settings', settings], ['header', header]]), closeSettingsWindow: () => hidden++ };
     const module = { exports: {} };
     vm.runInThisContext('(function(require,module,exports){' + source + '\n})', { filename: bridgeFile })(id => stubs[id], module, module.exports); module.exports.initialize();
     const pageDir = path.join(directory, 'src/ui'); fs.mkdirSync(pageDir, { recursive: true });

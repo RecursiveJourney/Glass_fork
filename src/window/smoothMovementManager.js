@@ -1,4 +1,4 @@
-const { getWindowBounds, setWindowBounds } = require('./windowBounds');
+const { getWindowBounds, setWindowBounds, getSizingPolicy } = require('./windowBounds');
 const { screen } = require('electron');
 
 class SmoothMovementManager {
@@ -125,6 +125,11 @@ class SmoothMovementManager {
 
     animateWindowBounds(win, targetBounds, options = {}) {
         this.cancelWindowAnimation(win);
+
+        if (getSizingPolicy(win)?.state().dragging) {
+            options.onCancel?.();
+            return;
+        }
 
         if (!this._isWindowValid(win)) {
             if (options.onComplete) options.onComplete();

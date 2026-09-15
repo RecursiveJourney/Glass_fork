@@ -86,7 +86,8 @@ function harness({ rounding = 0, deferNativeEvents = false, nativeLimits = false
         const filename = path.join(__dirname, '../src/window', name + '.js');
         const module = { exports: {} };
         const stubs = {
-            electron: { BrowserWindow: FakeWindow, screen, app: { isPackaged: true } },
+            electron: { BrowserWindow: FakeWindow, screen, app: { isPackaged: true, getPath: () => '/synthetic' } },
+            './windowSizeStore': { WindowSizeStore: class { constructor() { this.values = {}; } get(n) { return this.values[n]; } set(n,v) { this.values[n] = v; } } },
             '../bridge/internalBridge': bridge,
             '../features/shortcuts/shortcutsService': { initialize() {}, registerShortcuts() {} },
             '../features/common/repositories/permission': {}
@@ -115,6 +116,22 @@ function harness({ rounding = 0, deferNativeEvents = false, nativeLimits = false
     listen.show();
     return { api, header, listen, ask, bridge, timers, advance, load, FakeWindow };
 }
+
+test('managed user resize cancels in-flight height and survives later source/layout requests', async () => {
+    const h = harness({ rounding: 1, deferNativeEvents: true });
+    for (const name of ['listen', 'ask', 'settings']) assert.equal(h.api.windowPool.get(name).isResizable(), true, name);
+    const pending = h.api.adjustWindowHeight('listen', 650); h.advance(80);
+    h.listen.emit('will-resize'); h.listen.bounds.width = 610; h.listen.bounds.height = 470;
+    h.listen.emit('resize'); h.listen.emit('resized'); h.advance(1000);
+    assert.equal((await pending).applied, false);
+    const cache = h.load('windowBounds'); assert.equal(cache.getWindowBounds(h.listen).width, 610);
+    assert.equal((await h.api.adjustWindowHeight('listen', 224)).reason, 'user_owned');
+    h.bridge.emit('listen:source-changed', { source: 'meeting' }); h.api.moveHeaderTo(100,100); h.advance(1000);
+    assert.equal(cache.getWindowBounds(h.listen).height, 470);
+    for (let i=0;i<20;i++) { h.api.moveHeaderTo(100+i,100); h.advance(500); }
+    assert.equal(cache.getWindowBounds(h.listen).width, 610);
+    assert.equal(cache.getSizingPolicy(h.ask).state().owner, 'automatic');
+});
 
 function below(header, child) {
     assert.equal(child.getBounds().y, header.getBounds().y + header.getBounds().height + 8);
@@ -242,7 +259,7 @@ test('drag during transcript growth preserves requested height and restores resi
     below(h.header, h.listen);
     centered(h.header, h.listen);
     assert.equal(h.listen.getBounds().height, 600);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 
 test('final moved event reconciles position while a child animation is active', () => {
@@ -346,7 +363,7 @@ test('rounded Ask + Listen bounds stay bounded during drag and transcript growth
     assert.ok(l.height <= 452 && a.height <= 182);
     assert.ok(Math.abs(l.x + 400 + 8 - a.x) <= 2, 'requested widths determine side-by-side placement');
     assert.ok(l.y + l.height < 1080 && a.y + a.height < 1080);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 
 test('DPI rounding across below/above transitions does not change requested dimensions', () => {
@@ -371,7 +388,7 @@ test('meeting container attaches to the 445x47 source-control header', () => {
     assert.equal(h.listen.getBounds().height, MEETING_HEIGHT);
     below(h.header, h.listen);
     centered(h.header, h.listen);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 
 test('meeting stream/status updates with equal measurements do not restart resizing', async () => {
@@ -390,7 +407,7 @@ test('meeting stream/status updates with equal measurements do not restart resiz
     assert.match(renderer.view.render(), /aria-label="Transcript"[\s\S]*<stt-view[\s\S]*aria-label="Suggestions"[\s\S]*<suggestions-view/,
         'streaming keeps both panes in the meeting template');
     assert.equal(h.listen.getBounds().height, MEETING_HEIGHT);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
     below(h.header, h.listen);
     centered(h.header, h.listen);
     assert.equal(h.timers.size, 0, 'stream updates must leave no stale resize animations');
@@ -433,7 +450,7 @@ for (const rounding of [0, 2]) {
             const origin = onLeftDisplay ? -1920 : 0;
             assert.ok(listen.x >= origin && listen.x + listen.width <= origin + 1920);
             assert.ok(listen.y >= 0 && listen.y + listen.height <= 1080);
-            assert.equal(h.listen.isResizable(), false);
+            assert.equal(h.listen.isResizable(), true);
         }
         const settled = h.listen.getBounds();
         h.advance(1000);
@@ -508,19 +525,19 @@ test('Stop retains meeting geometry and switching to local resizes from local co
     assert.equal(h.listen.getBounds().height, 360, 'local transcript uses its own content height');
     below(h.header, h.listen);
     centered(h.header, h.listen);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 
 
-test('native-style locked min/max cannot replace intended limits', async () => {
+test('managed native limits stay user-resizable while automatic intent is preserved', async () => {
     const h = harness({ rounding: 1, nativeLimits: true });
     let result = h.api.adjustWindowHeight('listen', 223); h.advance(600);
     assert.equal((await result).applied, true);
-    assert.equal(h.listen.getMaximumSize()[1], 224);
+    assert.equal(h.listen.getMaximumSize()[1], 1080);
     result = h.api.adjustWindowHeight('listen', 614); h.advance(600);
     assert.equal((await result).applied, true);
     assert.equal(h.listen.getBounds().height, 615);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
     result = h.api.adjustWindowHeight('listen', 1000); h.advance(600);
     assert.equal((await result).applied, false);
     assert.equal(h.listen.getBounds().height, 901);
@@ -531,7 +548,7 @@ test('drag during resize settles applied acknowledgement and restores the resize
     h.api.moveHeaderTo(650, 80); h.advance(600);
     assert.equal((await result).applied, true);
     assert.equal(h.listen.getBounds().height, 614);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 test('a superseded resize settles false and the latest request owns the lock', async () => {
     const h = harness({ nativeLimits: true });
@@ -540,7 +557,7 @@ test('a superseded resize settles false and the latest request owns the lock', a
     assert.equal((await first).applied, false);
     assert.equal((await second).applied, true);
     assert.equal(h.listen.getBounds().height, 580);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
 });
 test('native rejection is reported using actual bounds, not requested-size bookkeeping', async () => {
     const h = harness();
@@ -549,7 +566,7 @@ test('native rejection is reported using actual bounds, not requested-size bookk
     const result = h.api.adjustWindowHeight('listen', 614); h.advance(600);
     const ack = await result;
     assert.equal(ack.applied, false); assert.equal(ack.height, 225);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
     assert.equal(h.load('windowBounds').getWindowBounds(h.listen).height, 225);
 });
 test('native setter failure settles the IPC response and restores the lock', async () => {
@@ -557,7 +574,7 @@ test('native setter failure settles the IPC response and restores the lock', asy
     h.listen.setBounds = () => { throw Error('synthetic native failure'); };
     const result = h.api.adjustWindowHeight('listen', 614); h.advance(600);
     assert.equal((await result).applied, false);
-    assert.equal(h.listen.isResizable(), false);
+    assert.equal(h.listen.isResizable(), true);
     assert.equal(h.timers.size, 0);
 });
 test('missing windows and invalid sizes return a failed acknowledgement', async () => {
@@ -595,6 +612,39 @@ test('a rejected header width is reconciled even when the requested height appli
 });
 
 function overlaps(a,b) { return a.x<b.x+b.width && b.x<a.x+a.width && a.y<b.y+b.height && b.y<a.y+a.height; }
+test('automatic movement requested during a user resize does not survive the gesture',()=>{
+ const h=harness();const manager=h.load('smoothMovementManager');
+ const movement=new manager(h.api.windowPool);let cancelled=0;
+ h.listen.emit('will-resize');
+ movement.animateWindowBounds(h.listen,{...h.listen.getBounds(),x:700,height:700},{onCancel:()=>cancelled++});
+ assert.equal(movement.animationTargets.size,0);
+ assert.equal(cancelled,1);
+ h.listen.emit('resized');h.advance(600);
+ assert.equal(movement.animationTimers.size,0);
+});
+
+test('Settings click pins through hover-out and blur; second click hides and restores hover behavior',()=>{
+ const h=harness(),settings=h.api.windowPool.get('settings');
+ h.api.showSettingsWindow();h.api.hideSettingsWindow();h.advance(100);
+ h.api.toggleSettingsPinned();h.advance(500);
+ h.api.hideSettingsWindow();settings.emit('blur');h.header.emit('blur');h.advance(500);
+ assert.equal(settings.isVisible(),true);
+ h.api.toggleSettingsPinned();assert.equal(settings.isVisible(),false);
+ h.api.showSettingsWindow();assert.equal(settings.isVisible(),true);
+ h.api.hideSettingsWindow();h.advance(199);assert.equal(settings.isVisible(),true);
+ h.advance(1);assert.equal(settings.isVisible(),false);
+});
+
+test('unpinned Settings resize cancels pending hover hide and ignores hover-out until completed',()=>{
+ const h=harness(),settings=h.api.windowPool.get('settings');
+ h.api.showSettingsWindow();h.api.hideSettingsWindow();h.advance(100);
+ settings.emit('will-resize');h.advance(1000);assert.equal(settings.isVisible(),true);
+ h.api.hideSettingsWindow();h.advance(1000);assert.equal(settings.isVisible(),true);
+ settings.bounds.width=520;settings.bounds.height=440;settings.emit('resized');h.advance(1000);
+ assert.equal(settings.isVisible(),true);
+ assert.equal(h.load('windowBounds').getWindowBounds(settings).width,520);
+ h.api.hideSettingsWindow();h.advance(200);assert.equal(settings.isVisible(),false);
+});
 test('Meeting Settings avoids Listen and Ask at screen edges and follows layout changes',()=>{
  const h=meetingHarness({rounding:2});
  h.bridge.emit('listen:source-changed',{source:'meeting'});

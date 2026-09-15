@@ -81,8 +81,10 @@ export class SummaryView extends LitElement {
             padding: 12px 16px 16px 16px;
             position: relative;
             z-index: 1;
-            min-height: 150px;
-            max-height: 600px;
+            height: var(--local-pane-height,auto);
+            min-height: var(--local-pane-min,150px);
+            max-height: var(--local-pane-max,600px);
+            box-sizing: var(--local-pane-box,content-box);
             flex: 1;
         }
 
@@ -545,4 +547,4 @@ export class SummaryView extends LitElement {
     }
 }
 
-customElements.define('summary-view', SummaryView); 
+customElements.define('summary-view', SummaryView);

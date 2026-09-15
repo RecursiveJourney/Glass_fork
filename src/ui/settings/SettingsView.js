@@ -1,10 +1,14 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
+import '../app/WindowSizeControls.js';
 import './TwinConnectionSettings.js';
 import './TwinInsightsSettings.js';
 // import { getOllamaProgressTracker } from '../../features/common/services/localProgressTracker.js'; // 제거됨
 
 export class SettingsView extends LitElement {
     static styles = css`
+        :host([user-sized]) { width:100%; height:100%; min-height:0; }
+        :host([user-sized]) .settings-container { min-height:0; overflow-y:auto; }
+
         * {
             font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             cursor: default;
@@ -13,7 +17,7 @@ export class SettingsView extends LitElement {
 
         :host {
             display: block;
-            width: 240px;
+            width: 100%;
             height: 100%;
             color: white;
         }
@@ -1184,7 +1188,7 @@ export class SettingsView extends LitElement {
     render() {
         if (this.isLoading) {
             return html`
-                <div class="settings-container">
+                <div class="settings-container"><window-size-controls></window-size-controls>
                     <div class="loading-state">
                         <div class="loading-spinner"></div>
                         <span>Loading...</span>
@@ -1355,7 +1359,7 @@ export class SettingsView extends LitElement {
         `;
 
         return html`
-            <div class="settings-container">
+            <div class="settings-container"><window-size-controls></window-size-controls>
                 <div class="header-section">
                     <div>
                         <h1 class="app-title">Pickle Glass</h1>

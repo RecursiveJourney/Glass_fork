@@ -6,6 +6,30 @@ const path = require('node:path');
 const { EventEmitter } = require('node:events');
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 
+test('rapid Listen requests then Stop and Done publish idle for Local and Meeting headers',async()=>{
+ for(const source of ['local','meeting']){
+  const h=harness();await h.service.selectSource(source);
+  for(let round=0;round<3;round++){
+   await Promise.all(Array.from({length:4},()=>h.service.handleListenRequest('Listen')));
+   await h.service.handleListenRequest('Stop');
+  }
+  assert.equal(h.service.state.phase,'stopped');const stoppedVersion=h.service.state.version;
+  const done=await h.service.handleListenRequest('Done');
+  assert.equal(done.success,true);assert.equal(done.state.phase,'idle');assert.ok(done.state.version>stoppedVersion);
+  assert.equal(h.sent.filter(e=>e.channel==='listen:state'&&e.header).at(-1).data.phase,'idle');
+ }
+});
+
+test('Done preserves cleanup failures and cannot reset a newer lifecycle',async()=>{
+ const failed=harness({closeThrows:true});await failed.service.handleListenRequest('Listen');
+ const result=await failed.service.handleListenRequest('Done');assert.equal(result.success,false);
+ assert.equal(result.state.phase,'stopped');assert.equal(result.state.error,'local_cleanup_failed');
+ const h=harness(),gate=deferred();h.service.publish({phase:'stopped'});
+ const old=h.service.result(true);h.service.closeSession=()=>gate.promise;
+ const done=h.service.handleListenRequest('Done');h.service.publish({phase:'active',lifecycleId:10});
+ gate.resolve(old);await done;assert.equal(h.service.state.phase,'active');
+});
+
 test('transcription status reports actual loaded provider and excludes its credential', () => {
     const { service } = harness();
     service.state = { ...service.state, source: 'local', phase: 'active' };

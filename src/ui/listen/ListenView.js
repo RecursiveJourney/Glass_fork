@@ -1,10 +1,19 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
+import '../app/WindowSizeControls.js';
 import './stt/SttView.js';
 import './summary/SummaryView.js';
 import './meeting/SuggestionsView.js';
 
 export class ListenView extends LitElement {
     static styles = css`
+        :host([user-sized]) { height:100%; min-height:0; }
+        :host([user-sized]) .assistant-container { height:100%; min-height:0; overflow-y:auto; }
+        :host([user-sized]) .top-bar { flex-shrink:0; }
+        :host([user-sized]) .meeting-layout section { display:flex; flex-direction:column; flex:1 1 0; min-height:80px; }
+        :host([user-sized]) .meeting-layout stt-view, :host([user-sized]) .meeting-layout suggestions-view { flex:1; min-height:0; height:0; --meeting-pane-height:100%; --meeting-pane-max:none; }
+        :host([user-sized]) .assistant-container > stt-view, :host([user-sized]) .assistant-container > summary-view { flex:1; min-height:0; height:0; --local-pane-height:100%; --local-pane-min:0; --local-pane-max:none; --local-pane-box:border-box; }
+        :host([user-sized]) .assistant-container > [data-inactive] { display:none; }
+
         .meeting-section-title { margin:0; padding:10px 12px 4px; font-size:11px; line-height:16px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#bdcbd4; }
         .assistant-container.meeting-layout { height:auto; }
         .meeting-layout section { min-height:0; border-top:1px solid rgba(255,255,255,.09); }
@@ -12,7 +21,7 @@ export class ListenView extends LitElement {
         .meeting-note { padding:8px 12px; font-size:12px; color:#f0c5a5; }
         :host {
             display: block;
-            width: 400px;
+            width: 100%;
             transform: translate3d(0, 0, 0);
             backface-visibility: hidden;
             transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease-out;
@@ -537,6 +546,7 @@ export class ListenView extends LitElement {
     }
 
     adjustWindowHeight() {
+        if (this.sizeOwner === 'user') return;
         if (!window.api) return;
 
         this.updateComplete
@@ -558,7 +568,7 @@ export class ListenView extends LitElement {
 
                 const contentHeight = activeContent.scrollHeight;
 
-                const idealHeight = topBarHeight + contentHeight;
+                const idealHeight = topBarHeight + contentHeight + (this.shadowRoot.querySelector('window-size-controls')?.offsetHeight || 0);
 
                 const targetHeight = Math.min(700, idealHeight);
 
@@ -635,7 +645,7 @@ export class ListenView extends LitElement {
 
     renderMeeting() {
         const snapshot = this.listenState.feed?.snapshot || null;
-        return html`<div class="assistant-container meeting-layout">
+        return html`<div class="assistant-container meeting-layout"><window-size-controls></window-size-controls>
             <div class="top-bar"><div class="bar-left-text">${this.isHovering ? "Copy Transcript and Insights" : "Meeting · " + this.meetingStatus()} <span class="meeting-elapsed">${this.elapsedTime}</span></div>
                     <div class="bar-controls">
                         <button class="toggle-button" @click=${this.toggleViewMode}>
@@ -765,7 +775,7 @@ export class ListenView extends LitElement {
     }
 
     render() {
-        if (!this.listenState && window.api?.listen) return html`<div class="assistant-container"><div class="top-bar">Loading Listen state…</div></div>`;
+        if (!this.listenState && window.api?.listen) return html`<div class="assistant-container"><window-size-controls></window-size-controls><div class="top-bar">Loading Listen state…</div></div>`;
         if (this.listenState?.source === 'meeting') return this.renderMeeting();
         const displayText = this.isHovering
             ? this.viewMode === 'transcript'
@@ -776,7 +786,7 @@ export class ListenView extends LitElement {
             : `Glass is Listening ${this.elapsedTime}`;
 
         return html`
-            <div class="assistant-container">
+            <div class="assistant-container"><window-size-controls></window-size-controls>
                 <div class="top-bar">
                     <div class="bar-left-text">
                         <span class="bar-left-text-content ${this.isAnimating ? 'slide-in' : ''}">${displayText}</span>
@@ -817,11 +827,13 @@ export class ListenView extends LitElement {
                 </div>
 
                 <stt-view 
+                    ?data-inactive=${this.viewMode !== 'transcript'}
                     .isVisible=${this.viewMode === 'transcript'}
                     @stt-messages-updated=${this.handleSttMessagesUpdated}
                 ></stt-view>
 
                 <summary-view 
+                    ?data-inactive=${this.viewMode !== 'insights'}
                     .isVisible=${this.viewMode === 'insights'}
                     .hasCompletedRecording=${this.hasCompletedRecording}
                 ></summary-view>

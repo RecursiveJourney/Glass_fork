@@ -1,4 +1,5 @@
 import { html, css, LitElement } from '../../ui/assets/lit-core-2.7.4.min.js';
+import '../app/WindowSizeControls.js';
 import { parser, parser_write, parser_end, default_renderer } from '../../ui/assets/smd.js';
 
 export class AskView extends LitElement {
@@ -17,6 +18,11 @@ export class AskView extends LitElement {
     };
 
     static styles = css`
+        :host([user-sized]) { height:100%; min-height:0; }
+        :host([user-sized]) .ask-container { height:100%; min-height:0; overflow-y:auto; }
+        :host([user-sized]) .response-container { flex:1 1 auto; min-height:0; max-height:none; }
+        :host([user-sized]) .response-header, :host([user-sized]) .text-input-container { flex-shrink:0; }
+
         :host {
             display: block;
             width: 100%;
@@ -1006,6 +1012,12 @@ export class AskView extends LitElement {
             return;
         }
         
+        if (this.currentResponse?.trim() === '[no suggestion]') {
+            responseContainer.innerHTML = '<div class="empty-state" role="status">No suggestion right now. Ask a question when you’re ready.</div>';
+            this.resetStreamingParser();
+            return;
+        }
+
         // If there is no response, show empty state
         if (!this.currentResponse) {
             responseContainer.innerHTML = `<div class="empty-state">...</div>`;
@@ -1333,7 +1345,7 @@ export class AskView extends LitElement {
         const headerText = this.isLoading ? 'Thinking...' : 'AI Response';
 
         return html`
-            <div class="ask-container">
+            <div class="ask-container"><window-size-controls></window-size-controls>
                 <!-- Response Header -->
                 <div class="response-header ${!hasResponse ? 'hidden' : ''}">
                     <div class="header-left">
@@ -1405,6 +1417,7 @@ export class AskView extends LitElement {
 
     // Dynamically resize the BrowserWindow to fit current content
     adjustWindowHeight() {
+        if (this.sizeOwner === 'user') return;
         if (!window.api) return;
 
         this.updateComplete.then(() => {
@@ -1418,7 +1431,7 @@ export class AskView extends LitElement {
             const responseHeight = responseEl.scrollHeight;
             const inputHeight = (inputEl && !inputEl.classList.contains('hidden')) ? inputEl.offsetHeight : 0;
 
-            const idealHeight = headerHeight + responseHeight + inputHeight;
+            const idealHeight = headerHeight + responseHeight + inputHeight + (this.shadowRoot.querySelector('window-size-controls')?.offsetHeight || 0);
 
             const targetHeight = Math.min(700, idealHeight);
 

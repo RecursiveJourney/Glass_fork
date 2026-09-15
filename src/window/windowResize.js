@@ -1,8 +1,9 @@
-const { getWindowSizeLimits, restoreWindowSizeLimits, reconcileRejectedSize } = require('./windowBounds');
+const { getWindowSizeLimits, restoreWindowSizeLimits, reconcileRejectedSize, getSizingPolicy } = require('./windowBounds');
 
 // Resolve only after native application or cancellation; no raw errors cross IPC.
 function animateResize(win, target, movement, afterResize, requestedHeight, requestedWidth) {
     if (!win || win.isDestroyed()) return Promise.resolve({ applied: false, height: null });
+    if (getSizingPolicy(win)?.state().owner === 'user') return Promise.resolve({ applied: false, height: win.getBounds().height, reason: 'user_owned' });
     movement.cancelWindowAnimation(win);
     getWindowSizeLimits(win);
     const wasResizable = win.isResizable();
@@ -32,7 +33,7 @@ function animateResize(win, target, movement, afterResize, requestedHeight, requ
         win.once('closed', onClosed);
         try {
             if (!wasResizable) win.setResizable(true);
-            restoreWindowSizeLimits(win);
+            if (!getSizingPolicy(win)) restoreWindowSizeLimits(win);
             const bounds = target();
             movement.animateWindowBounds(win, bounds, {
                 onComplete: () => settle(true), onCancel: () => settle(false)

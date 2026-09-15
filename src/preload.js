@@ -2,6 +2,15 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
+  windowSizing: {
+    get: () => ipcRenderer.invoke('window:sizing-get'),
+    reset: () => ipcRenderer.invoke('window:sizing-reset'),
+    onChanged: callback => {
+      const listener = (_event, state) => callback(state);
+      ipcRenderer.on('window:sizing-changed', listener);
+      return () => ipcRenderer.removeListener('window:sizing-changed', listener);
+    },
+  },
   // Platform information for renderer processes
   platform: {
     isLinux: process.platform === 'linux',
@@ -113,6 +122,7 @@ contextBridge.exposeInMainWorld('api', {
     sendHeaderAnimationFinished: (state) => ipcRenderer.send('header-animation-finished', state),
 
     // Settings Window Management
+    toggleSettingsPinned: () => ipcRenderer.send('settings:toggle-pin'),
     cancelHideSettingsWindow: () => ipcRenderer.send('cancel-hide-settings-window'),
     showSettingsWindow: () => ipcRenderer.send('show-settings-window'),
     hideSettingsWindow: () => ipcRenderer.send('hide-settings-window'),

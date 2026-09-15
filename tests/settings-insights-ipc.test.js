@@ -11,7 +11,7 @@ function harness() {
     stubs['../features/common/services/localAIManager'].startPeriodicSync = () => {};
     stubs['../features/settings/settingsInsightsService'] = { getSettingsInsightsService: () => ({ read: async () => ({ server: { state: 'reachable' } }) }) };
     const listen = stubs['../features/listen/listenService']; listen.getListenState = () => ({ phase: 'idle' });
-    stubs['../window/windowManager'] = { windowPool: new Map([['settings', settings], ['header', header]]), hideSettingsWindow: () => sent.push({ channel: 'hidden-settings' }) };
+    stubs['../window/windowManager'] = { windowPool: new Map([['settings', settings], ['header', header]]), closeSettingsWindow: () => sent.push({ channel: 'hidden-settings' }) };
     const module = { exports: {} };
     vm.runInThisContext('(function(require,module,exports){' + source + '\n})', { filename })(id => stubs[id], module, module.exports); module.exports.initialize();
     return { handlers, event: { sender, senderFrame: frame }, sent, listen };

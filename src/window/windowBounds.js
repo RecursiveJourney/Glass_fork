@@ -3,6 +3,13 @@
 // Keep app-requested sizes; continue reading actual positions for native dragging.
 const requestedSizes = new WeakMap();
 const sizeLimits = new WeakMap();
+const sizingPolicies = new WeakMap();
+function registerSizingPolicy(win, policy) { sizingPolicies.set(win, policy); }
+function getSizingPolicy(win) { return sizingPolicies.get(win); }
+function adoptUserBounds(win) {
+    const { width, height } = win.getBounds();
+    requestedSizes.set(win, { width, height });
+}
 
 function getWindowBounds(win) {
     const actual = win.getBounds();
@@ -14,7 +21,10 @@ function getWindowBounds(win) {
 }
 
 function setWindowBounds(win, bounds) {
-    const next = { ...getWindowBounds(win), ...bounds };
+    let next = { ...getWindowBounds(win), ...bounds };
+    const policy = sizingPolicies.get(win);
+    if (policy) next = policy.project(next);
+    if (!next) return;
     // Store before native calls: resize/move events may run layout synchronously.
     requestedSizes.set(win, { width: next.width, height: next.height });
     win.setBounds(next);
@@ -49,5 +59,5 @@ function reconcileRejectedSize(win) {
         height: prior && Math.abs(height - prior.height) <= 2 ? prior.height : height
     });
 }
-module.exports = { registerWindowSizeLimits, getWindowBounds, setWindowBounds, getWindowSizeLimits, restoreWindowSizeLimits, reconcileRejectedSize };
+module.exports = { registerWindowSizeLimits, getWindowBounds, setWindowBounds, getWindowSizeLimits, restoreWindowSizeLimits, reconcileRejectedSize, registerSizingPolicy, getSizingPolicy, adoptUserBounds };
 

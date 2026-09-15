@@ -5,7 +5,7 @@ export class SuggestionsView extends LitElement {
     static properties = { snapshot: { type: Object } };
     static styles = css`
         :host { display:block; min-height:0; color:#f0f5f7; }
-        .suggestions-container { height:200px; max-height:260px; overflow-y:auto; overflow-anchor:none; padding:8px 12px; box-sizing:border-box; user-select:text; }
+        .suggestions-container { height:var(--meeting-pane-height,200px); max-height:var(--meeting-pane-max,260px); overflow-y:auto; overflow-anchor:none; padding:8px 12px; box-sizing:border-box; user-select:text; }
         article { border-left:2px solid #93ceb7; padding:10px 12px; margin:0 0 10px; background:rgba(147,206,183,.07); border-radius:2px 8px 8px 2px; font-size:13px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
         .empty { padding:10px 12px; color:#b2bec5; font-size:12px; }
     `;

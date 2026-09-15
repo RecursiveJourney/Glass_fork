@@ -16,8 +16,10 @@ export class SttView extends LitElement {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            min-height: 150px;
-            max-height: 600px;
+            height: var(--local-pane-height,auto);
+            min-height: var(--local-pane-min,150px);
+            max-height: var(--local-pane-max,600px);
+            box-sizing: var(--local-pane-box,content-box);
             position: relative;
             z-index: 1;
             flex: 1;
@@ -77,7 +79,7 @@ export class SttView extends LitElement {
             font-size: 12px;
             font-style: italic;
         }
-        .meeting-scroll { height:280px; max-height:320px; min-height:0; box-sizing:border-box; overflow-anchor:none; user-select:text; }
+        .meeting-scroll { height:var(--meeting-pane-height,280px); max-height:var(--meeting-pane-max,320px); min-height:0; box-sizing:border-box; overflow-anchor:none; user-select:text; }
         .meeting-row { max-width:100%; align-self:stretch; background:rgba(255,255,255,.07); white-space:pre-wrap; }
         .speaker-label { display:block; font-size:11px; font-weight:600; color:#a8ceeb; margin-bottom:3px; }
     `;

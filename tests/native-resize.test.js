@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {spawn}=require('node:child_process'),path=require('node:path');
-test('native locked window grows from 224px to Meeting while preserving configured limits',{timeout:30000},async()=>{
+test('native resizable window grows to Meeting while preserving automatic and display limits',{timeout:30000},async()=>{
     const env={...process.env};delete env.ELECTRON_RUN_AS_NODE;
     const child=spawn(require('electron'),[path.join(__dirname,'helpers/native-resize.cjs')],{env,windowsHide:true,stdio:['ignore','pipe','pipe']});
     let output='';child.stdout.on('data',c=>output+=c);child.stderr.resume();
@@ -18,13 +18,13 @@ test('native locked window grows from 224px to Meeting while preserving configur
     console.log('Native header at 175%: '+JSON.stringify({initial:r.headerInitial,grown:r.headerGrown,viewport:r.headerViewport,repeated:r.headerRepeated}));
     assert.ok(Math.abs(r.locked.height-223)<=2,JSON.stringify(r));
     assert.ok(Math.abs(r.grown.height-614)<=2,'614px requested but OS remained at '+r.grown.height+'px; '+JSON.stringify(r));
-    assert.equal(r.grown.resizable,false);assert.equal(r.grown.ack.applied,true);
+    assert.equal(r.grown.resizable,true);assert.equal(r.grown.ack.applied,true);
     assert.ok(Math.abs(r.grown.ack.height-r.grown.height)<=2);
-    assert.ok(Math.abs(r.capped.height-900)<=2,'original maxHeight 900 survives unlocking');
+    assert.ok(Math.abs(r.capped.height-Math.min(900,r.locked.max[1]))<=2,'original maxHeight 900 survives unlocking');
     const intersects=(a,b)=>a.x<b.x+b.width&&b.x<a.x+a.width&&a.y<b.y+b.height&&b.y<a.y+a.height;
     assert.equal(intersects(r.meetingSettings.settings,r.meetingSettings.listen),false,'native Settings avoids Meeting overlay');
     assert.equal(intersects(r.meetingSettingsWithAsk.settings,r.meetingSettingsWithAsk.listen),false);
     assert.equal(intersects(r.meetingSettingsWithAsk.settings,r.meetingSettingsWithAsk.ask),false);
     console.log('Native Meeting Settings at 175%: '+JSON.stringify({withoutAsk:r.meetingSettings,withAsk:r.meetingSettingsWithAsk}));
-    assert.equal(r.capped.resizable,false);assert.equal(r.capped.ack.applied,false,'clamped request is not accepted as 1000px');
+    assert.equal(r.capped.resizable,true);assert.equal(r.capped.ack.applied,false,'clamped request is not accepted as 1000px');
 });

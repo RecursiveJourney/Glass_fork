@@ -153,7 +153,12 @@ class ListenService {
             }
         } else if (action === 'Stop' || action === 'Done') {
             result = await this.closeSession();
-            if (action === 'Done') internalBridge.emit('window:requestVisibility', { name: 'listen', visible: false });
+            if (action === 'Done' && result.success && this.state.phase === 'stopped'
+                && this.state.lifecycleId === result.state.lifecycleId) {
+                this.publish({ phase: 'idle', error: null });
+                result = this.result(true);
+                internalBridge.emit('window:requestVisibility', { name: 'listen', visible: false });
+            }
         } else result = this.result(false, 'invalid_listen_action');
         const { windowPool } = require('../../window/windowManager');
         const header = windowPool?.get('header');

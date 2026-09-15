@@ -584,6 +584,11 @@ export class MainHeader extends LitElement {
         }
     }
 
+    toggleSettingsPinned() {
+        if (this.wasJustDragged) return;
+        window.api?.mainHeader.toggleSettingsPinned();
+    }
+
     hideSettingsWindow() {
         if (this.wasJustDragged) return;
         if (window.api) {
@@ -752,8 +757,9 @@ export class MainHeader extends LitElement {
                 </div>
 
                 <button 
-                    class="settings-button" aria-label="Settings" title="Settings"
-                    @click=${(e) => this.showSettingsWindow(e.currentTarget)}
+                    class="settings-button" aria-label="Settings"
+                    @click=${() => this.toggleSettingsPinned()}
+                    title="Click to pin Settings open; click again to close"
                     @mousedown=${event => event.stopPropagation()}
                     @mouseenter=${(e) => this.showSettingsWindow(e.currentTarget)}
                     @mouseleave=${() => this.hideSettingsWindow()}

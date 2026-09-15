@@ -1,5 +1,8 @@
 const { getWindowBounds, setWindowBounds, registerWindowSizeLimits } = require('./windowBounds');
 const { animateResize } = require('./windowResize');
+const { attachWindowSizing } = require('./windowSizing');
+const { WindowSizeStore } = require('./windowSizeStore');
+const { getSizingPolicy } = require('./windowBounds');
 const { BrowserWindow, globalShortcut, screen, app, shell } = require('electron');
 const WindowLayoutManager = require('./windowLayoutManager');
 const SmoothMovementManager = require('./smoothMovementManager');
@@ -30,9 +33,19 @@ if (shouldUseLiquidGlass) {
 }
 /* ────────────────[ GLASS BYPASS ]─────────────── */
 
-function createManagedWindow(options) {
+let windowSizeStore;
+const sizingDefaults = { listen: { width: 400, height: 300, min: [400,180] }, ask: { width: 600, height: 180, min: [400,160] }, settings: { width: 240, height: 400, min: [240,240] } };
+function createManagedWindow(options, name) {
+    const sizing = sizingDefaults[name];
+    if (sizing) options = { ...options, resizable: true, minWidth: sizing.min[0], minHeight: sizing.min[1] };
     const win = new BrowserWindow(options);
     registerWindowSizeLimits(win, options);
+    if (sizing) {
+        windowSizeStore ||= new WindowSizeStore(path.join(app.getPath('userData'), 'window-sizes.json'));
+        attachWindowSizing(win, { name, defaults: { width: sizing.width, height: sizing.height }, min: sizing.min, store: windowSizeStore,
+            cancel: () => movementManager?.cancelWindowAnimation(win),
+            workArea: bounds => screen.getDisplayNearestPoint({ x: bounds.x + bounds.width/2, y: bounds.y + bounds.height/2 }).workArea });
+    }
     return win;
 }
 
@@ -43,6 +56,35 @@ let currentHeaderState = 'apikey';
 const windowPool = new Map();
 
 let settingsHideTimer = null;
+let settingsPinned = false;
+
+function clearSettingsHideTimer() {
+    clearTimeout(settingsHideTimer);
+    settingsHideTimer = null;
+}
+
+function settingsHoverHideBlocked(win) {
+    return settingsPinned || getSizingPolicy(win)?.state().dragging;
+}
+
+function closeSettingsWindow() {
+    settingsPinned = false;
+    clearSettingsHideTimer();
+    const win = windowPool.get('settings');
+    if (win && !win.isDestroyed()) {
+        win.setAlwaysOnTop(false);
+        win.hide();
+    }
+}
+
+function toggleSettingsPinned() {
+    const win = windowPool.get('settings');
+    if (!win || win.isDestroyed()) return;
+    if (settingsPinned) return closeSettingsWindow();
+    settingsPinned = true;
+    clearSettingsHideTimer();
+    showSettingsWindow();
+}
 
 
 let layoutManager = null;
@@ -289,6 +331,8 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
         return;
     }
 
+    if (shouldBeVisible) getSizingPolicy(win)?.restore();
+
     if (name !== 'settings') {
         const isCurrentlyVisible = win.isVisible();
         if (isCurrentlyVisible === shouldBeVisible) {
@@ -329,12 +373,13 @@ async function handleWindowVisibilityRequest(windowPool, layoutManager, movement
                 console.warn('[WindowManager] Could not calculate settings window position.');
             }
         } else {
+            if (settingsHoverHideBlocked(win)) return;
             // Hide after a delay
             if (settingsHideTimer) {
                 clearTimeout(settingsHideTimer);
             }
             settingsHideTimer = setTimeout(() => {
-                if (win && !win.isDestroyed()) {
+                if (win && !win.isDestroyed() && !settingsHoverHideBlocked(win)) {
                     win.setAlwaysOnTop(false);
                     win.hide();
                 }
@@ -485,7 +530,7 @@ function createFeatureWindows(header, namesToCreate) {
                 const listen = createManagedWindow({
                     ...commonChildOptions, width:400,minWidth:400,maxWidth:900,
                     maxHeight:900,
-                });
+                }, 'listen');
                 listen.setContentProtection(isContentProtectionOn);
                 listen.setVisibleOnAllWorkspaces(true,{visibleOnFullScreen:true});
                 if (process.platform === 'darwin') {
@@ -516,7 +561,7 @@ function createFeatureWindows(header, namesToCreate) {
 
             // ask
             case 'ask': {
-                const ask = createManagedWindow({ ...commonChildOptions, width:600 });
+                const ask = createManagedWindow({ ...commonChildOptions, width:600 }, 'ask');
                 ask.setContentProtection(isContentProtectionOn);
                 ask.setVisibleOnAllWorkspaces(true,{visibleOnFullScreen:true});
                 if (process.platform === 'darwin') {
@@ -549,7 +594,7 @@ function createFeatureWindows(header, namesToCreate) {
 
             // settings
             case 'settings': {
-                const settings = createManagedWindow({ ...commonChildOptions, width:240, maxHeight:400, parent:undefined });
+                const settings = createManagedWindow({ ...commonChildOptions, width:240, height:400, maxHeight:400, parent:undefined }, 'settings');
                 settings.setContentProtection(isContentProtectionOn);
                 settings.setVisibleOnAllWorkspaces(true,{visibleOnFullScreen:true});
                 if (process.platform === 'darwin') {
@@ -574,6 +619,7 @@ function createFeatureWindows(header, namesToCreate) {
                     });
                 }
                 windowPool.set('settings', settings);  
+                settings.on('will-resize', clearSettingsHideTimer);
 
                 if (!app.isPackaged) {
                     settings.webContents.openDevTools({ mode: 'detach' });
@@ -634,6 +680,7 @@ function createFeatureWindows(header, namesToCreate) {
 }
 
 function destroyFeatureWindows() {
+    settingsPinned = false;
     const featureWindows = ['listen','ask','settings','shortcut-settings'];
     if (settingsHideTimer) {
         clearTimeout(settingsHideTimer);
@@ -780,6 +827,7 @@ function setupIpcHandlers(windowPool, layoutManager) {
     });
 
     screen.on('display-removed', (event, oldDisplay) => {
+        for (const win of windowPool.values()) getSizingPolicy(win)?.restore();
         console.log('[Display] Display removed:', oldDisplay.id);
         const header = windowPool.get('header');
 
@@ -795,6 +843,7 @@ function setupIpcHandlers(windowPool, layoutManager) {
     });
 
     screen.on('display-metrics-changed', (event, display, changedMetrics) => {
+        for (const win of windowPool.values()) getSizingPolicy(win)?.restore();
         // 레이아웃 업데이트 함수를 새 버전으로 호출
         updateChildWindowLayouts(false);
     });
@@ -821,6 +870,8 @@ module.exports = {
     resizeHeaderWindow,
     getContentProtectionStatus,
     showSettingsWindow,
+    toggleSettingsPinned,
+    closeSettingsWindow,
     hideSettingsWindow,
     cancelHideSettingsWindow,
     openLoginPage,
