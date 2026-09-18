@@ -219,6 +219,15 @@ app.whenReady().then(async () => {
             for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('twin:settings-updated', state);
         });
         twinSettings.start();
+        try {
+            const mcpSettings = require('./features/settings/mcpSettingsService').getMcpSettingsService();
+            listenService.setMcpSettingsService(mcpSettings);
+            require('./features/ask/askService').setMcpSettingsService(mcpSettings);
+            mcpSettings.initialize();
+        } catch {
+            // Preserve MCP rows for recovery; unrelated provider startup remains usable.
+            console.warn('[MCP] settings unavailable; connection settings require recovery');
+        }
         //////// after_modelStateService ////////
 
         featureBridge.initialize();  // 추가: featureBridge 초기화
@@ -282,6 +291,7 @@ app.on('before-quit', async (event) => {
     try {
         // 1. Stop audio capture first (immediate)
         require('./features/settings/twinSettingsService').getTwinSettingsService().stop();
+        require('./features/settings/mcpSettingsService').getMcpSettingsService().stop();
         await listenService.closeSession();
         console.log('[Shutdown] Audio capture stopped');
         

@@ -1,0 +1,6 @@
+{
+  "name": "lookup_client_fact",
+  "definitionSha256": "cb5d943472ed0d35e4bb177412ff1b4b2dab8ceadb0f5350e14c877b69769c99",
+  "clientId": "demo-client",
+  "sourceIds": ["fixture-calibration-v1"]
+}

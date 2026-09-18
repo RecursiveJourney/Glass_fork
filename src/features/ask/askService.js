@@ -137,6 +137,16 @@ class AskService {
         console.log('[AskService] Service instance created.');
     }
 
+    setMcpSettingsService(service) { this.mcpSettingsService = service; }
+    async reconcileMcp(modelInfo, signal) {
+        signal.throwIfAborted();
+        if (this.mcpSettingsService && modelInfo.model === 'rj-twin') {
+            const applied = await this.mcpSettingsService.ensureApplied();
+            signal.throwIfAborted();
+            if (!applied.success) throw new Error('mcp_settings_pending');
+        }
+    }
+
     _broadcastState() {
         const askWindow = getWindowPool()?.get('ask');
         if (askWindow && !askWindow.isDestroyed()) {
@@ -283,6 +293,7 @@ class AskService {
             });
 
             try {
+                await this.reconcileMcp(modelInfo, signal);
                 const response = await streamingLLM.streamChat(messages);
                 const askWin = getWindowPool()?.get('ask');
 
@@ -315,6 +326,7 @@ class AskService {
                         }
                     ];
 
+                    await this.reconcileMcp(modelInfo, signal);
                     const fallbackResponse = await streamingLLM.streamChat(textOnlyMessages);
                     const askWin = getWindowPool()?.get('ask');
 

@@ -31,3 +31,5 @@ test('Setup relocation removes only the fork entry and retains upstream labels',
     assert.ok(settings.includes('Whisper is enabled')); assert.ok(settings.includes('Ollama'));
     assert.ok(settings.includes('twin-insights-settings'));
 });
+
+test('candidate Knowledge visibly identifies offline mode and its pending gate',()=>{const c=component();c.data=data();c.data.knowledge.data.evaluation={mode:'offline',freezeId:'c'.repeat(64),gate:'not_evaluated'};const rendered=c.render();assert.ok(rendered.includes('Offline evaluation'));assert.ok(rendered.includes('Not evaluated'));assert.ok(rendered.includes('c'.repeat(64)));});

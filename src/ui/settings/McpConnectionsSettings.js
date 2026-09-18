@@ -1,0 +1,65 @@
+import {html,css,LitElement} from '../assets/lit-core-2.7.4.min.js';
+
+export class McpConnectionsSettings extends LitElement {
+ static properties={state:{state:true},draft:{state:true},tools:{state:true},busy:{state:true},message:{state:true},dirty:{state:true}};
+ static styles=css`
+  :host{display:block;border-top:1px solid #ffffff25;margin-top:12px;padding:14px 0;color:#eee;font:12px system-ui;min-width:0}
+  h2{font-size:14px;margin:0 0 10px}h3{font-size:13px}p{color:#bbb;line-height:1.5}label{display:block;margin:10px 0}
+  input:not([type=checkbox]),select,textarea{box-sizing:border-box;width:100%;margin-top:4px;padding:8px;border:1px solid #ffffff30;border-radius:5px;color:#eee;background:#25262b;font:inherit}
+  select option{background:#25262b}textarea{resize:vertical;min-height:60px}input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid #8ebcf4;outline-offset:1px}
+  button{padding:7px 10px;background:#ffffff15;border:1px solid #ffffff30;border-radius:5px;color:#fff;cursor:pointer}button:disabled{opacity:.5;cursor:default}
+  .actions,.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}.row>span{flex:1;overflow-wrap:anywhere}.card{padding:10px;border:1px solid #ffffff20;border-radius:6px;margin:8px 0}
+  .limits{display:grid;grid-template-columns:1fr 1fr;gap:8px}.limits label{min-width:0}code{overflow-wrap:anywhere;font-size:10px}small{display:block;color:#bbb;overflow-wrap:anywhere}.status{color:#dcecff}fieldset{border:0;padding:0;margin:0;min-width:0}
+ `;
+ constructor(){super();this.state={config:null};this.draft=null;this.tools=[];this.secretValues={};this.clearSlots=new Set();this.dirty=false;this.busy=false;this.message='';this.editRevision=0;}
+ get api(){return window.api.settingsView;}
+ async connectedCallback(){super.connectedCallback();await this.refresh();if(this.isConnected!==false)this.timer=setInterval(()=>this.refresh(),2000);}
+ disconnectedCallback(){clearInterval(this.timer);this.secretValues={};this.draft=null;super.disconnectedCallback();}
+ receive(state){this.state=state;if(!this.dirty){this.editRevision=state.savedRevision;if(this.draft){const saved=state.config?.connections.find(c=>c.id===this.draft.id);if(saved)this.draft=structuredClone(saved);const live=state.runtime?.connections.find(c=>c.id===this.draft.id); if(live?.state!=='disabled'||this.testedRevision!==state.savedRevision)this.tools=live?.tools||[];}}}
+ async refresh(){if(this.reading)return;this.reading=true;try{const r=await this.api.getMcpSettings();if(r.success)this.receive(r.data);else this.message='Connection settings are unavailable. Existing data is preserved.';}catch{this.message='Connection settings are unavailable. Existing data is preserved.';}finally{this.reading=false;}}
+ editConnection(c){this.draft=structuredClone(c);this.editRevision=this.state.savedRevision;this.dirty=false;this.tools=this.state.runtime?.connections.find(x=>x.id===c.id)?.tools||[];this.secretValues={};this.clearSlots=new Set();this.message='';}
+ async addConnection(){if(this.busy||!this.state.config)return;const r=await this.api.newMcpIdentity();if(!r.success)return;this.editConnection({id:r.data,name:'New connection',enabled:false,transport:'streamable-http',http:{url:'http://127.0.0.1:8765/mcp'},credentialBindings:[],allowedTools:[],knowledgeApproval:null,limits:{connectMs:5000,callMs:5000,resultBytes:16384,maxCalls:4}});this.dirty=true;}
+ change(key,value){this.draft={...this.draft,[key]:value};this.dirty=true;}
+ endpointChanged(){this.draft={...this.draft,knowledgeApproval:null};this.tools=[];this.dirty=true;this.message='Destination changed. Re-enter retained credentials and review fact approval for this destination.';}
+ setTransport(value){const {http,stdio,...rest}=this.draft;this.draft={...rest,transport:value,...(value==='stdio'?{stdio:{executable:'',args:[],cwd:''}}:{http:{url:'http://127.0.0.1:8765/mcp'}}),credentialBindings:[],knowledgeApproval:null,allowedTools:[]};this.secretValues={};this.clearSlots=new Set();this.endpointChanged();}
+ async addCredential(){if(!this.draft||this.draft.credentialBindings.length>=8||this.draft.transport==='streamable-http'&&this.draft.credentialBindings.length)return;const r=await this.api.newMcpIdentity();if(!r.success)return;const slots=new Set(this.draft.credentialBindings.map(b=>b.slot)),names=new Set(this.draft.credentialBindings.map(b=>(b.target.name||'').toUpperCase()));let n=1,k=1;while(slots.has(n===1?'token':'token'+n))n++;while(names.has(k===1?'KNOWLEDGE_TOKEN':'KNOWLEDGE_TOKEN_'+k))k++;const slot=n===1?'token':'token'+n;this.draft={...this.draft,credentialBindings:[...this.draft.credentialBindings,{slot,ref:r.data,target:this.draft.transport==='stdio'?{kind:'env',name:k===1?'KNOWLEDGE_TOKEN':'KNOWLEDGE_TOKEN_'+k}:{kind:'bearer'}}]};this.endpointChanged();}
+ async save(){if(this.busy||!this.draft||!this.state.config)return;this.busy=true;this.message='';try{
+  const connections=structuredClone(this.state.config.connections),index=connections.findIndex(c=>c.id===this.draft.id);if(index<0)connections.push(structuredClone(this.draft));else connections[index]=structuredClone(this.draft);
+  const credentials=this.draft.credentialBindings.map(b=>({connectionId:this.draft.id,slot:b.slot,...(this.clearSlots.has(b.slot)?{action:'clear'}:this.secretValues[b.slot]?{action:'set',value:this.secretValues[b.slot]}:{action:'keep'})}));
+  const r=await this.api.saveMcpSettings({expectedRevision:this.editRevision,config:{schemaVersion:1,revision:this.editRevision+1,connections},credentials});
+  if(!r.success){this.message=r.error==='revision_conflict'?'Settings changed elsewhere. Cancel your edit and reopen it.':r.error==='credential_destination_changed'?'Re-enter all retained credentials for the changed destination.':'Save failed. Check the fields; existing data is preserved.';return;}
+  this.dirty=false;this.clearSlots=new Set();this.receive(r.data);this.message=r.data.state==='applied'?'Saved and applied.':'Saved; waiting for the twin server.';
+ }catch{this.message='Save failed. Existing data is preserved.';}finally{this.secretValues={};this.busy=false;this.requestUpdate();}}
+ async testConnection(){if(this.busy||this.dirty||!this.draft)return;this.busy=true;try{const r=await this.api.testMcpConnection({id:this.draft.id,expectedRevision:this.editRevision});if(!r.success){this.message='Test failed or is cooling down. Check live status and retry after five seconds.';return;}const result=r.data.connections.find(c=>c.id===this.draft.id);this.tools=result?.tools||[];this.testedRevision=this.editRevision;this.message='Test: '+(result?.state||'unavailable')+(result?.errorCode?' · '+result.errorCode:'');}catch{this.message='Test unavailable. Check the twin server.';}finally{this.busy=false;}}
+ allowTool(tool,checked){this.change('allowedTools',[...this.draft.allowedTools.filter(t=>t.name!==tool.name),...(checked?[{name:tool.name,definitionSha256:tool.definitionSha256,approvedReadOnly:true}]:[])]);this.draft.knowledgeApproval=null;}
+ async approveKnowledge(){try{const r=await this.api.approveMcpKnowledge(this.draft);if(r.success){this.change('knowledgeApproval',r.data);this.message='Demo client fact approval prepared. Save to apply.';}else this.message='Only the reviewed demo fixture definition supports fact approval.';}catch{this.message='Fact approval unavailable.';}}
+ render(){const c=this.draft;return html`
+  <h2>MCP Connections</h2><p>Connect read-only tools. Model use awaits the frozen live evaluation. A ready connection means discovery succeeded.</p>
+  <p class="status" role="status" aria-live="polite">${this.message||this.state.errorCode||this.state.state||'Loading…'}</p>
+  ${(this.state.config?.connections||[]).map(item=>{const live=this.state.runtime?.connections.find(x=>x.id===item.id);return html`<div class="row"><span>${item.name}<small>${item.enabled?'Enabled':'Disabled'} · ${live?.state||'unavailable'}${live?.errorCode?' · '+live.errorCode:''}</small></span><button ?disabled=${this.busy||this.dirty} @click=${()=>this.editConnection(item)}>Edit</button></div>`;})}
+  <button ?disabled=${this.busy||this.dirty||!this.state.config||this.state.config.connections.length>=8} @click=${()=>this.addConnection()}>Add connection</button>
+  ${c?html`<form @submit=${e=>{e.preventDefault();this.save();}}><fieldset ?disabled=${this.busy}>
+   <label>Name<input name="connection-name" maxlength="80" .value=${c.name} @input=${e=>this.change('name',e.target.value)}></label>
+   <label><input name="enabled" type="checkbox" .checked=${c.enabled} @change=${e=>this.change('enabled',e.target.checked)}> Enable connection</label>
+   <label>Transport<select .value=${c.transport} @change=${e=>this.setTransport(e.target.value)}><option value="streamable-http">Streamable HTTP</option><option value="stdio">Local program (stdio)</option></select></label>
+   ${c.transport==='streamable-http'?html`<label>Server URL<input name="url" type="url" .value=${c.http.url} @input=${e=>{this.change('http',{url:e.target.value});this.endpointChanged();}}></label>`:html`
+    <p>Enabling or testing starts this program with your OS permissions. Environment filtering does not sandbox its file or network access.</p>
+    <label>Absolute executable path<input name="executable" .value=${c.stdio.executable} @input=${e=>{this.change('stdio',{...c.stdio,executable:e.target.value});this.endpointChanged();}}></label>
+    <label>Arguments (one per line)<textarea name="arguments" .value=${c.stdio.args.join('\n')} @input=${e=>{this.change('stdio',{...c.stdio,args:e.target.value?e.target.value.split('\n'):[]});this.endpointChanged();}}></textarea></label>
+    <label>Working directory (absolute)<input name="cwd" .value=${c.stdio.cwd} @input=${e=>{this.change('stdio',{...c.stdio,cwd:e.target.value});this.endpointChanged();}}></label>`}
+   <h3>Credentials</h3><p>Use these password fields for secrets. Leave blank to keep a stored value; never put secrets in names, URLs or arguments.</p>
+   ${c.credentialBindings.map(b=>html`<div class="card"><small>${b.slot} · ${this.state.credentialStatuses?.find(s=>s.connectionId===c.id&&s.slot===b.slot)?.status||'not stored'}</small>
+    ${b.target.kind==='env'?html`<label>Environment variable<input .value=${b.target.name} @input=${e=>{this.change('credentialBindings',c.credentialBindings.map(x=>x.slot===b.slot?{...x,target:{kind:'env',name:e.target.value}}:x));this.endpointChanged();}}></label>`:''}
+    <label>${b.target.kind==='bearer'?'Bearer token':b.target.name}<input type="password" autocomplete="new-password" spellcheck="false" .value=${this.secretValues[b.slot]||''} @input=${e=>{this.secretValues[b.slot]=e.target.value;this.dirty=true;}}></label>
+    <label><input type="checkbox" .checked=${this.clearSlots.has(b.slot)} @change=${e=>{if(e.target.checked)this.clearSlots.add(b.slot);else this.clearSlots.delete(b.slot);this.draft.knowledgeApproval=null;this.dirty=true;}}> Clear this credential on Save</label></div>`)}
+   <button type="button" @click=${()=>this.addCredential()} ?disabled=${c.credentialBindings.length>=(c.transport==='stdio'?8:1)}>Add credential</button>
+   <details><summary>Connection limits</summary><div class="limits">${[['connectMs','Connect timeout (ms)',1000,10000],['callMs','Call timeout (ms)',500,10000],['resultBytes','Result bytes',1024,32768],['maxCalls','Calls per suggestion',1,4]].map(([key,label,min,max])=>html`<label>${label}<input type="number" min=${min} max=${max} .value=${String(c.limits[key])} @input=${e=>this.change('limits',{...c.limits,[key]:Number(e.target.value)})}></label>`)}</div></details>
+   <h3>Discovered tools</h3><p>Save, then Test to discover tools without calling them. Approve only tools you have reviewed as read-only. Changed definitions require new approval.</p>
+   ${this.tools.map(tool=>html`<div class="card"><label><input type="checkbox" ?disabled=${!tool.supported} .checked=${c.allowedTools.some(t=>t.name===tool.name&&t.definitionSha256===tool.definitionSha256)} @change=${e=>this.allowTool(tool,e.target.checked)}> ${tool.name}</label><p>${tool.description}</p><small>${tool.blockedReason||'Supported'} · ${tool.allowed?'Callable':'Not callable'}</small><code>${tool.definitionSha256}</code></div>`)}
+   <h3>Client facts</h3><p>${c.knowledgeApproval?'Approved for demo-client / fixture-calibration-v1.':'Tool output is reference-only unless separately approved.'}</p>
+   <button type="button" @click=${()=>this.approveKnowledge()}>Approve reviewed demo fixture facts</button>
+   ${c.knowledgeApproval?html`<button type="button" @click=${()=>this.change('knowledgeApproval',null)}>Revoke fact approval</button>`:''}
+   <div class="actions"><button type="submit">Save</button><button type="button" ?disabled=${this.dirty} @click=${()=>this.testConnection()}>Test connection</button><button type="button" @click=${()=>{this.draft=null;this.dirty=false;this.secretValues={};}}>Cancel edit</button></div>
+  </fieldset></form>`:''}`;}
+}
+customElements.define('mcp-connections-settings',McpConnectionsSettings);

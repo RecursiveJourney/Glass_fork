@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict'),{spawn}=require('node:child_process'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
+test('native MCP form configures encrypted connection, discovers and approves a real tool for offline inference',{timeout:60000},async()=>{
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'glass-mcp-native-')),env={...process.env};delete env.ELECTRON_RUN_AS_NODE;
+ try{const child=spawn(require('electron'),[path.join(__dirname,'helpers/mcp-settings-native.cjs'),directory,'node'+process.versions.node.split('.')[0]],{env,windowsHide:true,stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',c=>output+=c);child.stderr.resume();const timer=setTimeout(()=>child.kill(),55000);const code=await new Promise((resolve,reject)=>{child.once('close',resolve);child.once('error',reject);}).finally(()=>clearTimeout(timer));
+ const line=output.split(/\r?\n/).find(s=>s.startsWith('MCP_NATIVE:'));assert.ok(line,'native result available');const result=JSON.parse(line.slice(11));assert.equal(result.passed,true,JSON.stringify(result));assert.equal(code,0);assert.equal(result.modelRequests,2);assert.equal(result.toolCalls,1);assert.equal(result.externalInvitations,0);assert.ok(result.inputEmpty);console.log('Native MCP metrics: '+JSON.stringify(result));
+ }finally{const resolved=path.resolve(directory);assert.ok(resolved.startsWith(path.resolve(os.tmpdir())+path.sep)&&path.basename(resolved).startsWith('glass-mcp-native-'));fs.rmSync(resolved,{recursive:true,force:true});}
+});

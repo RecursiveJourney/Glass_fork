@@ -145,6 +145,17 @@ module.exports = {
     ipcMain.handle('model:validate-key', credentialHandler(({ provider, key }) => modelStateService.handleValidateKey(provider, key), true));
     ipcMain.handle('model:get-credential-status', credentialHandler(() => modelStateService.getCredentialStatus()));
     const twin = () => require('../features/settings/twinSettingsService').getTwinSettingsService();
+    const mcp = () => require('../features/settings/mcpSettingsService').getMcpSettingsService();
+    const mcpHandler = action => async (event, data) => {
+      if (!trustedSettingsSender(event) || require('../window/windowManager').windowPool?.get('settings')?.webContents !== event.sender) return { success: false, error: 'untrusted_sender' };
+      try { return { success: true, data: await action(data) }; }
+      catch (error) { return { success: false, error: ['revision_conflict', 'credential_locked', 'vault_unavailable', 'credential_destination_changed', 'credential_reference_invalid', 'invalid_mcp_config', 'runtime_pending', 'unsupported_schema'].includes(error.code) ? error.code : 'mcp_operation_failed' }; }
+    };
+    ipcMain.handle('mcp:settings', mcpHandler(data => { if (data !== undefined) throw Error(); return mcp().getState(); }));
+    ipcMain.handle('mcp:save', mcpHandler(data => mcp().save(data)));
+    ipcMain.handle('mcp:test', mcpHandler(data => mcp().test(data)));
+    ipcMain.handle('mcp:new-identity', mcpHandler(data => { if (data !== undefined) throw Error(); return mcp().newIdentity(); }));
+    ipcMain.handle('mcp:approve-knowledge', mcpHandler(data => mcp().approveKnowledge(data)));
     ipcMain.handle('twin:settings', credentialHandler(() => ({ success: true, data: twin().getState() })));
     ipcMain.handle('twin:insights', credentialHandler(async data => {
       if (data !== undefined) return { success: false, error: 'invalid_payload' };

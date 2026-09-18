@@ -119,6 +119,15 @@ class ListenService {
     getMeetingFeedState() { return this.meetingFeed?.getState() ?? { connectionStatus: 'idle', snapshot: null, error: null, nextRetryAt: null }; }
     initialize() { this.setupIpcHandlers?.(); }
     setRuntimeSettingsService(service) { this.runtimeSettingsService = service; }
+    setMcpSettingsService(service) { this.mcpSettingsService = service; }
+    async reconcileMcp(id) {
+        if (!this.mcpSettingsService) return null;
+        let applied;
+        try { applied = await this.mcpSettingsService.ensureApplied(); } catch { applied = { success: false }; }
+        if (this.state.lifecycleId !== id || this.state.phase !== 'starting') return this.result(false, 'listen_cancelled');
+        if (!applied.success) { this.publish({ phase: 'stopped', error: 'mcp_settings_pending' }); return this.result(false, 'mcp_settings_pending'); }
+        return null;
+    }
 
     async handleListenRequest(action) {
         let result;
@@ -143,11 +152,18 @@ class ListenService {
                     if (this.state.lifecycleId !== id || this.state.phase !== 'starting') return this.result(false, 'listen_cancelled');
                     if (!applied.success) { this.publish({ phase: 'stopped', error: 'runtime_settings_pending' }); return this.result(false, 'runtime_settings_pending'); }
                 }
+                const mcp = await this.reconcileMcp(id);
+                if (mcp) return mcp;
                 const feed = this.startMeetingFeed();
                 if (this.state.lifecycleId === id && this.state.phase === 'starting')
                     this.publish({ phase: feed.success ? 'active' : 'stopped', error: feed.error || null });
                 result = this.result(feed.success, feed.error);
             } else {
+                if (this.mcpSettingsService) {
+                    const model = await require('../common/services/modelStateService').getCurrentModelInfo('llm');
+                    if (this.state.lifecycleId !== dispatchId || this.state.phase !== 'starting') return this.result(false, 'listen_cancelled');
+                    if (model?.model === 'rj-twin') { const mcp = await this.reconcileMcp(dispatchId); if (mcp) return mcp; }
+                }
                 const success = await this.initializeSession();
                 result = this.result(success, success ? null : (this.state.error || 'local_initialization_failed'));
             }

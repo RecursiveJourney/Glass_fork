@@ -1,6 +1,7 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
 import '../app/WindowSizeControls.js';
 import './TwinConnectionSettings.js';
+import './McpConnectionsSettings.js';
 import './TwinInsightsSettings.js';
 // import { getOllamaProgressTracker } from '../../features/common/services/localProgressTracker.js'; // 제거됨
 
@@ -1381,6 +1382,7 @@ export class SettingsView extends LitElement {
                 <twin-insights-settings></twin-insights-settings>
                 ${modelSelectionHTML}
                 <twin-connection-settings></twin-connection-settings>
+                <mcp-connections-settings></mcp-connections-settings>
 
                 <div class="buttons-section" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 6px; margin-top: 6px;">
                     <button class="settings-button full-width" @click=${this.openShortcutEditor}>

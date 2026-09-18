@@ -67,6 +67,7 @@ export class TwinInsightsSettings extends LitElement {
                         <small>Dossier SHA256</small><code>${metadata.dossier.sha256}</code>
                         <small>Prompt version</small><span>${metadata.prompt.version}</span>
                         <small>Prompt SHA256</small><code>${metadata.prompt.sha256}</code>
+                        ${metadata.evaluation ? html`<small>Evaluation profile</small><span>${metadata.evaluation.mode === 'offline' ? 'Offline evaluation' : 'Live evaluation'} · Not evaluated for shipping</span><small>Freeze SHA256</small><code>${metadata.evaluation.freezeId}</code>` : ''}
                     ` : ''}
                 </div>
                 <p>Read-only identity of the dossier loaded by the twin. Knowledge browsing comes later.</p>

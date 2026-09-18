@@ -3,10 +3,13 @@ const exact = (value, keys) => value && typeof value === 'object' && !Array.isAr
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const timestamp = value => Number.isSafeInteger(value) && value >= 0;
 function knowledge(value) {
-    if (!exact(value, ['schemaVersion', 'dossier', 'prompt']) || value.schemaVersion !== 1) fail();
+    if (!exact(value, value?.evaluation===undefined?['schemaVersion', 'dossier', 'prompt']:['schemaVersion', 'dossier', 'prompt', 'evaluation']) || value.schemaVersion !== 1) fail();
     if (value.dossier === null && value.prompt === null) return value;
     if (!exact(value.dossier, ['name', 'sha256']) || typeof value.dossier.name !== 'string' || !value.dossier.name || value.dossier.name.length > 256 || /[\\/\x00-\x1f]/.test(value.dossier.name) || !hash(value.dossier.sha256) ||
-        !exact(value.prompt, ['version', 'sha256']) || value.prompt.version !== 'wire-1' || !hash(value.prompt.sha256)) fail();
+        !exact(value.prompt, ['version', 'sha256']) || !['wire-1','wire3-mcp-v1'].includes(value.prompt.version) || !hash(value.prompt.sha256)) fail();
+    const e=value.evaluation;
+    if(e!==undefined&&(!exact(e,['mode','freezeId','gate'])||!['offline','live'].includes(e.mode)||!hash(e.freezeId)||e.gate!=='not_evaluated'||value.prompt.version!=='wire3-mcp-v1'))fail();
+    if(value.prompt.version==='wire3-mcp-v1'&&!e)fail();
     return value;
 }
 function status(value) {
