@@ -1,6 +1,6 @@
 import { html, css, LitElement } from '../assets/lit-core-2.7.4.min.js';
 const names = { whisper: 'Whisper', openai: 'OpenAI', deepgram: 'Deepgram', gemini: 'Gemini', fireflies: 'Fireflies' };
-const states = { reachable: 'Reachable', unavailable: 'Unavailable', unauthorized: 'Control authentication failed', unconfigured: 'Unconfigured',
+const states = { ready: 'Ready', stopped: 'Paused', no_eligible_tools: 'No eligible tools', not_ready: 'Not ready', selection_conflict: 'Choose one eligible connection', reachable: 'Reachable', unavailable: 'Unavailable', unauthorized: 'Control authentication failed', unconfigured: 'Unconfigured',
     not_tested: 'Not tested', generating: 'Generating', succeeded: 'Last request succeeded', failed: 'Last request failed',
     loaded: 'Session loaded', idle: 'No local STT loaded', connected: 'Connected', disconnected: 'Disconnected', disabled: 'Disabled',
     applying: 'Applying settings', joining: 'Joining meeting', waiting: 'Waiting for meeting', rate_limited: 'Rate limited', auth_failed: 'Authentication failed',
@@ -43,6 +43,7 @@ export class TwinInsightsSettings extends LitElement {
         finally { this.settingUp = false; }
     }
     label(value) { return states[value] || 'Unavailable'; }
+    money(value) { return '$' + Number(value).toFixed(2); }
     when(value) { return value ? new Date(value).toLocaleTimeString() : ''; }
     render() {
         const data = this.data, transcript = data?.transcription, knowledge = data?.knowledge;
@@ -55,6 +56,9 @@ export class TwinInsightsSettings extends LitElement {
                     <div class="row"><dt>Gemini</dt><dd>${this.label(data?.gemini.state)}<small>${data?.gemini.model || ''}${data?.gemini.observedAt ? ' · observed ' + this.when(data.gemini.observedAt) : ''}</small></dd></div>
                     <div class="row"><dt>Transcription</dt><dd>${transcript?.provider ? (names[transcript.provider] || transcript.provider) + ' · ' : ''}${this.label(transcript?.state)}<small>${transcript?.model || ''}${transcript ? ' · ' + transcript.source + ' Listen ' + transcript.phase : ''}</small></dd></div>
                     <div class="row"><dt>Fireflies</dt><dd>${this.label(data?.fireflies.state)}</dd></div>
+                    <div class="row"><dt>MCP</dt><dd>${this.label(data?.mcp?.state)}<small>${data?.mcp?.totalConnections === undefined ? "" : data.mcp.readyConnections + " / " + data.mcp.totalConnections + " connections ready"}</small><small>${data?.mcp?.errorCode || ""}</small>
+                    ${data?.mcp?.cost ? html`<small>Reported cost ${this.money(data.mcp.cost.reportedUsd)} · warn ${this.money(data.mcp.cost.warnUsd)} · stop ${this.money(data.mcp.cost.stopUsd)}</small><small>${data.mcp.cost.unknownBilledAttempts ? "Billed usage unknown for " + data.mcp.cost.unknownBilledAttempts + " attempt(s); reported cost is partial." : "Per process; an in-flight request can exceed the stop threshold."}</small>` : ""}
+                    ${data?.mcp?.state === "stopped" ? html`<small>Inference paused; transcript stays active. Resolve the reason and restart the listener. No automatic fallback.</small>` : ""}</dd></div>
                 </dl>
                 <p>Gemini status reflects real requests. A stored key alone is not a connection check.</p>
             </section>
@@ -65,9 +69,10 @@ export class TwinInsightsSettings extends LitElement {
                     ${metadata?.dossier ? html`
                         <strong>${metadata.dossier.name}</strong>
                         <small>Dossier SHA256</small><code>${metadata.dossier.sha256}</code>
+                        ${metadata.activation ? html`<small>Active profile</small><span>${metadata.activation.activeProfile}</span><small>${metadata.activation.state === "activation_failed" ? "Activation failed · " + metadata.activation.errorCode : metadata.activation.state === "rollback_selected" ? "Rollback selected" : "Verified production activation"}</small>` : ""}
                         <small>Prompt version</small><span>${metadata.prompt.version}</span>
                         <small>Prompt SHA256</small><code>${metadata.prompt.sha256}</code>
-                        ${metadata.evaluation ? html`<small>Evaluation profile</small><span>${metadata.evaluation.mode === 'offline' ? 'Offline evaluation' : 'Live evaluation'} · Not evaluated for shipping</span><small>Freeze SHA256</small><code>${metadata.evaluation.freezeId}</code>` : ''}
+                        ${metadata.evaluation ? html`<small>Evaluation profile</small><span>${metadata.evaluation.mode === 'production' ? 'Production · Gate passed' : (metadata.evaluation.mode === 'offline' ? 'Offline evaluation' : 'Live evaluation') + ' · Not evaluated for shipping'}</span><small>Freeze SHA256</small><code>${metadata.evaluation.freezeId}</code>` : ''}
                     ` : ''}
                 </div>
                 <p>Read-only identity of the dossier loaded by the twin. Knowledge browsing comes later.</p>

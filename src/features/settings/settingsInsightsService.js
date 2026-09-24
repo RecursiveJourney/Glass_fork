@@ -18,6 +18,7 @@ class SettingsInsightsService {
             server: { state: available ? 'reachable' : status.reason?.code === 'runtime_unauthorized' ? 'unauthorized' : 'unavailable' },
             gemini: available ? status.value.gemini : { model: null, state: 'unavailable', observedAt: null, inFlight: 0, errorCode: null },
             fireflies,
+            mcp: available && status.value.mcp ? status.value.mcp : { state: 'unavailable' },
             transcription: { source: local.source, phase: local.phase, state: local.source === 'meeting' ? fireflies.state : local.state,
                 provider: local.source === 'meeting' ? 'fireflies' : local.provider, model: local.source === 'meeting' ? null : local.model },
             knowledge: { state: knowledge.status === 'fulfilled' ? 'current' : this.#knowledge ? 'stale' : 'unavailable', observedAt: this.#knowledgeAt, data: this.#knowledge },

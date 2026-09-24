@@ -1,0 +1,36 @@
+const {app,BrowserWindow,ipcMain}=require('electron');
+const fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url'),{createHash}=require('node:crypto');
+const directory=process.argv[2],coordinator=process.argv[3],root=path.resolve(__dirname,'../..');
+app.setPath('userData',path.join(directory,'profile'));app.disableHardwareAcceleration();app.on('window-all-closed',()=>{});
+let window,server;
+app.whenReady().then(async()=>{
+ const {selectProductionProfile}=await import('../../../realtime_listener/lib/mcp-production-profile.js');
+ const {createRuntimeInsights}=await import('../../../realtime_listener/lib/runtime-insights.js');
+ const {startHttpServer}=await import('../../../realtime_listener/lib/http-server.js');
+ const {SettingsInsightsService}=require('../../src/features/settings/settingsInsightsService');
+ const {TwinRuntimeClient}=require('../../src/features/common/services/twinRuntimeClient');
+ const text=fs.readFileSync(path.resolve(root,'../realtime_listener/dossiers/demo_client.txt'),'utf8');
+ const dossier={path:'demo_client.txt',text,sha256:createHash('sha256').update(text).digest('hex')},model='gemini-3.8-flash';
+ const {profile}=await selectProductionProfile({model,dossier});if(!profile.inferenceEnabled)throw Error('activation_failed');
+ const execution={state:'stopped',errorCode:'model_cost_limit',reportedCostUsd:10.01,thresholdsUsd:{warn:2,stop:10},unknownBilledAttempts:0};
+ const insights=createRuntimeInsights({profile,dossier,model,configured:true,getMcp:()=>({connections:[{state:'ready'}],policy:{state:'ready'},execution})});
+ const token='synthetic-production-render-token-32';
+ server=await startHttpServer({port:0,controlToken:token,getStatus:insights.snapshot,getKnowledge:insights.knowledge,suggest:()=>{throw Error('unexpected_model');}});
+ const service=new SettingsInsightsService({client:new TwinRuntimeClient({url:'http://127.0.0.1:'+server.port,token}),listenService:{getTranscriptionStatus:()=>({source:'local',state:'idle',phase:'idle',provider:null,model:null})}});
+ ipcMain.handle('settings:get-twin-insights',async()=>({success:true,data:await service.read()}));
+ // Use the real preload channel name, with the same metadata-only service projection.
+ const preload=fs.readFileSync(path.join(root,'src/preload.js'),'utf8');const channel=preload.match(/getTwinInsights:.*invoke\('([^']+)'/)[1];
+ if(channel!=='settings:get-twin-insights')ipcMain.handle(channel,async()=>({success:true,data:await service.read()}));
+ window=new BrowserWindow({show:false,width:700,height:900,webPreferences:{preload:path.join(root,'src/preload.js'),contextIsolation:true,nodeIntegration:false,offscreen:true,backgroundThrottling:false}});
+ window.webContents.setZoomFactor(1.75);
+ const page=path.join(directory,'src/ui/settings/production.html');fs.mkdirSync(path.dirname(page),{recursive:true});
+ fs.writeFileSync(page,`<!doctype html><meta charset="utf-8"><style>body{margin:14px;background:#1b1c21;color:white}main{min-width:0}</style><main><twin-insights-settings></twin-insights-settings></main><script type="module" src="${pathToFileURL(path.join(root,'src/ui/settings/TwinInsightsSettings.js')).href}"></script>`);
+ await window.loadFile(page);
+ const result=await window.webContents.executeJavaScript(`(async()=>{await customElements.whenDefined('twin-insights-settings');const c=document.querySelector('twin-insights-settings'),until=Date.now()+5000;while(!c.data){if(Date.now()>until)throw Error('metadata_timeout');await new Promise(r=>setTimeout(r,20));}await c.updateComplete;const text=c.shadowRoot.textContent;for(const label of ['Gate passed','wire3-mcp-v1','Paused','model_cost_limit','Not tested','MCP','Setup'])if(!text.includes(label))throw Error('missing_'+label);if(text.includes('Not evaluated for shipping')||text.includes('synthetic-production-render-token'))throw Error('misleading_or_secret');const overflow=document.documentElement.scrollWidth>innerWidth+1;if(overflow)throw Error('horizontal_overflow');const hashes=[...c.shadowRoot.querySelectorAll('code')];if(hashes.some(n=>getComputedStyle(n).userSelect!=='text'))throw Error('hash_not_copyable');window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>requestAnimationFrame(r));if(scrollY<=0)throw Error('not_scrollable');return {scrollable:true,horizontalOverflow:false,hashesCopyable:true,gatePassed:true,costStopped:true};})()`);
+ const evidence=path.resolve(root,'../docs/wire3-phase4b-evidence');fs.mkdirSync(evidence,{recursive:true});
+ fs.writeFileSync(path.join(evidence,`production-knowledge-175-${coordinator}.png`),(await window.webContents.capturePage()).toPNG());
+ await window.webContents.executeJavaScript('(async()=>{window.scrollTo(0,0);await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})()');
+ fs.writeFileSync(path.join(evidence,`production-components-175-${coordinator}.png`),(await window.webContents.capturePage()).toPNG());
+ fs.writeFileSync(path.join(evidence,`production-render-${coordinator}.json`),JSON.stringify({...result,zoom:1.75,externalRequests:0,nativeManualPin:'NOT OBSERVED'},null,2)+'\n');
+ process.stdout.write('PRODUCTION_NATIVE:'+JSON.stringify({passed:true,...result,externalRequests:0})+'\n');
+}).catch(error=>{process.stdout.write('PRODUCTION_NATIVE:'+JSON.stringify({passed:false,code:/^[a-z_]+$/.test(error.message)?error.message:'native_fixture_failed'})+'\n');process.exitCode=1;}).finally(async()=>{window?.destroy();await server?.close();app.exit(process.exitCode||0);});

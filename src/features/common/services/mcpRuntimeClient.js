@@ -1,15 +1,18 @@
+const dtos=require('./twinInsightsDtos');
 const http=require('node:http');
 const {registerSecrets,redact}=require('./secretRedactor');
 const {exact,text,fail}=require('./mcpConfig');
 function projectState(value){
  if(value.inferenceEnabled!==undefined&&typeof value.inferenceEnabled!=='boolean')throw fail();
- exact(value,['component','protocolVersion','instanceId','appliedRevision','operationId','connections',...(Object.hasOwn(value,'inferenceEnabled')?['inferenceEnabled']:[])]);
+ exact(value,['component','protocolVersion','instanceId','appliedRevision','operationId','connections',...(Object.hasOwn(value,'inferenceEnabled')?['inferenceEnabled']:[]),...(Object.hasOwn(value,'activation')?['activation']:[]),...(Object.hasOwn(value,'execution')?['execution']:[])]);
  if(value.component!=='digital-twin'||value.protocolVersion!==1||!text(value.instanceId,128)||!Number.isSafeInteger(value.appliedRevision)||value.appliedRevision<0||value.operationId!==null&&!text(value.operationId,128)||!Array.isArray(value.connections)||value.connections.length>8)throw fail();
+ if(value.activation!==undefined)dtos.activation(value.activation);
+ if(value.execution!==undefined)dtos.execution(value.execution);
  const states=['disabled','connecting','discovering','ready','degraded','reconnecting','auth_required','failed'];
  for(const c of value.connections){
   exact(c,['id','name','state','generation','catalogRevision','lastSuccess','errorCode','retryAt','activeCalls','protocolVersion','tools']);
   if(!text(c.id,128)||!text(c.name,80)||!states.includes(c.state)||!['generation','catalogRevision','activeCalls'].every(k=>Number.isSafeInteger(c[k])&&c[k]>=0)||!['lastSuccess','retryAt'].every(k=>c[k]===null||Number.isFinite(c[k]))||c.errorCode!==null&&!/^[a-z_]{1,64}$/.test(c.errorCode)||c.protocolVersion!==null&&!['2025-11-25','2025-06-18','2025-03-26'].includes(c.protocolVersion)||!Array.isArray(c.tools)||c.tools.length>128)throw fail();
-  for(const t of c.tools){exact(t,['name','description','definitionSha256','supported','blockedReason','allowed']);if(!text(t.name,128)||typeof t.description!=='string'||Buffer.byteLength(t.description)>1024||!/^[a-f0-9]{64}$/.test(t.definitionSha256)||typeof t.supported!=='boolean'||typeof t.allowed!=='boolean'||t.blockedReason!==null&&!/^[a-z_]{1,64}$/.test(t.blockedReason))throw fail();}
+  for(const t of c.tools){exact(t,['name','description','definitionSha256','supported','blockedReason','allowed',...(t.liveUse===undefined?[]:['liveUse'])]);if(t.liveUse!==undefined)dtos.liveUse(t.liveUse);if(!text(t.name,128)||typeof t.description!=='string'||Buffer.byteLength(t.description)>1024||!/^[a-f0-9]{64}$/.test(t.definitionSha256)||typeof t.supported!=='boolean'||typeof t.allowed!=='boolean'||t.blockedReason!==null&&!/^[a-z_]{1,64}$/.test(t.blockedReason))throw fail();}
  }
  return redact(value);
 }
