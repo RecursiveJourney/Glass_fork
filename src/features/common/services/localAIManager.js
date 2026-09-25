@@ -338,6 +338,9 @@ class LocalAIManager extends EventEmitter {
      * 서비스 복구
      */
     async repairService(serviceName) {
+        if (serviceName === 'ollama' && ollamaService.externallyManaged) {
+            return { success: false, error: 'externally_managed_service', repairLog: [] };
+        }
         const service = this.services[serviceName];
         if (!service) {
             throw new Error(`Unknown service: ${serviceName}`);

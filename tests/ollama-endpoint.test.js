@@ -18,6 +18,7 @@ function loadService(name, stubs) {
     const module = { exports: {} };
     const load = id => {
         if (Object.hasOwn(stubs, id)) return stubs[id];
+        if (id === './twinEndpoint') return require('../src/features/common/services/twinEndpoint');
         if (id === './secretRedactor') return require('../src/features/common/services/secretRedactor');
         if (isBuiltin(id)) return require(id);
         throw new Error('Unexpected dependency: ' + id);

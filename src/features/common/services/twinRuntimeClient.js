@@ -1,9 +1,10 @@
+const { twinBaseUrl } = require('./twinEndpoint');
 const http = require('node:http');
 const { registerSecrets, redact } = require('./secretRedactor');
 const fail = code => Object.assign(new Error(code), { code });
 class TwinRuntimeClient {
     #url; #token; #timeout;
-    constructor({ url = process.env.TWIN_CONTROL_URL || 'http://localhost:11434', token = process.env.TWIN_CONTROL_TOKEN, timeoutMs = 800 } = {}) {
+    constructor({ url = twinBaseUrl(), token = process.env.TWIN_CONTROL_TOKEN, timeoutMs = 800 } = {}) {
         if (token) registerSecrets([token]);
         try {
             const parsed = new URL(url);

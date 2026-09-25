@@ -1,3 +1,4 @@
+const { twinBaseUrl } = require('./twinEndpoint');
 const { EventEmitter } = require('events');
 const { spawn, exec } = require('child_process');
 const { promisify } = require('util');
@@ -18,7 +19,8 @@ class OllamaService extends EventEmitter {
     constructor() {
         super();
         this.serviceName = 'OllamaService';
-        this.baseUrl = 'http://localhost:11434';
+        this.baseUrl = twinBaseUrl();
+        this.externallyManaged = process.env.TWIN_CONTROL_URL !== undefined;
         
         // 단순화된 상태 관리
         this.installState = {
@@ -190,6 +192,10 @@ class OllamaService extends EventEmitter {
     }
 
     async startService() {
+        if (this.externallyManaged) {
+            this.isShuttingDown = false;
+            return this.isServiceRunning();
+        }
         // 서비스 시작 시 종료 플래그 리셋
         this.isShuttingDown = false;
         
@@ -354,6 +360,10 @@ class OllamaService extends EventEmitter {
     }
 
     async getInstalledModelsList() {
+        if (this.externallyManaged) {
+            const models = await this.getInstalledModels();
+            return models.map(model => ({ name: model.name, id: model.digest || 'unknown', size: model.size || 'Unknown', status: 'installed' }));
+        }
         try {
             const { stdout } = await spawnAsync(this.getOllamaCliPath(), ['list']);
             const lines = stdout.split('\n').filter(line => line.trim());
@@ -679,6 +689,7 @@ class OllamaService extends EventEmitter {
     }
 
     async autoInstall(onProgress) {
+        if (this.externallyManaged) throw new Error('externally_managed_service');
         const platform = this.getPlatform();
         console.log(`[${this.serviceName}] Starting auto-installation for ${platform}`);
         
@@ -1128,6 +1139,12 @@ class OllamaService extends EventEmitter {
     }
 
     async shutdown(force = false) {
+        if (this.externallyManaged) {
+            this.isShuttingDown = true;
+            this._clearWarmUpCache();
+            this.stopPeriodicSync();
+            return true;
+        }
         console.log(`[OllamaService] Shutdown initiated (force: ${force})`);
         
         // 종료 중 플래그 설정

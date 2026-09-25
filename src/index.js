@@ -16,6 +16,12 @@ if (require('electron-squirrel-startup')) {
 }
 
 const { app, BrowserWindow, shell, ipcMain, dialog, desktopCapturer, session } = require('electron');
+// Apply the explicit profile before importing anything that can open storage.
+if (process.env.GLASS_USER_DATA_DIR !== undefined) {
+    const profile = process.env.GLASS_USER_DATA_DIR;
+    if (!profile || !require('node:path').isAbsolute(profile)) throw new Error('invalid_glass_user_data_dir');
+    app.setPath('userData', profile);
+}
 const { createWindows } = require('./window/windowManager.js');
 const listenService = require('./features/listen/listenService');
 const { initializeFirebase } = require('./features/common/services/firebaseClient');
@@ -52,7 +58,9 @@ let pendingDeepLinkUrl = null;
 function setupProtocolHandling() {
     // Protocol registration - must be done before app is ready
     try {
-        if (!app.isDefaultProtocolClient('pickleglass')) {
+        if (process.env.GLASS_USER_DATA_DIR !== undefined) {
+            console.log('[Protocol] Explicit profile: preserving the existing protocol association');
+        } else if (!app.isDefaultProtocolClient('pickleglass')) {
             const success = app.setAsDefaultProtocolClient('pickleglass');
             if (success) {
                 console.log('[Protocol] Successfully set as default protocol client for pickleglass://');
@@ -679,7 +687,7 @@ async function startWebStack() {
   };
   
   // 쓰기 가능한 임시 폴더에 런타임 설정 파일 생성
-  const tempDir = app.getPath('temp');
+  const tempDir = process.env.GLASS_USER_DATA_DIR ? app.getPath('userData') : app.getPath('temp');
   const configPath = path.join(tempDir, 'runtime-config.json');
   fs.writeFileSync(configPath, JSON.stringify(runtimeConfig, null, 2));
   console.log(`📝 Runtime config created in temp location: ${configPath}`);

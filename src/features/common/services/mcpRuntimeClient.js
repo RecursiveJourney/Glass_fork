@@ -1,3 +1,4 @@
+const { twinBaseUrl } = require('./twinEndpoint');
 const dtos=require('./twinInsightsDtos');
 const http=require('node:http');
 const {registerSecrets,redact}=require('./secretRedactor');
@@ -18,7 +19,7 @@ function projectState(value){
 }
 class McpRuntimeClient {
  #url;#token;#timeout;
- constructor({url=process.env.TWIN_CONTROL_URL||'http://localhost:11434',token=process.env.TWIN_CONTROL_TOKEN,timeoutMs=800}={}){
+ constructor({url=twinBaseUrl(),token=process.env.TWIN_CONTROL_TOKEN,timeoutMs=800}={}){
   if(token)registerSecrets([token]);const u=new URL(url);if(u.protocol!=='http:'||!['localhost','127.0.0.1','[::1]'].includes(u.hostname)||u.username||u.password||u.search||u.hash||u.pathname!=='/')throw fail('invalid_runtime_url');this.#url=u.origin;this.#token=token;this.#timeout=timeoutMs;
  }
  #request(method,path,body,timeout=this.#timeout){

@@ -1,3 +1,4 @@
+const { twinBaseUrl } = require('../../services/twinEndpoint');
 const http = require('http');
 const fetch = require('node-fetch');
 
@@ -77,7 +78,7 @@ const requestQueue = new RequestQueue();
 class OllamaProvider {
     static async validateApiKey() {
         try {
-            const response = await fetch('http://localhost:11434/api/tags');
+            const response = await fetch(`${twinBaseUrl()}/api/tags`);
             if (response.ok) {
                 return { success: true };
             } else {
@@ -120,7 +121,7 @@ function createLLM({
     model, 
     temperature = 0.7, 
     maxTokens = 2048, 
-    baseUrl = 'http://localhost:11434',
+    baseUrl = twinBaseUrl(),
     ...config 
 }) {
     if (!model) {
@@ -231,7 +232,7 @@ function createStreamingLLM({
     model, 
     temperature = 0.7, 
     maxTokens = 2048, 
-    baseUrl = 'http://localhost:11434',
+    baseUrl = twinBaseUrl(),
     ...config 
 }) {
     if (!model) {

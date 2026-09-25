@@ -12,6 +12,7 @@ function load() {
     const module = { exports: {} };
     vm.runInThisContext('(function(require,module,exports){' + fs.readFileSync(filename, 'utf8') + '\n})', { filename })(
         id => {
+            if (id === '../../common/services/twinEndpoint') return require('../src/features/common/services/twinEndpoint');
             assert.ok(['node:http', 'node:string_decoder'].includes(id), 'Subscriber must not import capture, generation, or provider dependencies: ' + id);
             return require(id);
         }, module, module.exports);

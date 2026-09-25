@@ -90,7 +90,7 @@ class Config {
     }
     
     getUserConfigPath() {
-        const configDir = path.join(os.homedir(), '.pickleglass');
+        const configDir = process.env.GLASS_USER_DATA_DIR || path.join(os.homedir(), '.pickleglass');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }

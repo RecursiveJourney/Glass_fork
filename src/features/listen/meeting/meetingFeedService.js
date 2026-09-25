@@ -1,3 +1,4 @@
+const { twinBaseUrl } = require('../../common/services/twinEndpoint');
 const http = require('node:http');
 const { StringDecoder } = require('node:string_decoder');
 
@@ -65,7 +66,7 @@ class MeetingFeedService {
     #retryTimer = null; #livenessTimer = null; #healthyTimer = null;
     #transportCleanups = new Set();
 
-    constructor({ url = 'http://localhost:11434/v1/live/events', wrapperToken = process.env.WRAPPER_TOKEN,
+    constructor({ url = `${twinBaseUrl()}/v1/live/events`, wrapperToken = process.env.WRAPPER_TOKEN,
         requestImpl = http.request, now = Date.now, setTimeoutImpl = setTimeout, clearTimeoutImpl = clearTimeout, random = Math.random } = {}) {
         try {
             requireValid(string(url));

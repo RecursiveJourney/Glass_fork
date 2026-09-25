@@ -286,7 +286,7 @@ class WhisperService extends EventEmitter {
 
         try {
             const homeDir = os.homedir();
-            const whisperDir = path.join(homeDir, '.glass', 'whisper');
+            const whisperDir = process.env.GLASS_USER_DATA_DIR ? path.join(process.env.GLASS_USER_DATA_DIR, 'whisper') : path.join(homeDir, '.glass', 'whisper');
             
             this.modelsDir = path.join(whisperDir, 'models');
             this.tempDir = path.join(whisperDir, 'temp');
@@ -629,7 +629,7 @@ class WhisperService extends EventEmitter {
     }
 
     async isInstalled() {
-        const managedPath = this.whisperPath || path.join(os.homedir(), '.glass', 'whisper', 'bin',
+        const managedPath = this.whisperPath || path.join(process.env.GLASS_USER_DATA_DIR || path.join(os.homedir(), '.glass'), 'whisper', 'bin',
             this.getPlatform() === 'win32' ? 'whisper-cli.exe' : 'whisper-cli');
         const candidates = new Set([managedPath]);
         for (const command of ['whisper-cli', 'whisper']) {

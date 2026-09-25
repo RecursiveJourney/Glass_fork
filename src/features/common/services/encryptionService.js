@@ -11,7 +11,10 @@ try {
 
 const permissionService = require('./permissionService');
 
-const SERVICE_NAME = 'com.pickle.glass'; // A unique identifier for the app in the keychain
+const profileNamespace = process.env.GLASS_USER_DATA_DIR
+    ? '.' + crypto.createHash('sha256').update(require('node:path').resolve(process.env.GLASS_USER_DATA_DIR)).digest('hex')
+    : '';
+const SERVICE_NAME = 'com.pickle.glass' + profileNamespace; // A unique identifier for the app in the keychain
 let sessionKey = null; // In-memory fallback key
 
 const ALGORITHM = 'aes-256-gcm';
