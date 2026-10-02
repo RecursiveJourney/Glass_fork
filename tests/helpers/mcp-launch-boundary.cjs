@@ -1,5 +1,6 @@
 // Test-only preload: stop at the real launcher's application handoff before any
 // application network, OS registration, windows or credential persistence occurs.
+require('../../../realtime_listener/test-support/historical-fixture.cjs');
 const Module = require('node:module');
 const path = require('node:path');
 const appEntry = path.resolve(__dirname, '../../src/index.js');
@@ -36,6 +37,3 @@ Module._load = function(request, parent, isMain) {
   }
   return originalLoad.apply(this, arguments);
 };
-
-
-

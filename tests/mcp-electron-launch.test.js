@@ -1,3 +1,4 @@
+require('../../realtime_listener/test-support/historical-fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -87,6 +88,3 @@ test('launcher helper import remains inert inside Electron', { timeout: 12000 },
 test('launcher helper import remains inert inside Node', () => {
   assert.equal(typeof require(entry).prepareOfflineLaunch, 'function');
 });
-
-
-

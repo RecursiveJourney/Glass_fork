@@ -1,8 +1,10 @@
+require('../../../realtime_listener/test-support/historical-fixture.cjs');
 const {app,BrowserWindow,ipcMain}=require('electron');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const {pathToFileURL}=require('node:url'),{EventEmitter}=require('node:events');
 const directory=process.argv[2],coordinator=process.argv[3],root=path.resolve(__dirname,'../..');
 app.setPath('userData',path.join(directory,'profile'));app.disableHardwareAcceleration();app.on('window-all-closed',()=>{});
+const runtime={execPath:process.execPath,node:process.versions.node,electron:process.versions.electron,coordinator:process.argv[4]};
 let db,server,knowledge,manager,win,service,stage='initialize';
 app.whenReady().then(async()=>{
  const Database=require('better-sqlite3');db=new Database(path.join(directory,'synthetic.db'));
@@ -55,5 +57,5 @@ app.whenReady().then(async()=>{
  const response=await localFetch('http://127.0.0.1:'+server.port+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'rj-twin',stream:false,messages:[{role:'user',content:'Who approves calibration release?'}]})});assert.equal(response.status,200);const answer=await response.json();assert.match(answer.message.content,/Quality Lead/);assert.equal(modelRequests,2);assert.equal(toolCalls,1);
  assert.ok(!JSON.stringify(service.getState()).includes('synthetic-native-knowledge'));assert.ok(!db.prepare('SELECT connections_json FROM mcp_settings').get().connections_json.includes('synthetic-native-knowledge'));assert.equal(db.prepare('SELECT count(*) AS n FROM secret_records').get().n,1);
  stage='capture';const evidence=path.resolve(root,'../docs/wire3-phase4-evidence/checkpoint-c');fs.mkdirSync(evidence,{recursive:true});fs.writeFileSync(path.join(evidence,`mcp-panel-${coordinator}.png`),(await win.webContents.capturePage()).toPNG());
- process.stdout.write('MCP_NATIVE:'+JSON.stringify({passed:true,...metrics,modelRequests,toolCalls,externalInvitations:0})+'\n');
-}).catch(()=>{process.stdout.write('MCP_NATIVE:'+JSON.stringify({passed:false,stage})+'\n');process.exitCode=1;}).finally(async()=>{service?.stop();if(win&&!win.isDestroyed())win.destroy();await server?.close();await manager?.close();await knowledge?.close();db?.close();app.exit(process.exitCode||0);});
+ process.stdout.write('MCP_NATIVE:'+JSON.stringify({passed:true,runtime,...metrics,modelRequests,toolCalls,externalInvitations:0})+'\n');
+}).catch(()=>{process.stdout.write('MCP_NATIVE:'+JSON.stringify({passed:false,stage,runtime})+'\n');process.exitCode=1;}).finally(async()=>{service?.stop();if(win&&!win.isDestroyed())win.destroy();await server?.close();await manager?.close();await knowledge?.close();db?.close();app.exit(process.exitCode||0);});
